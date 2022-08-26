@@ -5,6 +5,9 @@ buildscript {
         jcenter()
         mavenCentral()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+    }
 }
 
 apply plugin: 'com.android.library'
@@ -26,9 +29,15 @@ android {
 
 repositories {
     mavenCentral()
+    mavenLocal()
+    google()
+    maven {
+        url("$rootDir/../node_modules/react-native/android")
+    }
 }
 
 dependencies {
+    implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.yandex.android:maps.mobile:4.1.0-full'

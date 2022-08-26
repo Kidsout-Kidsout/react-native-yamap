@@ -38,6 +38,9 @@ build/
 .gradle
 local.properties
 *.iml
+/android/gradlew
+/android/gradlew.bat
+/android/gradle/
 
 # BUCK
 buck-out/
