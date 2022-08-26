@@ -135,6 +135,19 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         }
     }
 
+    public void setBounds(Point bottomLeft, Point topRight, float offset, float duration, int animation) {
+        BoundingBox boundingBox = new BoundingBox(bottomLeft, topRight);
+        CameraPosition cameraPosition = getMap().cameraPosition(boundingBox);
+        cameraPosition = new CameraPosition(cameraPosition.getTarget(), cameraPosition.getZoom() - offset, cameraPosition.getAzimuth(), cameraPosition.getTilt());
+
+        if (duration > 0) {
+            Animation.Type anim = animation == 0 ? Animation.Type.SMOOTH : Animation.Type.LINEAR;
+            getMap().move(cameraPosition, new Animation(anim, duration), null);
+        } else {
+            getMap().move(cameraPosition);
+        }
+    }
+
     private WritableMap positionToJSON(CameraPosition position, CameraUpdateReason reason, boolean finished) {
         WritableMap cameraPosition = Arguments.createMap();
         Point point = position.getTarget();

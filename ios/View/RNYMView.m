@@ -327,6 +327,20 @@
     }
 }
 
+- (void)setBoundsForSouthWest:(YMKPoint*) southWest northEast: (YMKPoint*) northEast withOffset:(float)offset withDuration:(float)duration withAnimation:(int)animation {
+    YMKBoundingBox *boundingBox = [YMKBoundingBox boundingBoxWithSouthWest:southWest northEast:northEast];
+    YMKCameraPosition *cameraPosition = [self.mapWindow.map cameraPositionWithBoundingBox:boundingBox];
+    cameraPosition = [YMKCameraPosition cameraPositionWithTarget:cameraPosition.target zoom:cameraPosition.zoom - offset azimuth:cameraPosition.azimuth tilt:cameraPosition.tilt];
+
+    if (duration > 0) {
+        YMKAnimationType anim = animation == 0 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
+        [self.mapWindow.map moveWithCameraPosition:cameraPosition animationType:[YMKAnimation animationWithType:anim duration: duration] cameraCallback:^(BOOL completed) {
+        }];
+    } else {
+        [self.mapWindow.map moveWithCameraPosition:cameraPosition];
+    }
+}
+
 - (void)setZoom:(float)zoom withDuration:(float)duration withAnimation:(int)animation {
     YMKCameraPosition* prevPosition = self.mapWindow.map.cameraPosition;
     YMKCameraPosition* position = [YMKCameraPosition cameraPositionWithTarget:prevPosition.target zoom:zoom azimuth:prevPosition.azimuth tilt:prevPosition.tilt];

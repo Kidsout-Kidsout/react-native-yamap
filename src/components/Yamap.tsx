@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   Platform,
   requireNativeComponent,
@@ -17,7 +17,7 @@ import { processColorProps } from '../utils';
 
 const { yamap: NativeYamapModule } = NativeModules;
 
-export interface YaMapProps extends ViewProps {
+export interface YaMapProps extends PropsWithChildren<ViewProps> {
   userLocationIcon?: ImageSourcePropType;
   withClusters?: boolean;
   clusterColor?: string;
@@ -133,6 +133,14 @@ export class YaMap extends React.Component<YaMapProps> {
       findNodeHandle(this),
       this.getCommand('setCenter'),
       [center, zoom, azimuth, tilt, duration, animation]
+    );
+  }
+
+  public setBounds(bottomLeft: { lon: number, lat: number }, topRight: { lon: number, lat: number }, offset: number = 0, duration: number = 0, animation: Animation = Animation.SMOOTH) {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this),
+      this.getCommand('setBounds'),
+      [bottomLeft, topRight, offset, duration, animation]
     );
   }
 

@@ -25,6 +25,7 @@
 - (void)emitCameraPositionToJS:(NSString*_Nonnull)_id;
 - (void)emitVisibleRegionToJS:(NSString*_Nonnull)_id;
 - (void)setCenter:(YMKCameraPosition*_Nonnull)position withDuration:(float)duration withAnimation:(int)animation;
+- (void)setBoundsForSouthWest:(YMKPoint*_Nonnull) southWest northEast:(YMKPoint*_Nonnull) northEast withOffset:(float)offset withDuration:(float)duration withAnimation:(int)animation;
 - (void)setZoom:(float)zoom withDuration:(float)duration withAnimation:(int)animation;
 - (void)fitAllMarkers;
 - (void)fitMarkers:(NSArray<YMKPoint*>*_Nonnull)points;
