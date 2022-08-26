@@ -5,20 +5,16 @@ buildscript {
         jcenter()
         mavenCentral()
     }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.2'
-    }
 }
 
 apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -33,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.yandex.android:maps.mobile:4.1.0-full'
 }

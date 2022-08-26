@@ -1,7 +1,5 @@
 package ru.vvdev.yamap;
 
-import androidx.annotation.NonNull;
-
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -59,12 +57,13 @@ public class RNYamapModule extends ReactContextBaseJavaModule {
                     } catch (Throwable exception) {
                         apiKeyException = exception;
                     }
+
                     MapKitFactory.initialize(reactContext);
                     TransportFactory.initialize(reactContext);
                     MapKitFactory.getInstance().onStart();
                     promise.resolve(null);
                 } catch (Exception exception) {
-                    if(apiKeyException != null) {
+                    if (apiKeyException != null) {
                         promise.reject(apiKeyException);
                         return;
                     }

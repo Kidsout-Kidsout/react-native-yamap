@@ -3,6 +3,31 @@ export interface Point {
   lon: number;
 }
 
+export interface ScreenPoint {
+  x: number;
+  y: number;
+}
+
+export interface MapLoaded {
+  renderObjectCount: number;
+  curZoomModelsLoaded: number;
+  curZoomPlacemarksLoaded: number;
+  curZoomLabelsLoaded: number;
+  curZoomGeometryLoaded: number;
+  tileMemoryUsage: number;
+  delayedGeometryLoaded: number;
+  fullyAppeared: number;
+  fullyLoaded: number;
+}
+
+export interface InitialRegion {
+  lat: number;
+  lon: number;
+  zoom?: number;
+  azimuth?: number;
+  tilt?: number;
+}
+
 export type AddressComponent =
   | "unknown"
   | "country"
@@ -72,11 +97,6 @@ export interface RoutesFoundEvent<T extends DrivingInfo | MasstransitInfo> {
   };
 }
 
-export enum Animation {
-  SMOOTH,
-  LINEAR,
-}
-
 export interface CameraPosition {
   zoom: number;
   tilt: number;
@@ -91,3 +111,8 @@ export type VisibleRegion = {
   topLeft: Point;
   topRight: Point;
 };
+
+export enum Animation {
+  SMOOTH,
+  LINEAR,
+}

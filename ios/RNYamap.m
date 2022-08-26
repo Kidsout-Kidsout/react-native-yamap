@@ -58,7 +58,7 @@ RCT_EXPORT_METHOD(resetLocale:(RCTResponseSenderBlock)successCb errorCallback:(R
 }
 
 RCT_EXPORT_METHOD(getLocale:(RCTResponseSenderBlock)successCb errorCallback:(RCTResponseSenderBlock) errorCb) {
-    NSString* locale = [YRTI18nManagerFactory getLocale];
+    NSString * locale = [YRTI18nManagerFactory getLocale];
     successCb(@[locale]);
 }
 
