@@ -7,7 +7,7 @@
 
 @class RCTBridge;
 
-@interface RNYMView: YMKMapView<YMKUserLocationObjectListener, YMKMapCameraListener, RCTComponent, YMKClusterListener, YMKClusterTapListener, YMKMapLoadedListener, YMKTrafficDelegate>
+@interface RNYMView: YMKMapView<YMKUserLocationObjectListener, YMKMapCameraListener, RCTComponent, YMKMapLoadedListener, YMKTrafficDelegate>
 
 @property (nonatomic, assign) CGRect mapFrame;
 @property (nonatomic, copy) RCTBubblingEventBlock _Nullable onRouteFound;
@@ -33,6 +33,7 @@
 - (void)setTrafficVisible:(BOOL)traffic;
 - (void)emitWorldToScreenPoint:(NSArray<YMKPoint*>*_Nonnull)points withId:(NSString*_Nonnull)_id;
 - (void)emitScreenToWorldPoint:(NSArray<YMKScreenPoint*>*_Nonnull)points withId:(NSString*_Nonnull)_id;
+-(YMKBoundingBox*_Nonnull)calculateBoundingBox:(NSArray<YMKPoint*>*_Nonnull) points;
 
 // PROPS
 - (void)setNightMode:(BOOL)nightMode;
@@ -47,6 +48,8 @@
 - (void)setInitialRegion:(NSDictionary*_Nullable)initialRegion;
 - (void)setMaxFps:(float)maxFps;
 - (void)setInteractive:(BOOL)interactive;
+-(void) insertMarkerReactSubview:(UIView *_Nullable)subview atIndex:(NSInteger)atIndex;
+-(void) removeMarkerReactSubview:(UIView*_Nullable) subview;
 
 @end
 
