@@ -40,6 +40,7 @@ export interface YaMapProps extends PropsWithChildren<ViewProps> {
   fastTapEnabled?: boolean;
   initialRegion?: InitialRegion;
   maxFps?: number;
+  followUser?: boolean;
 }
 
 const YaMapNativeComponent = requireNativeComponent<YaMapProps>('YamapView');
@@ -246,6 +247,7 @@ export class YaMap extends React.Component<YaMapProps> {
     processColorProps(props, 'clusterColor' as keyof YaMapProps);
     processColorProps(props, 'userLocationAccuracyFillColor' as keyof YaMapProps);
     processColorProps(props, 'userLocationAccuracyStrokeColor' as keyof YaMapProps);
+    processColorProps(props, 'followUser' as keyof YaMapProps);
 
     return props;
   }

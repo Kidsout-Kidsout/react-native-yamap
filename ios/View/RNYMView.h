@@ -48,8 +48,9 @@
 - (void)setInitialRegion:(NSDictionary*_Nullable)initialRegion;
 - (void)setMaxFps:(float)maxFps;
 - (void)setInteractive:(BOOL)interactive;
--(void) insertMarkerReactSubview:(UIView *_Nullable)subview atIndex:(NSInteger)atIndex;
--(void) removeMarkerReactSubview:(UIView*_Nullable) subview;
+- (void)insertMarkerReactSubview:(UIView *_Nullable)subview atIndex:(NSInteger)atIndex;
+- (void)removeMarkerReactSubview:(UIView*_Nullable) subview;
+- (void)setFollowUser: (BOOL) follow;
 
 @end
 
