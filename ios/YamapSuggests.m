@@ -40,9 +40,11 @@ NSString* ERR_SUGGEST_FAILED = @"YANDEX_SUGGEST_ERR_SUGGEST_FAILED";
     if (suggestClient) {
         return suggestClient;
     }
-    
+
     if (!searchManager) {
-        searchManager = [[YMKSearch sharedInstance] createSearchManagerWithSearchManagerType:YMKSearchSearchManagerTypeOnline];
+        runOnMainQueueWithoutDeadlocking(^{
+            self->searchManager = [[YMKSearch sharedInstance] createSearchManagerWithSearchManagerType:YMKSearchSearchManagerTypeOnline];
+        });
     }
 
     runOnMainQueueWithoutDeadlocking(^{
