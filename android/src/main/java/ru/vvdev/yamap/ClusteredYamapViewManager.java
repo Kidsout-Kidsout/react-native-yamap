@@ -27,15 +27,16 @@ public class ClusteredYamapViewManager extends ViewGroupManager<ClusteredYamapVi
     public static final String REACT_CLASS = "ClusteredYamapView";
 
     private static final int SET_CENTER = 1;
-    private static final int FIT_ALL_MARKERS = 2;
-    private static final int FIND_ROUTES = 3;
-    private static final int SET_ZOOM = 4;
-    private static final int GET_CAMERA_POSITION = 5;
-    private static final int GET_VISIBLE_REGION = 6;
-    private static final int SET_TRAFFIC_VISIBLE = 7;
-    private static final int FIT_MARKERS = 8;
-    private static final int GET_SCREEN_POINTS = 9;
-    private static final int GET_WORLD_POINTS = 10;
+    private static final int SET_BOUNDS = 2;
+    private static final int FIT_ALL_MARKERS = 3;
+    private static final int FIND_ROUTES = 4;
+    private static final int SET_ZOOM = 5;
+    private static final int GET_CAMERA_POSITION = 6;
+    private static final int GET_VISIBLE_REGION = 7;
+    private static final int SET_TRAFFIC_VISIBLE = 8;
+    private static final int FIT_MARKERS = 9;
+    private static final int GET_SCREEN_POINTS = 10;
+    private static final int GET_WORLD_POINTS = 11;
 
     ClusteredYamapViewManager() {
     }
@@ -70,6 +71,7 @@ public class ClusteredYamapViewManager extends ViewGroupManager<ClusteredYamapVi
     public Map<String, Integer> getCommandsMap() {
         Map<String, Integer> map = MapBuilder.newHashMap();
         map.put("setCenter", SET_CENTER);
+        map.put("setBounds", SET_BOUNDS);
         map.put("fitAllMarkers", FIT_ALL_MARKERS);
         map.put("findRoutes", FIND_ROUTES);
         map.put("setZoom", SET_ZOOM);
@@ -94,6 +96,10 @@ public class ClusteredYamapViewManager extends ViewGroupManager<ClusteredYamapVi
         switch (commandType) {
             case "setCenter":
                 setCenter(castToYaMapView(view), args.getMap(0), (float) args.getDouble(1), (float) args.getDouble(2), (float) args.getDouble(3), (float) args.getDouble(4), args.getInt(5));
+                break;
+
+            case "setBounds":
+                setBounds(castToYaMapView(view), args.getMap(0), args.getMap(1), (float) args.getDouble(2), (float) args.getDouble(3), args.getInt(4));
                 break;
 
             case "fitAllMarkers":
@@ -184,6 +190,16 @@ public class ClusteredYamapViewManager extends ViewGroupManager<ClusteredYamapVi
             CameraPosition pos = new CameraPosition(centerPosition, zoom, azimuth, tilt);
             view.setCenter(pos, duration, animation);
         }
+    }
+
+    private void setBounds(ClusteredYamapView view, ReadableMap bottomLeft, ReadableMap topRight, float offset, float duration, int animation) {
+        view.setBounds(
+          new Point(bottomLeft.getDouble("lat"), bottomLeft.getDouble("lon")),
+          new Point(topRight.getDouble("lat"), topRight.getDouble("lon")),
+          offset,
+          duration,
+          animation
+        );
     }
 
     private void fitAllMarkers(View view) {

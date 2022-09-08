@@ -37,6 +37,12 @@ RCT_EXPORT_MODULE()
     [map setCenter: pos withDuration: duration withAnimation: animation];
 }
 
+- (void)setBoundsForMap:(RNYMView*)map southWest:(NSDictionary*)_southWest northEast:(NSDictionary*)_northEast offset:(float)offset duration:(float)duration animation:(int)animation {
+    YMKPoint *southWest = [RCTConvert YMKPoint:_southWest];
+    YMKPoint *northEast = [RCTConvert YMKPoint:_northEast];
+    [map setBoundsForSouthWest: southWest northEast: northEast withOffset: offset withDuration: duration withAnimation: animation];
+}
+
 // props
 RCT_EXPORT_VIEW_PROPERTY(onRouteFound, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onCameraPositionReceived, RCTBubblingEventBlock)
@@ -169,6 +175,19 @@ RCT_EXPORT_METHOD(setCenter:(nonnull NSNumber*) reactTag center:(NSDictionary*_N
             return;
         }
         [self setCenterForMap: view center:center zoom: [zoom floatValue] azimuth: [azimuth floatValue] tilt: [tilt floatValue] duration: [duration floatValue] animation: [animation intValue]];
+    }];
+}
+
+RCT_EXPORT_METHOD(setBounds:(nonnull NSNumber*)reactTag southWest:(NSDictionary*_Nonnull)southWest northEast:(NSDictionary*_Nonnull)northEast offset:(NSNumber*_Nonnull)offset duration:(NSNumber*_Nonnull)duration animation:(NSNumber*_Nonnull)animation) {
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber*, UIView*> *viewRegistry) {
+        RNYMView *view = (RNYMView*)viewRegistry[reactTag];
+
+        if (!view || ![view isKindOfClass:[RNYMView class]]) {
+            RCTLogError(@"Cannot find NativeView with tag #%@", reactTag);
+            return;
+        }
+
+        [self setBoundsForMap:view southWest:southWest northEast:northEast offset:[offset floatValue] duration:[duration floatValue] animation:[animation intValue]];
     }];
 }
 
