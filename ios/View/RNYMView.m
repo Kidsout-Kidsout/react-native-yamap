@@ -791,6 +791,9 @@
     }
 
     [_reactSubviews removeObject:subview];
+    if ([_reactSubviews count] < 1 && userClusters) {
+        [clusterCollection clear];
+    }
     [super removeReactSubview: subview];
 }
 

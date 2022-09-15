@@ -732,6 +732,8 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
 
             if (userClusters) {
                 clusterCollection.remove(child.getMapObject());
+                // Trigger view updates. If we don't than last point won't be removed
+                clusterCollection.clusterPlacemarks(50, 12);
             } else {
                 final MapObject mapObject = child.getMapObject();
                 if (mapObject == null || !mapObject.isValid()) return;
