@@ -776,8 +776,9 @@
         YamapMarkerView* marker = (YamapMarkerView*) subview;
         if (userClusters) {
             [clusterCollection removeWithMapObject:[marker getMapObject]];
+            [clusterCollection clusterPlacemarksWithClusterRadius:(50) minZoom:(12)];
         } else {
-        [objects removeWithMapObject:[marker getMapObject]];
+            [objects removeWithMapObject:[marker getMapObject]];
         }
     } else if ([subview isKindOfClass:[YamapCircleView class]]) {
         YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;
@@ -792,6 +793,8 @@
 
     [_reactSubviews removeObject:subview];
     if ([_reactSubviews count] < 1 && userClusters) {
+        //somehow clusterPlacemarksWithClusterRadius doesn't work
+        // when we remove last object so we force clear
         [clusterCollection clear];
     }
     [super removeReactSubview: subview];
