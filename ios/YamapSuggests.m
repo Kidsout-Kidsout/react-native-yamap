@@ -71,6 +71,8 @@ NSString* ERR_SUGGEST_FAILED = @"YANDEX_SUGGEST_ERR_SUGGEST_FAILED";
 					[suggestToPass setValue:[[suggest title] text] forKey:@"title"];
 					[suggestToPass setValue:[[suggest subtitle] text] forKey:@"subtitle"];
 					[suggestToPass setValue:[suggest uri] forKey:@"uri"];
+					[suggestToPass setValue:[suggest displayText] forKey:@"displayText"];
+					[suggestToPass setValue:[suggest searchText] forKey:@"searchText"];
 
 					[suggestsToPass addObject:suggestToPass];
 				}

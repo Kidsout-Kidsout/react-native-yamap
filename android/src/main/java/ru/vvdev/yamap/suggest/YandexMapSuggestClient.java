@@ -67,6 +67,10 @@ public class YandexMapSuggestClient implements MapSuggestClient {
                                 suggest.setSubtitle(rawSuggest.getSubtitle().getText());
                             }
                             suggest.setUri(rawSuggest.getUri());
+                            suggest.setSearchText(rawSuggest.setSearchText());
+                            if (rawSuggest.getDisplayText() != null) {
+                              suggest.setDisplayText(rawSuggest.setDisplayText());
+                            }
                             result.add(suggest);
 
                         }

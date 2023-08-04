@@ -9,6 +9,9 @@ public class MapSuggestItem {
     private String subtitle;
     @Nullable
     private String uri;
+    private String searchText;
+    @Nullable
+    private String displayText;
 
     public MapSuggestItem() {
     }
@@ -46,5 +49,22 @@ public class MapSuggestItem {
 
     public void setUri(@Nullable String uri) {
         this.uri = uri;
+    }
+
+    public String getSearchText() {
+        return searchText;
+    }
+
+    public void setSearchText(String title) {
+        this.searchText = searchText;
+    }
+
+    @Nullable
+    public String getDisplayText() {
+        return displayText;
+    }
+
+    public void setDisplayText(@Nullable String title) {
+        this.displayText = displayText;
     }
 }
