@@ -3,7 +3,6 @@ package ru.vvdev.yamap.suggest;
 import javax.annotation.Nullable;
 
 public class MapSuggestItem {
-    private String searchText;
     private String title;
     @Nullable
     private String subtitle;
@@ -14,14 +13,6 @@ public class MapSuggestItem {
     private String displayText;
 
     public MapSuggestItem() {
-    }
-
-    public String getSearchText() {
-        return searchText;
-    }
-
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
     }
 
     public String getTitle() {
@@ -55,7 +46,7 @@ public class MapSuggestItem {
         return searchText;
     }
 
-    public void setSearchText(String title) {
+    public void setSearchText(String searchText) {
         this.searchText = searchText;
     }
 
@@ -64,7 +55,7 @@ public class MapSuggestItem {
         return displayText;
     }
 
-    public void setDisplayText(@Nullable String title) {
+    public void setDisplayText(@Nullable String displayText) {
         this.displayText = displayText;
     }
 }
