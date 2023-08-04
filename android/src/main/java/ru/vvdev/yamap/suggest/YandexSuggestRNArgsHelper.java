@@ -22,6 +22,8 @@ public final class YandexSuggestRNArgsHelper {
         result.putString("title", data.getTitle());
         result.putString("subtitle", data.getSubtitle());
         result.putString("uri", data.getUri());
+        result.putString("searchText", data.getSearchText());
+        result.putString("displayText", data.getDisplayText());
 
         return result;
     }
