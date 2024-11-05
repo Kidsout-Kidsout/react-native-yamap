@@ -115,6 +115,8 @@ RCT_EXPORT_MODULE();
     YMKPoint* point = nil;
     YMKSearchAddress* address = nil;
     YMKBoundingBox* box = nil;
+  
+    if(response == nil) return nil;
     
     for(YMKGeoObjectCollectionItem *result in response.collection.children) {
         if(result == nil) { continue; }
