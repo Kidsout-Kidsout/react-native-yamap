@@ -77,7 +77,11 @@ public class RNYandexGeocodeModule extends ReactContextBaseJavaModule {
                         new Callback<MapGeocodeItem>() {
                             @Override
                             public void invoke(MapGeocodeItem result) {
+                              try {
                                 promise.resolve(argsHelper.createResultItemFrom(result));
+                              } catch (Exception e) {
+                                promise.reject(ERR_GEOCODE_FAILED, "suggest request: " + e.getMessage());
+                              }
                             }
                         },
                         new Callback<Throwable>() {
