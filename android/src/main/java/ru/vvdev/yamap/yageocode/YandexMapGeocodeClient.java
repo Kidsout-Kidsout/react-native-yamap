@@ -72,7 +72,7 @@ public class YandexMapGeocodeClient implements MapGeocodeClient {
 
     @Override
     public void geocodeUri(final String uri, final Callback<MapGeocodeItem> onSuccess, final Callback<Throwable> onError) {
-      searchManager.resolveUri(
+      searchManager.resolveURI(
         uri,
         searchOptions,
         new Session.SearchListener() {
