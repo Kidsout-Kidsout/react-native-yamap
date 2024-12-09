@@ -14,11 +14,13 @@ export type YamapGeocodeResult = {
 };
 
 type GeocodeFetcher = (
-  query: string | Point
+  query: string | { uri: string } | Point
 ) => Promise<YamapGeocodeResult | undefined>;
 const geocode: GeocodeFetcher = (query) =>
   typeof query === "string"
     ? YamapGeocode.geocode(query)
+    : "uri" in query
+    ? YamapGeocode.geocodeUri(query.uri)
     : YamapGeocode.geocodePoint([query.lat, query.lon]);
 
 /**

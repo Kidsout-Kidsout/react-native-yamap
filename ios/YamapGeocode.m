@@ -58,7 +58,7 @@ RCT_EXPORT_METHOD(geocode:(nonnull NSString*) searchQuery
                           responseHandler:^(YMKSearchResponse * _Nullable response, NSError * _Nullable error){
 
                 if (error) {
-                    reject(ERR_GEOCODE_SEARCH_FAILED, [NSString stringWithFormat:@"search request: %@", searchQuery], error);
+                    reject(ERR_GEOCODE_SEARCH_FAILED, [NSString stringWithFormat:@"search request: %@", error], error);
                 } else {
                     resolve([self convert: response]);
                 }
@@ -70,7 +70,36 @@ RCT_EXPORT_METHOD(geocode:(nonnull NSString*) searchQuery
             [self->searchSessions setObject:session forKey:key];
         }
         @catch ( NSException *error ) {
-            reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"search request: %@", searchQuery], nil);
+            reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"Search request: %@", error], nil);
+        }
+    });
+})
+
+RCT_EXPORT_METHOD(geocodeUri:(nonnull NSString*) uri
+                resolver:(RCTPromiseResolveBlock) resolve
+                rejecter:(RCTPromiseRejectBlock) reject {
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @try {
+            NSString *key = [[NSUUID UUID] UUIDString];
+            YMKSearchSession* session = [self->searchManager resolveURIWithUri:uri
+                            searchOptions:self->searchOptions
+                          responseHandler:^(YMKSearchResponse * _Nullable response, NSError * _Nullable error){
+
+                if (error) {
+                    reject(ERR_GEOCODE_SEARCH_FAILED, [NSString stringWithFormat:@"Search request: %@", error], error);
+                } else {
+                    resolve([self convert: response]);
+                }
+
+                [self->searchSessions removeObjectForKey:key];
+            }];
+            
+            // put into dictionary to create strong reference
+            [self->searchSessions setObject:session forKey:key];
+        }
+        @catch ( NSException *error ) {
+            reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"Search request: %@", error], nil);
         }
     });
 })
@@ -91,7 +120,7 @@ RCT_EXPORT_METHOD(geocodePoint:(NSArray*) point
                           responseHandler:^(YMKSearchResponse * _Nullable response, NSError * _Nullable error){
 
                 if (error) {
-                    reject(ERR_GEOCODE_SEARCH_FAILED, [NSString stringWithFormat:@"search request: %@", point], error);
+                    reject(ERR_GEOCODE_SEARCH_FAILED, [NSString stringWithFormat:@"Search request: %@", error], error);
                 } else {
                     resolve([self convert: response]);
                 }
@@ -103,7 +132,7 @@ RCT_EXPORT_METHOD(geocodePoint:(NSArray*) point
             [self->searchSessions setObject:session forKey:key];
         }
         @catch ( NSException *error ) {
-            reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"search request: %@", point], nil);
+            reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"Search request: %@", error], nil);
         }
     });
 })

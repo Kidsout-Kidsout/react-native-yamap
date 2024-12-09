@@ -64,7 +64,26 @@ public class YandexMapGeocodeClient implements MapGeocodeClient {
 
           @Override
           public void onSearchError(@NonNull Error error) {
-            onError.invoke(new IllegalStateException("suggest error: " + error));
+            onError.invoke(new IllegalStateException("Suggest error: " + error));
+          }
+        }
+      );
+    }
+
+    @Override
+    public void geocodeUri(final String uri, final Callback<MapGeocodeItem> onSuccess, final Callback<Throwable> onError) {
+      searchManager.resolveUri(
+        uri,
+        searchOptions,
+        new Session.SearchListener() {
+          @Override
+          public void onSearchResponse(@NonNull Response response) {
+            onSuccess.invoke(YandexMapGeocodeClient.extract(response));
+          }
+
+          @Override
+          public void onSearchError(@NonNull Error error) {
+            onError.invoke(new IllegalStateException("Suggest error: " + error));
           }
         }
       );
@@ -84,7 +103,7 @@ public class YandexMapGeocodeClient implements MapGeocodeClient {
 
           @Override
           public void onSearchError(@NonNull Error error) {
-            onError.invoke(new IllegalStateException("suggest error: " + error));
+            onError.invoke(new IllegalStateException("Suggest error: " + error));
           }
         }
       );
