@@ -8,5 +8,7 @@ public interface MapGeocodeClient {
 
     void geocode(final String text, final Callback<MapGeocodeItem> onSuccess, final Callback<Throwable> onError);
 
+    void geocodeUri(final String uri, final Callback<MapGeocodeItem> onSuccess, final Callback<Throwable> onError);
+
     void geocodePoint(final Point point, final Callback<MapGeocodeItem> onSuccess, final Callback<Throwable> onError);
 }

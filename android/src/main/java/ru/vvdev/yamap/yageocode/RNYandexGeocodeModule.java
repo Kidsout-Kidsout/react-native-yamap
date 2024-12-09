@@ -36,7 +36,7 @@ public class RNYandexGeocodeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void geocode(final String text, final Promise promise) {
         if (text == null) {
-            promise.reject(ERR_NO_REQUEST_ARG, "suggest request: text arg is not provided");
+            promise.reject(ERR_NO_REQUEST_ARG, "Suggest request: text arg is not provided");
             return;
         }
         runOnUiThread(new Runnable() {
@@ -49,14 +49,40 @@ public class RNYandexGeocodeModule extends ReactContextBaseJavaModule {
                                 try {
                                     promise.resolve(argsHelper.createResultItemFrom(result));
                                 } catch (Exception e) {
-                                    promise.reject(ERR_GEOCODE_FAILED, "suggest request: " + e.getMessage());
+                                    promise.reject(ERR_GEOCODE_FAILED, "Suggest request: " + e.getMessage());
                                 }
                             }
                         },
                         new Callback<Throwable>() {
                             @Override
                             public void invoke(Throwable e) {
-                                promise.reject(ERR_GEOCODE_FAILED, "suggest request: " + e.getMessage());
+                                promise.reject(ERR_GEOCODE_FAILED, "Suggest request: " + e.getMessage());
+                            }
+                        });
+            }
+        });
+    }
+
+    @ReactMethod
+    public void geocodeUri(final String uri, final Promise promise) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getGeocodeClient(getReactApplicationContext()).geocodeUri(uri,
+                        new Callback<MapGeocodeItem>() {
+                            @Override
+                            public void invoke(MapGeocodeItem result) {
+                                try {
+                                    promise.resolve(argsHelper.createResultItemFrom(result));
+                                } catch (Exception e) {
+                                    promise.reject(ERR_GEOCODE_FAILED, "Suggest request: " + e.getMessage());
+                                }
+                            }
+                        },
+                        new Callback<Throwable>() {
+                            @Override
+                            public void invoke(Throwable e) {
+                                promise.reject(ERR_GEOCODE_FAILED, "Suggest request: " + e.getMessage());
                             }
                         });
             }
@@ -66,7 +92,7 @@ public class RNYandexGeocodeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void geocodePoint(ReadableArray point, final Promise promise) {
         if (point == null) {
-            promise.reject(ERR_NO_REQUEST_ARG, "suggest request: text arg is not provided");
+            promise.reject(ERR_NO_REQUEST_ARG, "Suggest request: text arg is not provided");
             return;
         }
         Point ypoint = new Point(point.getDouble(0), point.getDouble(1));
@@ -80,14 +106,14 @@ public class RNYandexGeocodeModule extends ReactContextBaseJavaModule {
                               try {
                                 promise.resolve(argsHelper.createResultItemFrom(result));
                               } catch (Exception e) {
-                                promise.reject(ERR_GEOCODE_FAILED, "suggest request: " + e.getMessage());
+                                promise.reject(ERR_GEOCODE_FAILED, "Suggest request: " + e.getMessage());
                               }
                             }
                         },
                         new Callback<Throwable>() {
                             @Override
                             public void invoke(Throwable e) {
-                                promise.reject(ERR_GEOCODE_FAILED, "suggest request: " + e.getMessage());
+                                promise.reject(ERR_GEOCODE_FAILED, "Suggest request: " + e.getMessage());
                             }
                         });
             }
