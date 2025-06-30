@@ -1,0 +1,148 @@
+package ru.vvdev.yamap.suggest
+
+import android.content.Context
+import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.ReadableType
+import com.yandex.mapkit.geometry.BoundingBox
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.search.*
+import com.yandex.runtime.Error
+import ru.vvdev.yamap.utils.Callback
+
+class YandexMapSuggestClient(context: Context) : MapSuggestClient {
+  private val searchManager: SearchManager
+  private val suggestOptions = SuggestOptions()
+  private var suggestSession: SuggestSession? = null
+
+  /**
+   * Для Яндекса нужно указать географическую область поиска. В дефолтном варианте мы не знаем какие
+   * границы для каждого конкретного города, поэтому поиск осуществляется по всему миру.
+   * Для `BoundingBox` нужно указать ширину и долготу для юго-западной точки и северо-восточной
+   * в градусах. Получается, что координаты самой юго-западной точки, это
+   * ширина = -90, долгота = -180, а самой северо-восточной - ширина = 90, долгота = 180
+   */
+  private val defaultGeometry = BoundingBox(Point(-90.0, -180.0), Point(90.0, 180.0))
+
+  init {
+    SearchFactory.initialize(context)
+    searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+    suggestOptions.suggestTypes = SearchType.GEO.value
+  }
+
+  private fun suggestHandler(
+    text: String,
+    options: SuggestOptions,
+    onSuccess: Callback<List<MapSuggestItem>>,
+    onError: Callback<Throwable>
+  ) {
+    if (suggestSession == null) {
+      suggestSession = searchManager.createSuggestSession()
+    }
+
+    suggestSession?.suggest(
+      text,
+      defaultGeometry,
+      options,
+      object : SuggestSession.SuggestListener {
+        override fun onResponse(list: List<SuggestItem>) {
+          val result = list.map { rawSuggest ->
+            MapSuggestItem().apply {
+              searchText = rawSuggest.searchText
+              title = rawSuggest.title.text
+              subtitle = rawSuggest.subtitle?.text
+              uri = rawSuggest.uri
+              displayText = rawSuggest.displayText
+            }
+          }
+          onSuccess.invoke(result)
+        }
+
+        override fun onError(error: Error) {
+          onError.invoke(IllegalStateException("suggest error: $error"))
+        }
+      }
+    )
+  }
+
+  override fun suggest(
+    text: String,
+    onSuccess: Callback<List<MapSuggestItem>>,
+    onError: Callback<Throwable>
+  ) {
+    suggestHandler(text, suggestOptions, onSuccess, onError)
+  }
+
+  override fun suggest(
+    text: String,
+    options: ReadableMap,
+    onSuccess: Callback<List<MapSuggestItem>>,
+    onError: Callback<Throwable>
+  ) {
+    val userPositionKey = "userPosition"
+    val lonKey = "lon"
+    val latKey = "lat"
+    val suggestWordsKey = "suggestWords"
+    val suggestTypesKey = "suggestTypes"
+
+    val options_ = SuggestOptions()
+    var suggestType = SuggestType.GEO.value
+
+    if (options.hasKey(suggestWordsKey) && !options.isNull(suggestWordsKey)) {
+      if (options.getType(suggestWordsKey) != ReadableType.Boolean) {
+        onError.invoke(IllegalStateException("suggest error: $suggestWordsKey is not a Boolean"))
+        return
+      }
+      options_.suggestWords = options.getBoolean(suggestWordsKey)
+    }
+
+    if (options.hasKey(userPositionKey) && !options.isNull(userPositionKey)) {
+      if (options.getType(userPositionKey) != ReadableType.Map) {
+        onError.invoke(IllegalStateException("suggest error: $userPositionKey is not an Object"))
+        return
+      }
+      val userPositionMap = options.getMap(userPositionKey) ?: return
+
+      if (!userPositionMap.hasKey(latKey) || !userPositionMap.hasKey(lonKey)) {
+        onError.invoke(IllegalStateException("suggest error: $userPositionKey does not have lat or lon"))
+        return
+      }
+
+      if (userPositionMap.getType(latKey) != ReadableType.Number || userPositionMap.getType(lonKey) != ReadableType.Number) {
+        onError.invoke(IllegalStateException("suggest error: lat or lon is not a Number"))
+        return
+      }
+
+      val lat = userPositionMap.getDouble(latKey)
+      val lon = userPositionMap.getDouble(lonKey)
+      val userPosition = Point(lat, lon)
+
+      options_.userPosition = userPosition
+    }
+
+    if (options.hasKey(suggestTypesKey) && !options.isNull(suggestTypesKey)) {
+      if (options.getType(suggestTypesKey) != ReadableType.Array) {
+        onError.invoke(IllegalStateException("suggest error: $suggestTypesKey is not an Array"))
+        return
+      }
+      suggestType = SuggestType.UNSPECIFIED.value
+      val suggestTypesArray = options.getArray(suggestTypesKey) ?: return
+      for (i in 0 until suggestTypesArray.size()) {
+        if (suggestTypesArray.getType(i) != ReadableType.Number) {
+          onError.invoke(IllegalStateException("suggest error: one or more $suggestTypesKey is not a Number"))
+          return
+        }
+        val value = suggestTypesArray.getInt(i)
+        suggestType = suggestType or value
+      }
+    }
+
+    options_.suggestTypes = suggestType
+    suggestHandler(text, options_, onSuccess, onError)
+  }
+
+  override fun resetSuggest() {
+    suggestSession?.reset()
+    suggestSession = null
+  }
+}

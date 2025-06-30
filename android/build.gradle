@@ -40,5 +40,5 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.yandex.android:maps.mobile:4.1.0-full'
+    implementation 'com.yandex.android:maps.mobile:4.8.0-full'
 }
