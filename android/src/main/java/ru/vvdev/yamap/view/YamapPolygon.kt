@@ -19,7 +19,12 @@ class YamapPolygon(context: Context) : ViewGroup(context), MapObjectTapListener,
   var polygon: Polygon = Polygon(LinearRing(emptyList()), emptyList())
   private var _points: ArrayList<Point> = ArrayList()
   private var innerRings: ArrayList<ArrayList<Point>> = ArrayList()
-  private var mapObject: PolygonMapObject? = null
+  override var mapObject: MapObject? = null
+    set(obj) {
+      field = obj as PolygonMapObject
+      obj.addTapListener(this)
+      updatePolygon()
+    }
   private var fillColor: Int = Color.BLACK
   private var strokeColor: Int = Color.BLACK
   private var zIndex: Int = 1
@@ -67,23 +72,13 @@ class YamapPolygon(context: Context) : ViewGroup(context), MapObjectTapListener,
   }
 
   private fun updatePolygon() {
-    mapObject?.let {
+    (mapObject as PolygonMapObject?)?.let {
       it.geometry = polygon
       it.strokeWidth = strokeWidth
       it.strokeColor = strokeColor
       it.fillColor = fillColor
       it.zIndex = zIndex.toFloat()
     }
-  }
-
-  fun setMapObject(obj: MapObject) {
-    mapObject = obj as PolygonMapObject
-    mapObject?.addTapListener(this)
-    updatePolygon()
-  }
-
-  fun getMapObject(): MapObject? {
-    return mapObject
   }
 
   override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean {

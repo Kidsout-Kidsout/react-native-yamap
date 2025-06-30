@@ -13,11 +13,11 @@ class YandexGeocodeRNArgsHelper {
     result.putString("name", data.name)
     result.putString("descriptionText", data.descriptionText)
     result.putString("formattedAddress", data.formattedAddress)
-    result.putMap("coords", pointToMap(data.coords))
-    result.putMap("upperCorner", pointToMap(data.upperCorner))
-    result.putMap("lowerCorner", pointToMap(data.lowerCorner))
+    result.putMap("coords", data.coords?.let { pointToMap(it) })
+    result.putMap("upperCorner", data.upperCorner?.let { pointToMap(it) })
+    result.putMap("lowerCorner", data.lowerCorner?.let { pointToMap(it) })
 
-    for (component in data.components) {
+    for (component in data.components ?: listOf()) {
       val item = Arguments.createMap()
       val kinds = Arguments.createArray()
       item.putString("name", component.name)

@@ -37,7 +37,6 @@ class RNYamapModule(private val reactContext: ReactApplicationContext) : ReactCo
         }
 
         MapKitFactory.initialize(reactContext)
-        TransportFactory.initialize(reactContext)
         MapKitFactory.getInstance().onStart()
         promise.resolve(null)
       } catch (exception: Exception) {

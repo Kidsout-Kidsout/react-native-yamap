@@ -25,7 +25,6 @@ class YandexMapSuggestClient(context: Context) : MapSuggestClient {
   private val defaultGeometry = BoundingBox(Point(-90.0, -180.0), Point(90.0, 180.0))
 
   init {
-    SearchFactory.initialize(context)
     searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     suggestOptions.suggestTypes = SearchType.GEO.value
   }
@@ -45,15 +44,18 @@ class YandexMapSuggestClient(context: Context) : MapSuggestClient {
       defaultGeometry,
       options,
       object : SuggestSession.SuggestListener {
-        override fun onResponse(list: List<SuggestItem>) {
-          val result = list.map { rawSuggest ->
-            MapSuggestItem().apply {
-              searchText = rawSuggest.searchText
-              title = rawSuggest.title.text
-              subtitle = rawSuggest.subtitle?.text
-              uri = rawSuggest.uri
-              displayText = rawSuggest.displayText
-            }
+        override fun onResponse(suggestResponse: SuggestResponse) {
+          val result: MutableList<MapSuggestItem> = ArrayList(suggestResponse.items.size)
+          for (i in suggestResponse.items.indices) {
+              val rawSuggest = suggestResponse.items[i]
+              val suggest = MapSuggestItem()
+              suggest.searchText = rawSuggest.searchText
+              suggest.title = rawSuggest.title.text
+              if (rawSuggest.subtitle != null) {
+                  suggest.subtitle = rawSuggest.subtitle!!.text
+              }
+              suggest.uri = rawSuggest.uri
+              result.add(suggest)
           }
           onSuccess.invoke(result)
         }

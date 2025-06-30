@@ -26,6 +26,10 @@ import ru.vvdev.yamap.utils.ImageLoader
 
 class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListener, ReactMapObject {
   var point: Point? = null
+    set(point) {
+      field = point
+      updateMarker()
+    }
   private var zIndex = 1
   private var scale = 1f
   private var visible = true
@@ -33,7 +37,12 @@ class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListe
   private var markerAnchor: PointF? = null
   private var iconSource: String? = null
   private var _childView: View? = null
-  private var mapObject: PlacemarkMapObject? = null
+  override var mapObject: MapObject? = null
+    set(obj) {
+      field = obj
+      obj?.addTapListener(this)
+      updateMarker()
+    }
   private val childs = ArrayList<View>()
 
   private val childLayoutListener = OnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -41,12 +50,6 @@ class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListe
   }
 
   override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {}
-
-  // PROPS
-  fun setPoint(_point: Point) {
-    point = _point
-    updateMarker()
-  }
 
   fun setZIndex(_zIndex: Int) {
     zIndex = _zIndex
@@ -78,12 +81,14 @@ class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListe
       val iconStyle = IconStyle().apply {
         scale = this@YamapMarker.scale
         rotationType = RotationType.ROTATE
-        isVisible = this@YamapMarker.visible
+        visible = this@YamapMarker.visible
         markerAnchor?.let { anchor = it }
       }
-      placemark.geometry = point
-      placemark.zIndex = zIndex.toFloat()
-      placemark.setIconStyle(iconStyle)
+      (placemark as PlacemarkMapObject?)?.apply {
+        geometry = point!!
+        zIndex = zIndex.toFloat()
+        setIconStyle(iconStyle)
+      }
 
       _childView?.let { childView ->
         try {
@@ -98,27 +103,17 @@ class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListe
       }
 
       if (childs.isEmpty() && !iconSource.isNullOrEmpty()) {
-        ImageLoader.DownloadImageBitmap(context, iconSource!!, object : Callback<Bitmap> {
-          override fun invoke(bitmap: Bitmap) {
+        ImageLoader.downloadImageBitmap(context, iconSource!!, fun(bitmap) {
             try {
               placemark.setIcon(ImageProvider.fromBitmap(bitmap))
               placemark.setIconStyle(iconStyle)
             } catch (e: Exception) {
               e.printStackTrace()
             }
-          }
-        })
+          })
       }
     }
   }
-
-  fun setMapObject(obj: MapObject) {
-    mapObject = obj as PlacemarkMapObject
-    mapObject?.addTapListener(this)
-    updateMarker()
-  }
-
-  fun getMapObject(): MapObject? = mapObject
 
   fun setChildView(view: View?) {
     if (view == null) {
@@ -142,15 +137,15 @@ class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListe
   }
 
   fun moveAnimationLoop(lat: Double, lon: Double) {
-    (getMapObject() as? PlacemarkMapObject)?.geometry = Point(lat, lon)
+    (mapObject as? PlacemarkMapObject)?.geometry = Point(lat, lon)
   }
 
   fun rotateAnimationLoop(delta: Float) {
-    (getMapObject() as? PlacemarkMapObject)?.direction = delta
+    (mapObject as? PlacemarkMapObject)?.direction = delta
   }
 
   fun animatedMoveTo(point: Point, duration: Float) {
-    val placemark = getMapObject() as? PlacemarkMapObject ?: return
+    val placemark = mapObject as? PlacemarkMapObject ?: return
     val startLat = placemark.geometry.latitude
     val startLon = placemark.geometry.longitude
     val deltaLat = point.latitude - startLat
@@ -171,7 +166,7 @@ class YamapMarker(context: Context) : ReactViewGroup(context), MapObjectTapListe
   }
 
   fun animatedRotateTo(angle: Float, duration: Float) {
-    val placemark = getMapObject() as? PlacemarkMapObject ?: return
+    val placemark = mapObject as? PlacemarkMapObject ?: return
     val startDirection = placemark.direction
     val delta = angle - startDirection
     val valueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {

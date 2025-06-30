@@ -42,7 +42,7 @@ class YamapMarkerManager : ViewGroupManager<YamapMarker>() {
       val lon = it.getDouble("lon")
       val lat = it.getDouble("lat")
       val point = Point(lat, lon)
-      castToMarkerView(view).setPoint(point)
+      castToMarkerView(view).point = point
     }
   }
 
@@ -70,9 +70,9 @@ class YamapMarkerManager : ViewGroupManager<YamapMarker>() {
 
   @ReactProp(name = "anchor")
   fun setAnchor(view: View, anchor: ReadableMap?) {
-    castToMarkerView(view).setAnchor(anchor?.let {
+    anchor?.let {
       PointF(it.getDouble("x").toFloat(), it.getDouble("y").toFloat())
-    })
+    }?.let { castToMarkerView(view).setAnchor(it) }
   }
 
   override fun addView(parent: YamapMarker, child: View, index: Int) {
@@ -89,15 +89,15 @@ class YamapMarkerManager : ViewGroupManager<YamapMarker>() {
     when (commandType) {
       "animatedMoveTo" -> {
         val markerPoint = args?.getMap(0)
-        val moveDuration = args?.getInt(1) ?: 0
+        val moveDuration = args?.getDouble(1)?.toFloat() ?: 0f
         val lon = markerPoint?.getDouble("lon")?.toFloat() ?: 0f
         val lat = markerPoint?.getDouble("lat")?.toFloat() ?: 0f
-        val point = Point(lat, lon)
+        val point = Point(lat.toDouble(), lon.toDouble())
         castToMarkerView(view).animatedMoveTo(point, moveDuration)
       }
       "animatedRotateTo" -> {
-        val angle = args?.getInt(0) ?: 0
-        val rotateDuration = args?.getInt(1) ?: 0
+        val angle = args?.getDouble(0)?.toFloat() ?: 0f
+        val rotateDuration = args?.getDouble(1)?.toFloat() ?: 0f
         castToMarkerView(view).animatedRotateTo(angle, rotateDuration)
       }
       else -> throw IllegalArgumentException("Unsupported command $commandType received by ${this::class.java.simpleName}.")

@@ -15,9 +15,14 @@ import com.yandex.mapkit.map.MapObjectTapListener
 import ru.vvdev.yamap.models.ReactMapObject
 
 class YamapCircle(context: Context) : ViewGroup(context), MapObjectTapListener, ReactMapObject {
-  var circle: Circle = Circle(Point(0.0, 0.0), 0.0)
+  var circle: Circle = Circle(Point(0.0, 0.0), 0f)
 
-  private var mapObject: CircleMapObject? = null
+  override var mapObject: MapObject? = null
+    set(mapObject) {
+      field = mapObject
+      mapObject?.addTapListener(this)
+      updateCircle()
+    }
   private var fillColor: Int = Color.BLACK
   private var strokeColor: Int = Color.BLACK
   private var zIndex: Int = 1
@@ -69,23 +74,13 @@ class YamapCircle(context: Context) : ViewGroup(context), MapObjectTapListener, 
   }
 
   private fun updateCircle() {
-    mapObject?.apply {
+    (mapObject as CircleMapObject?)?.apply {
       setGeometry(circle)
       setStrokeWidth(strokeWidth)
       setStrokeColor(strokeColor)
       setFillColor(fillColor)
       setZIndex(zIndex)
     }
-  }
-
-  fun setMapObject(obj: MapObject) {
-    mapObject = obj as? CircleMapObject
-    mapObject?.addTapListener(this)
-    updateCircle()
-  }
-
-  fun getMapObject(): MapObject? {
-    return mapObject
   }
 
   override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean {

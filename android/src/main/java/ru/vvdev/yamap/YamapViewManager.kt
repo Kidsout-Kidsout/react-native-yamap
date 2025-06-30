@@ -35,7 +35,7 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
 
   override fun getExportedCustomDirectEventTypeConstants(): Map<String, Any> = mapOf()
 
-  fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> = mapOf(
+  override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> = mapOf(
     "routes" to mapOf("phasedRegistrationNames" to mapOf("bubbled" to "onRouteFound")),
     "cameraPosition" to mapOf("phasedRegistrationNames" to mapOf("bubbled" to "onCameraPositionReceived")),
     "cameraPositionChange" to mapOf("phasedRegistrationNames" to mapOf("bubbled" to "onCameraPositionChange")),
@@ -118,7 +118,7 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
 
   private fun fitMarkers(view: YamapView, jsPoints: ReadableArray?) {
     jsPoints?.let {
-      val points = ArrayList<Point>()
+      val points = ArrayList<Point?>()
       for (i in 0 until it.size()) {
         it.getMap(i)?.let { point ->
           points.add(Point(point.getDouble("lat"), point.getDouble("lon")))
@@ -130,7 +130,7 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
 
   private fun findRoutes(view: YamapView, jsPoints: ReadableArray?, jsVehicles: ReadableArray?, id: String?) {
     jsPoints?.let {
-      val points = ArrayList<Point>()
+      val points = ArrayList<Point?>()
       for (i in 0 until it.size()) {
         it.getMap(i)?.let { point ->
           points.add(Point(point.getDouble("lat"), point.getDouble("lon")))
@@ -151,15 +151,15 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
     icon?.let { view.setUserLocationIcon(it) }
   }
 
-  @ReactProp(name = "withClusters")
-  fun setClusters(view: YamapView, with: Boolean?) {
-    view.setClusters(with)
-  }
-
-  @ReactProp(name = "clusterColor")
-  fun setClusterColor(view: YamapView, color: Int) {
-    view.setClustersColor(color)
-  }
+//  @ReactProp(name = "withClusters")
+//  fun setClusters(view: YamapView, with: Boolean?) {
+//    view.setClusters(with)
+//  }
+//
+//  @ReactProp(name = "clusterColor")
+//  fun setClusterColor(view: YamapView, color: Int) {
+//    view.setClustersColor(color)
+//  }
 
   @ReactProp(name = "userLocationAccuracyFillColor")
   fun setUserLocationAccuracyFillColor(view: YamapView, color: Int) {
@@ -178,7 +178,7 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
 
   @ReactProp(name = "showUserPosition")
   fun setShowUserPosition(view: YamapView, show: Boolean?) {
-    view.setShowUserPosition(show)
+    view.setShowUserPosition(show!!)
   }
 
   @ReactProp(name = "nightMode")

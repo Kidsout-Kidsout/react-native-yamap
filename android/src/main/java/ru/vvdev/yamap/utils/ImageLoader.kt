@@ -30,11 +30,11 @@ object ImageLoader {
       val aURL = URL(url)
       val conn: URLConnection = aURL.openConnection()
       conn.connect()
-      val is: InputStream = conn.getInputStream()
-      val bis = BufferedInputStream(is)
+      val istr = conn.getInputStream()
+      val bis = BufferedInputStream(istr)
       val bitmap = BitmapFactory.decodeStream(bis)
       bis.close()
-      is.close()
+      istr.close()
       bitmap
     } else {
       val id = context.resources.getIdentifier(url, "drawable", context.packageName)

@@ -10,7 +10,7 @@ class RNYandexGeocodePackage : ReactPackage {
     return listOf(RNYandexGeocodeModule(reactContext))
   }
 
-  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager> {
+  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     return emptyList()
   }
 }

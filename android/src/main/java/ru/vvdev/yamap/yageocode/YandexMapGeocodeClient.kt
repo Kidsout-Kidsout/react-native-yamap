@@ -31,11 +31,10 @@ class YandexMapGeocodeClient(context: Context) : MapGeocodeClient {
   )
 
   init {
-    SearchFactory.initialize(context)
     searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
     searchOptions.searchTypes = SearchType.GEO.value
-    searchOptions.isGeometry = true
-    searchOptions.isDisableSpellingCorrection = true
+    searchOptions.geometry = true
+    searchOptions.disableSpellingCorrection = true
   }
 
   override fun geocode(text: String, onSuccess: Callback<MapGeocodeItem>, onError: Callback<Throwable>) {
@@ -45,7 +44,7 @@ class YandexMapGeocodeClient(context: Context) : MapGeocodeClient {
       searchOptions,
       object : Session.SearchListener {
         override fun onSearchResponse(@NonNull response: Response) {
-          onSuccess.invoke(extract(response))
+          extract(response)?.let { onSuccess.invoke(it) }
         }
 
         override fun onSearchError(@NonNull error: Error) {
@@ -61,7 +60,7 @@ class YandexMapGeocodeClient(context: Context) : MapGeocodeClient {
       searchOptions,
       object : Session.SearchListener {
         override fun onSearchResponse(@NonNull response: Response) {
-          onSuccess.invoke(extract(response))
+          extract(response)?.let { onSuccess.invoke(it) }
         }
 
         override fun onSearchError(@NonNull error: Error) {
@@ -78,7 +77,7 @@ class YandexMapGeocodeClient(context: Context) : MapGeocodeClient {
       searchOptions,
       object : Session.SearchListener {
         override fun onSearchResponse(@NonNull response: Response) {
-          onSuccess.invoke(extract(response))
+          extract(response)?.let { onSuccess.invoke(it) }
         }
 
         override fun onSearchError(@NonNull error: Error) {

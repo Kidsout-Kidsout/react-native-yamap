@@ -73,7 +73,7 @@ class YamapPolylineManager : ViewGroupManager<YamapPolyline>() {
   }
 
   @ReactProp(name = "dashOffset")
-  fun setDashOffset(view: View, offset: Int) {
+  fun setDashOffset(view: View, offset: Float) {
     castToPolylineView(view).setDashOffset(offset)
   }
 

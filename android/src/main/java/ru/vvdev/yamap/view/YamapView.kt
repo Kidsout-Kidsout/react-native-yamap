@@ -71,7 +71,7 @@ import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import ru.vvdev.yamap.models.ReactMapObject
 import ru.vvdev.yamap.utils.Callback
-import ru.vvdev.yamap.utils.ImageLoader.DownloadImageBitmap
+import ru.vvdev.yamap.utils.ImageLoader
 import ru.vvdev.yamap.utils.RouteManager
 import java.util.Objects
 import javax.annotation.Nonnull
@@ -444,14 +444,12 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
     fun setUserLocationIcon(iconSource: String) {
         // todo[0]: можно устанавливать разные иконки на покой и движение. Дополнительно можно устанавливать стиль иконки, например scale
         userLocationIcon = iconSource
-        DownloadImageBitmap(context, iconSource, object : Callback<Bitmap?> {
-            override fun invoke(arg: Bitmap?) {
+        ImageLoader.downloadImageBitmap(context, iconSource, fun(arg: Bitmap?) {
                 if (iconSource == userLocationIcon) {
                     userLocationBitmap = arg
                     updateUserLocationIcon()
                 }
-            }
-        })
+            })
     }
 
     fun setUserLocationIconScale(scale: Float) {
@@ -791,26 +789,26 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
         if (child is YamapPolygon) {
             val _child = child
             val obj = mapWindow.map.mapObjects.addPolygon(_child.polygon)
-            _child.setPolygonMapObject(obj)
+            _child.mapObject = obj
         } else if (child is YamapPolyline) {
             val _child = child
             val obj = mapWindow.map.mapObjects.addPolyline(_child.polyline)
-            _child.setPolylineMapObject(obj)
+            _child.mapObject = obj
         } else if (child is YamapMarker) {
             val _child = child
             val obj = mapWindow.map.mapObjects.addPlacemark(_child.point!!)
-            _child.setMarkerMapObject(obj)
+            _child.mapObject = obj
         } else if (child is YamapCircle) {
             val _child = child
             val obj = mapWindow.map.mapObjects.addCircle(_child.circle)
-            _child.setCircleMapObject(obj)
+            _child.mapObject = obj
         }
     }
 
     open fun removeChild(index: Int) {
         if (getChildAt(index) is ReactMapObject) {
             val child = getChildAt(index) as ReactMapObject ?: return
-            val mapObject = child.rnMapObject
+            val mapObject = child.mapObject
             if (mapObject == null || !mapObject.isValid) return
 
             mapWindow.map.mapObjects.remove(mapObject)

@@ -18,7 +18,12 @@ import ru.vvdev.yamap.models.ReactMapObject
 class YamapPolyline(context: Context) : ViewGroup(context), MapObjectTapListener, ReactMapObject {
   var polyline: Polyline = Polyline(emptyList())
   private var _points: ArrayList<Point> = ArrayList()
-  private var mapObject: PolylineMapObject? = null
+  override var mapObject: MapObject? = null
+    set(obj) {
+      field= obj as? PolylineMapObject
+      obj?.addTapListener(this)
+      updatePolyline()
+    }
   private var outlineColor: Int = Color.BLACK
   private var strokeColor: Int = Color.BLACK
   private var zIndex: Int = 1
@@ -78,10 +83,10 @@ class YamapPolyline(context: Context) : ViewGroup(context), MapObjectTapListener
   }
 
   private fun updatePolyline() {
-    mapObject?.let {
+    (mapObject as PolylineMapObject?)?.let {
       it.geometry = polyline
       it.strokeWidth = strokeWidth
-      it.strokeColor = strokeColor
+      it.setStrokeColor(strokeColor)
       it.zIndex = zIndex.toFloat()
       it.dashLength = dashLength.toFloat()
       it.gapLength = gapLength.toFloat()
@@ -89,16 +94,6 @@ class YamapPolyline(context: Context) : ViewGroup(context), MapObjectTapListener
       it.outlineColor = outlineColor
       it.outlineWidth = outlineWidth.toFloat()
     }
-  }
-
-  fun setMapObject(obj: MapObject) {
-    mapObject = obj as? PolylineMapObject
-    mapObject?.addTapListener(this)
-    updatePolyline()
-  }
-
-  fun getMapObject(): MapObject? {
-    return mapObject
   }
 
   override fun onMapObjectTap(@NonNull mapObject: MapObject, @NonNull point: Point): Boolean {

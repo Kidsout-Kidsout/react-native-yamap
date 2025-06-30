@@ -10,7 +10,7 @@ class RNYandexSuggestPackage : ReactPackage {
     return listOf(RNYandexSuggestModule(reactContext))
   }
 
-  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager> {
+  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
     return emptyList()
   }
 }
