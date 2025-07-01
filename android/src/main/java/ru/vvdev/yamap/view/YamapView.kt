@@ -829,7 +829,7 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
         val mapObject = child.mapObject
         if (mapObject == null || !mapObject.isValid) return
 
-        if (userClusters) {
+        if (userClusters && child is YamapMarker) {
           if (subviews.isEmpty()) {
             clusterCollection.clear()
           } else {
