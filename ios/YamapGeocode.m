@@ -18,20 +18,9 @@
     YMKPoint* northEastPoint = [YMKPoint pointWithLatitude:89.999999 longitude:179.999999];
     defaultBoundingBox = [YMKBoundingBox boundingBoxWithSouthWest:southWestPoint northEast:northEastPoint];
     defaultGeometry = [YMKGeometry geometryWithBoundingBox:defaultBoundingBox];
-    searchOptions = [YMKSearchOptions searchOptionsWithSearchTypes:YMKSearchTypeGeo
-                                                    resultPageSize:@1
-                                                          snippets:YMKSearchSnippetNone
-                                              experimentalSnippets:@[]
-                                                      userPosition:nil
-                                                            origin:nil
-                                                      directPageId:nil
-                                                          appleCtx:nil
-                                                          geometry:TRUE
-                                                      advertPageId:nil
-                                         disableSpellingCorrection:FALSE
-                                                           filters:nil];
+    searchOptions = [YMKSearchOptions searchOptionsWithSearchTypes:YMKSearchTypeGeo resultPageSize:@1 snippets:YMKSearchSnippetNone userPosition:nil origin:nil geometry:true disableSpellingCorrection:false filters:nil];
     
-    searchManager = [[YMKSearch sharedInstance] createSearchManagerWithSearchManagerType:YMKSearchSearchManagerTypeOnline];
+    searchManager = [[YMKSearchFactory instance] createSearchManagerWithSearchManagerType:YMKSearchManagerTypeOnline];
     searchSessions = [NSMutableDictionary dictionary];
 
     return self;

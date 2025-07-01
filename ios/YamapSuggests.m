@@ -15,8 +15,8 @@
     YMKPoint* southWestPoint = [YMKPoint pointWithLatitude:-90.0 longitude:-180.0];
     YMKPoint* northEastPoint = [YMKPoint pointWithLatitude:90.0 longitude:180.0];
     defaultBoundingBox = [YMKBoundingBox boundingBoxWithSouthWest:southWestPoint northEast:northEastPoint];
-    suggestOptions = [YMKSuggestOptions suggestOptionsWithSuggestTypes: YMKSuggestTypeGeo userPosition:nil suggestWords:true];
-    searchManager = [[YMKSearch sharedInstance] createSearchManagerWithSearchManagerType:YMKSearchSearchManagerTypeOnline];
+    suggestOptions = [YMKSuggestOptions suggestOptionsWithSuggestTypes: YMKSuggestTypeGeo userPosition:nil suggestWords:true strictBounds: false];
+    searchManager = [[YMKSearchFactory instance] createSearchManagerWithSearchManagerType:YMKSearchManagerTypeOnline];
 
     return self;
 }
@@ -57,7 +57,7 @@ NSString* ERR_SUGGEST_FAILED = @"YANDEX_SUGGEST_ERR_SUGGEST_FAILED";
 			[session suggestWithText:searchQuery
 												window:self->defaultBoundingBox
 								suggestOptions:options
-							 responseHandler:^(NSArray<YMKSuggestItem *> * _Nullable suggestList, NSError * _Nullable error) {
+							 responseHandler:^(YMKSuggestResponse * _Nullable response, NSError * _Nullable error) {
 				if (error) {
 					reject(ERR_SUGGEST_FAILED, [NSString stringWithFormat:@"search request: %@", searchQuery], error);
 					return;
@@ -65,7 +65,7 @@ NSString* ERR_SUGGEST_FAILED = @"YANDEX_SUGGEST_ERR_SUGGEST_FAILED";
 
 				NSMutableArray *suggestsToPass = [NSMutableArray new];
 
-				for (YMKSuggestItem* suggest in suggestList) {
+				for (YMKSuggestItem* suggest in response.items) {
 					NSMutableDictionary *suggestToPass = [NSMutableDictionary new];
 
 					[suggestToPass setValue:[[suggest title] text] forKey:@"title"];
