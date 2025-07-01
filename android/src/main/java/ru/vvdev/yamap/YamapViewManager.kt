@@ -151,15 +151,15 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
     icon?.let { view.setUserLocationIcon(it) }
   }
 
-//  @ReactProp(name = "withClusters")
-//  fun setClusters(view: YamapView, with: Boolean?) {
-//    view.setClusters(with)
-//  }
-//
-//  @ReactProp(name = "clusterColor")
-//  fun setClusterColor(view: YamapView, color: Int) {
-//    view.setClustersColor(color)
-//  }
+  @ReactProp(name = "withClusters")
+  fun setClusters(view: YamapView, with: Boolean?) {
+    view.setClusters(with!!)
+  }
+
+  @ReactProp(name = "clusterColor")
+  fun setClusterColor(view: YamapView, color: Int) {
+    view.setClustersColor(color)
+  }
 
   @ReactProp(name = "userLocationAccuracyFillColor")
   fun setUserLocationAccuracyFillColor(view: YamapView, color: Int) {
@@ -237,12 +237,22 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
   }
 
   override fun addView(parent: YamapView, child: View, index: Int) {
-    parent.addFeature(child, index)
-    super.addView(parent, child, index)
+    parent.subviews.add(index, child)
+    parent.addFeature(child)
   }
 
   override fun removeViewAt(parent: YamapView, index: Int) {
-    parent.removeChild(index)
-    super.removeViewAt(parent, index)
+    val child = parent.subviews[index]
+    parent.subviews.removeAt(index)
+    parent.removeChild(child)
+  }
+
+  override fun getChildCount(parent: YamapView): Int {
+    return parent.subviews.size
+  }
+
+  override fun getChildAt(parent: YamapView, index: Int): View? {
+    if (index >= parent.subviews.size ) return null
+    return parent.subviews[index]
   }
 }

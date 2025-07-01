@@ -2,7 +2,9 @@ package ru.vvdev.yamap.view
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
@@ -41,11 +43,14 @@ import com.yandex.mapkit.logo.VerticalAlignment
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.Cluster
+import com.yandex.mapkit.map.ClusterListener
+import com.yandex.mapkit.map.ClusterTapListener
+import com.yandex.mapkit.map.ClusterizedPlacemarkCollection
 import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.InputListener
 import com.yandex.mapkit.map.MapLoadStatistics
 import com.yandex.mapkit.map.MapLoadedListener
-import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapType
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.VisibleRegion
@@ -78,15 +83,20 @@ import javax.annotation.Nonnull
 
 
 open class YamapView(context: Context?) : MapView(context), UserLocationObjectListener,
-    CameraListener, InputListener, TrafficListener, MapLoadedListener {
+    CameraListener, InputListener, TrafficListener, MapLoadedListener, ClusterListener, ClusterTapListener {
     private var mViewParent: ViewParent? = null
     private var userLocationIcon = ""
+    private var userClusters = false;
+    private var clusterColor = 0;
+    var subviews: ArrayList<View> = ArrayList()
+
     private var userLocationIconScale = 1f
     private var userLocationBitmap: Bitmap? = null
     private val routeMng = RouteManager()
     private var routeOptions: RouteOptions = RouteOptions(FitnessOptions(false))
     private val masstransitRouter = TransportFactory.getInstance().createMasstransitRouter()
     private val drivingRouter: DrivingRouter
+    private var clusterCollection: ClusterizedPlacemarkCollection;
     private val pedestrianRouter = TransportFactory.getInstance().createPedestrianRouter()
     private var userLocationLayer: UserLocationLayer? = null
     private var userLocationAccuracyFillColor = 0
@@ -100,6 +110,7 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
 
     init {
         drivingRouter = DirectionsFactory.getInstance().createDrivingRouter(DrivingRouterType.ONLINE)
+        clusterCollection = mapWindow.map.mapObjects.addClusterizedPlacemarkCollection(this);
         mapWindow.map.addCameraListener(this)
         mapWindow.map.addInputListener(this)
         mapWindow.map.setMapLoadedListener(this)
@@ -369,8 +380,8 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
 
     fun fitAllMarkers() {
         val points = ArrayList<Point?>()
-        for (i in 0 until childCount) {
-            val obj: Any = getChildAt(i)
+        for (i in 0 until subviews.count()) {
+            val obj: Any = subviews[i]
             if (obj is YamapMarker) {
                 points.add(obj.point)
             }
@@ -455,6 +466,16 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
     fun setUserLocationIconScale(scale: Float) {
         userLocationIconScale = scale
         updateUserLocationIcon()
+    }
+
+    fun setClusters(with: Boolean) {
+        userClusters = with
+        updateUserMarkers()
+    }
+
+    fun setClustersColor(color: Int) {
+      clusterColor = color
+      updateUserMarkersColor()
     }
 
     fun setUserLocationAccuracyFillColor(color: Int) {
@@ -785,34 +806,39 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
     }
 
     // CHILDREN
-    open fun addFeature(child: View?, index: Int) {
+    open fun addFeature(child: View) {
         if (child is YamapPolygon) {
-            val _child = child
-            val obj = mapWindow.map.mapObjects.addPolygon(_child.polygon)
-            _child.mapObject = obj
+            val obj = mapWindow.map.mapObjects.addPolygon(child.polygon)
+            child.mapObject = obj
         } else if (child is YamapPolyline) {
-            val _child = child
-            val obj = mapWindow.map.mapObjects.addPolyline(_child.polyline)
-            _child.mapObject = obj
+            val obj = mapWindow.map.mapObjects.addPolyline(child.polyline)
+            child.mapObject = obj
         } else if (child is YamapMarker) {
-            val _child = child
-            val obj = mapWindow.map.mapObjects.addPlacemark(_child.point!!)
-            _child.mapObject = obj
+            val pl = clusterCollection.addPlacemark(child.point!!)
+            child.mapObject = pl
         } else if (child is YamapCircle) {
-            val _child = child
-            val obj = mapWindow.map.mapObjects.addCircle(_child.circle)
-            _child.mapObject = obj
+            val obj = mapWindow.map.mapObjects.addCircle(child.circle)
+            child.mapObject = obj
         }
+        clusterCollection.clusterPlacemarks(50.0, 12)
     }
 
-    open fun removeChild(index: Int) {
-        if (getChildAt(index) is ReactMapObject) {
-            val child = getChildAt(index) as ReactMapObject ?: return
-            val mapObject = child.mapObject
-            if (mapObject == null || !mapObject.isValid) return
+    open fun removeChild(child: View) {
+      val child = child as? ReactMapObject
+      if (child != null) {
+        val mapObject = child.mapObject
+        if (mapObject == null || !mapObject.isValid) return
 
-            mapWindow.map.mapObjects.remove(mapObject)
+        if (userClusters) {
+          if (subviews.isEmpty()) {
+            clusterCollection.clear()
+          } else {
+            clusterCollection.remove(mapObject)
+          }
+        } else {
+          mapWindow.map.mapObjects.remove(mapObject)
         }
+      }
     }
 
     // location listener implementation
@@ -831,6 +857,41 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
         userLocationView = _userLocationView
         updateUserLocationIcon()
     }
+
+    private fun updateUserMarkers() {
+      val lastKnownMarkers = ArrayList<YamapMarker>()
+      for (i in 0 until subviews.count()) {
+        val obj = subviews[i]
+        if (obj is YamapMarker) {
+          lastKnownMarkers.add(obj)
+        }
+      }
+      clusterCollection.clear()
+      mapWindow.map.mapObjects.clear()
+      clusterCollection = mapWindow.map.mapObjects.addClusterizedPlacemarkCollection(this)
+      for (marker in lastKnownMarkers) {
+        addFeature(marker)
+      }
+      clusterCollection.clusterPlacemarks(50.0, 12)
+    }
+
+    private fun updateUserMarkersColor() {
+      if (userClusters) {
+        val lastKnownMarkers = ArrayList<YamapMarker>()
+        for (i in 0 until subviews.count()) {
+          val obj = subviews[i]
+          if (obj is YamapMarker) {
+            lastKnownMarkers.add(obj)
+          }
+        }
+        clusterCollection.clear()
+        for (marker in lastKnownMarkers) {
+          addFeature(marker)
+        }
+        clusterCollection.clusterPlacemarks(50.0, 12)
+      }
+    }
+
 
     private fun updateUserLocationIcon() {
         if (userLocationView != null) {
@@ -914,6 +975,16 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
     override fun onTrafficExpired() {
     }
 
+    override fun onClusterAdded(cluster: Cluster) {
+      cluster.appearance.setIcon(TextImageProvider(cluster.size.toString(), clusterColor))
+      cluster.addClusterTapListener(this)
+    }
+
+    override fun onClusterTap(cluster: Cluster): Boolean {
+      fitMarkers(mapPlacemarksToPoints(cluster.placemarks) as ArrayList<Point?>)
+      return true
+    }
+
     companion object {
         private val DEFAULT_VEHICLE_COLORS: HashMap<String?, String?> =
             object : HashMap<String?, String?>() {
@@ -927,5 +998,56 @@ open class YamapView(context: Context?) : MapView(context), UserLocationObjectLi
                     put("walk", "#333333")
                 }
             }
+    }
+
+  private class TextImageProvider(private val text: String, private val clusterColor: Int) : ImageProvider() {
+      companion object {
+        private const val FONT_SIZE = 45f
+        private const val MARGIN_SIZE = 9f
+        private const val STROKE_SIZE = 9f
+      }
+
+      override fun getId(): String {
+        return "text_$text"
+      }
+
+      override fun getImage(): Bitmap {
+        val textPaint = Paint().apply {
+          textSize = FONT_SIZE
+          textAlign = Paint.Align.CENTER
+          style = Paint.Style.FILL
+          isAntiAlias = true
+        }
+
+        val widthF = textPaint.measureText(text)
+        val textMetrics = textPaint.fontMetrics
+        val heightF = Math.abs(textMetrics.bottom) + Math.abs(textMetrics.top)
+        val textRadius = Math.sqrt((widthF * widthF + heightF * heightF).toDouble()).toFloat() / 2
+        val internalRadius = textRadius + MARGIN_SIZE
+        val externalRadius = internalRadius + STROKE_SIZE
+
+        val width = (2 * externalRadius + 0.5).toInt()
+
+        val bitmap = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+
+        val backgroundPaint = Paint().apply {
+          isAntiAlias = true
+          color = clusterColor
+        }
+        canvas.drawCircle(width / 2f, width / 2f, externalRadius, backgroundPaint)
+
+        backgroundPaint.color = Color.WHITE
+        canvas.drawCircle(width / 2f, width / 2f, internalRadius, backgroundPaint)
+
+        canvas.drawText(
+          text,
+          width / 2f,
+          width / 2f - (textMetrics.ascent + textMetrics.descent) / 2,
+          textPaint
+        )
+
+        return bitmap
+      }
     }
 }
