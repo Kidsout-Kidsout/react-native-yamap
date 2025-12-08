@@ -80,8 +80,8 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
       "getCameraPosition" -> args?.let { view.emitCameraPositionToJS(it.getString(0)) }
       "getVisibleRegion" -> args?.let { view.emitVisibleRegionToJS(it.getString(0)) }
       "setTrafficVisible" -> args?.let { view.setTrafficVisible(it.getBoolean(0)) }
-      "getScreenPoints" -> args?.let { view.emitWorldToScreenPoints(it.getArray(0), it.getString(1)) }
-      "getWorldPoints" -> args?.let { view.emitScreenToWorldPoints(it.getArray(0), it.getString(1)) }
+      "getScreenPoints" -> args?.let { view.emitWorldToScreenPoints(it.getArray(0)!!, it.getString(1)) }
+      "getWorldPoints" -> args?.let { view.emitScreenToWorldPoints(it.getArray(0)!!, it.getString(1)) }
       else -> throw IllegalArgumentException("Unsupported command $commandType received by ${javaClass.simpleName}.")
     }
   }
@@ -139,7 +139,7 @@ class YamapViewManager : ViewGroupManager<YamapView>() {
       val vehicles = ArrayList<String>()
       jsVehicles?.let { vehiclesArray ->
         for (i in 0 until vehiclesArray.size()) {
-          vehicles.add(vehiclesArray.getString(i))
+          vehicles.add(vehiclesArray.getString(i)!!)
         }
       }
       view.findRoutes(points, vehicles, id)
