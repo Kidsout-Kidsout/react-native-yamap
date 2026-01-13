@@ -210,7 +210,7 @@ RCT_EXPORT_METHOD(findRoutes:(nonnull NSNumber*)reactTag json:(NSDictionary*)jso
         NSMutableArray<YMKRequestPoint*> *requestPoints = [[NSMutableArray alloc] init];
 
         for (int i = 0; i < [points count]; ++i) {
-            YMKRequestPoint *requestPoint = [YMKRequestPoint requestPointWithPoint:[points objectAtIndex:i] type:YMKRequestPointTypeWaypoint pointContext:nil drivingArrivalPointId:nil];
+            YMKRequestPoint *requestPoint = [YMKRequestPoint requestPointWithPoint:[points objectAtIndex:i] type:YMKRequestPointTypeWaypoint pointContext:nil drivingArrivalPointId:nil indoorLevelId:nil];
             [requestPoints addObject:requestPoint];
         }
 
