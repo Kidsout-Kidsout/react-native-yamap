@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     reactNativeDelegate = delegate
     reactNativeFactory = factory
     
-    let ymapsKey = "19740bb7-2428-4f62-a159-544bcfc19b63"
+    let ymapsKey = "a45f8ca9-a1e9-42c4-8853-cdfb1709ff36"
     YMKMapKit.setLocale("ru_RU")
     YMKMapKit.setApiKey(ymapsKey)
     YMKMapKit.sharedInstance().onStart()
