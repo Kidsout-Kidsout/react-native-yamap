@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@kidsout-kidsout/react-native-yamap": ["../src/index.ts"],
+    },
+    "verbatimModuleSyntax": false
+  },
+  "include": ["./src"],
+  "exclude": ["node_modules"]
+}

@@ -1,7 +1,6 @@
-import { NativeModules } from "react-native";
-import { AddressComponent, Point } from "./interfaces";
-
-const { YamapGeocode } = NativeModules;
+import { type AddressComponent, type Point } from './interfaces';
+import NativeModule from './specs/NativeYamapGeocode';
+import { invariant } from './utils/invariant';
 
 export type YamapGeocodeResult = {
   name: string;
@@ -13,21 +12,30 @@ export type YamapGeocodeResult = {
   components: { name: string; kinds: AddressComponent[] }[];
 };
 
+const getModule = () =>
+  NativeModule ?? invariant('YamapGeocode native module is not linked.');
+
 type GeocodeFetcher = (
   query: string | { uri: string } | Point
 ) => Promise<YamapGeocodeResult | undefined>;
-const geocode: GeocodeFetcher = (query) =>
-  typeof query === "string"
-    ? YamapGeocode.geocode(query)
-    : "uri" in query
-    ? YamapGeocode.geocodeUri(query.uri)
-    : YamapGeocode.geocodePoint([query.lat, query.lon]);
+
+const geocode: GeocodeFetcher = (query) => {
+  const YamapGeocode = getModule();
+
+  if (typeof query === 'string') {
+    return YamapGeocode.geocode(query);
+  }
+
+  if ('uri' in query) {
+    return YamapGeocode.geocodeUri(query.uri);
+  }
+
+  return YamapGeocode.geocodePoint([query.lat, query.lon]);
+};
 
 /**
  * This version of Geocode doesn't use http-geocoding and doesn't require separate api key
  */
-const Geocode = {
+export const Geocode = {
   geocode,
 };
-
-export default Geocode;

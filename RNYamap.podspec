@@ -1,18 +1,27 @@
 require "json"
 
-Pod::Spec.new do |s|
-    package = JSON.parse(File.read(File.join(File.dirname(__FILE__), "package.json")))
-    s.name         = "RNYamap"
-    s.version      = package["version"]
-    s.summary      = package["description"]
-    s.homepage     = "vvdev.ru"
-    s.license      = "MIT"
-    s.author       = { package["author"]["name"] => package["author"]["email"] }
-    s.platform     = :ios, "12.0"
-    s.source       = { :git => "https://github.com/author/RNYamap.git", :tag => "master" }
-    s.source_files = "ios/**/*.{h,m}"
-    # s.requires_arc = true
+package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
-    s.dependency "React"
-    s.dependency "YandexMapsMobile", "4.29.0-full"
+Pod::Spec.new do |s|
+  s.name         = "RNYamap"
+  s.version      = package["version"]
+  s.summary      = package["description"]
+  s.homepage     = package["homepage"]
+  s.license      = package["license"]
+  s.authors      = package["author"]
+
+  s.platforms    = { :ios => min_ios_version_supported }
+  s.source       = { :git => "https://dev.kidsout.ru.git", :tag => "#{s.version}" }
+
+  s.source_files = "ios/**/*.{h,m,mm}"
+  s.private_header_files = "ios/**/*.h"
+
+  s.dependency "React"
+  s.dependency "YandexMapsMobile", "4.29.0-full"
+
+  # s.xcconfig = {
+  #   "OTHER_CPLUSPLUSFLAGS" => "$(inherited) -fcxx-modules -fmodules",
+  # }
+
+  install_modules_dependencies(s)
 end

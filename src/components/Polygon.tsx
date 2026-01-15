@@ -1,32 +1,42 @@
-import React from 'react';
-import { requireNativeComponent } from 'react-native';
-import { processColorProps } from '../utils';
-import { Point } from '../interfaces';
+import { useMemo, type FunctionComponent } from 'react';
+import { type Point } from '../interfaces';
+
+import YamapPolygon from '../specs/NativeYamapPolygonView';
+import { processColor } from 'react-native';
+import { usePreventedCallback } from '../utils/preventedCallback';
 
 export interface PolygonProps {
+  points: Point[];
+
   fillColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
   zIndex?: number;
   onPress?: () => void;
-  points: Point[];
-  innerRings?: (Point[])[];
-  children?: undefined;
+  innerRings?: Point[][];
 }
 
-const NativePolygonComponent = requireNativeComponent<PolygonProps>('YamapPolygon');
+export const Polygon: FunctionComponent<PolygonProps> = ({
+  onPress,
+  ...props
+}) => {
+  const handlePress = usePreventedCallback(onPress);
 
-export class Polygon extends React.Component<PolygonProps> {
-  static defaultProps = {
-    innerRings: []
-  };
+  const styling = useMemo(
+    () => ({
+      fillColor: processColor(props.fillColor) ?? undefined,
+      strokeColor: processColor(props.strokeColor) ?? undefined,
+      strokeWidth: props.strokeWidth,
+    }),
+    [props.fillColor, props.strokeColor, props.strokeWidth]
+  );
 
-  render() {
-    const props = { ...this.props };
-
-    processColorProps(props, 'fillColor' as keyof PolygonProps);
-    processColorProps(props, 'strokeColor' as keyof PolygonProps);
-
-    return <NativePolygonComponent {...props} />;
-  }
-}
+  return (
+    <YamapPolygon
+      {...props}
+      onPress={handlePress}
+      styling={styling}
+      lIndex={props.zIndex ?? 1}
+    />
+  );
+};

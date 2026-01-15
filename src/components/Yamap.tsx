@@ -1,261 +1,204 @@
-import React, { PropsWithChildren } from 'react';
 import {
-  Platform,
-  requireNativeComponent,
-  NativeModules,
-  UIManager,
-  findNodeHandle,
-  ViewProps,
-  ImageSourcePropType,
-  NativeSyntheticEvent
-} from 'react-native';
-// @ts-ignore
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
-import CallbacksManager from '../utils/CallbacksManager';
-import { Point, ScreenPoint, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition, VisibleRegion, InitialRegion, MapType, Animation, MapLoaded } from '../interfaces';
-import { processColorProps } from '../utils';
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type FunctionComponent,
+  type PropsWithChildren,
+  type Ref,
+} from 'react';
+import { type HostInstance, type ViewProps } from 'react-native';
+import {
+  type Animation,
+  type CameraPosition,
+  type MapType,
+  type Point,
+  type VisibleRegion,
+} from '../interfaces';
+import YamapNativeComponent, {
+  type CameraMoveNativeEvent,
+  type CameraPositionReceivedEvent,
+  type NativeProps,
+  type VisibleRegionReceivedEvent,
+  Commands,
+} from '../specs/NativeYamapView';
+import { CallbacksManager } from '../utils/CallbacksManager';
 
-const { yamap: NativeYamapModule } = NativeModules;
+export type YamapRef = {
+  setCenter: (p: {
+    center: Point;
+    zoom?: number;
+    azimuth?: number;
+    tilt?: number;
+    offset?: number;
+    animation?: Animation;
+  }) => Promise<{ completed: boolean }>;
+  setBounds: (p: {
+    rectangle: { bottomLeft: Point; topRight: Point };
+    minZoom?: number;
+    maxZoom?: number;
+    offset?: number;
+    animation?: Animation;
+  }) => Promise<{ completed: boolean }>;
+  setZoom: (p: {
+    zoom: number;
+    offset?: number;
+    animation?: Animation;
+  }) => Promise<{ completed: boolean }>;
+  fitPoints: (p: {
+    points: Point[];
+    minZoom?: number;
+    maxZoom?: number;
+    offset?: number;
+    animation?: Animation;
+  }) => Promise<{ completed: boolean }>;
+  getCameraPosition: () => Promise<CameraPosition>;
+  getVisibleRegion: () => Promise<VisibleRegion>;
+};
 
-export interface YaMapProps extends PropsWithChildren<ViewProps> {
-  userLocationIcon?: ImageSourcePropType;
-  withClusters?: boolean;
-  clusterColor?: string;
-  showUserPosition?: boolean;
+export type YamapProps = PropsWithChildren<ViewProps> & {
   nightMode?: boolean;
-  mapStyle?: string;
   mapType?: MapType;
-  onCameraPositionChange?: (event: NativeSyntheticEvent<CameraPosition>) => void;
-  onCameraPositionChangeEnd?: (event: NativeSyntheticEvent<CameraPosition>) => void;
-  onMapPress?: (event: NativeSyntheticEvent<Point>) => void;
-  onMapLongPress?: (event: NativeSyntheticEvent<Point>) => void;
-  onMapLoaded?: (event: NativeSyntheticEvent<MapLoaded>) => void;
-  userLocationAccuracyFillColor?: string;
-  userLocationAccuracyStrokeColor?: string;
-  userLocationAccuracyStrokeWidth?: number;
   scrollGesturesEnabled?: boolean;
   zoomGesturesEnabled?: boolean;
   tiltGesturesEnabled?: boolean;
   rotateGesturesEnabled?: boolean;
   fastTapEnabled?: boolean;
-  initialRegion?: InitialRegion;
   maxFps?: number;
-}
+  ref?: Ref<YamapRef>;
+} & Pick<
+    NativeProps,
+    'onCameraPositionChange' | 'onMapPress' | 'onMapLongPress' | 'onMapLoaded'
+  >;
 
-const YaMapNativeComponent = requireNativeComponent<YaMapProps>('YamapView');
+export const Yamap: FunctionComponent<YamapProps> = ({
+  ref,
+  nightMode = false,
+  mapType = 'vector',
+  scrollGesturesEnabled = true,
+  zoomGesturesEnabled = true,
+  maxFps = 60,
+  ...props
+}) => {
+  const nativeRef = useRef<HostInstance>(null);
 
-export class YaMap extends React.Component<YaMapProps> {
-  static defaultProps = {
-    showUserPosition: true,
-    clusterColor: 'red',
-    maxFps: 60
-  };
+  const getRef = useCallback(() => {
+    const el = nativeRef.current;
+    if (!el) throw new Error('Yamap native ref is null');
+    return el;
+  }, []);
 
-  // @ts-ignore
-  map = React.createRef<YaMapNativeComponent>();
+  const [callbackManager] = useState(() => new CallbacksManager());
 
-  static ALL_MASSTRANSIT_VEHICLES: Vehicles[] = [
-    'bus',
-    'trolleybus',
-    'tramway',
-    'minibus',
-    'suburban',
-    'underground',
-    'ferry',
-    'cable',
-    'funicular',
-  ];
-
-  public static init(apiKey: string): Promise<void> {
-    return NativeYamapModule.init(apiKey);
-  }
-
-  public static setLocale(locale: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      NativeYamapModule.setLocale(locale, () => resolve(), (err: string) => reject(new Error(err)));
-    });
-  }
-
-  public static getLocale(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      NativeYamapModule.getLocale((locale: string) => resolve(locale), (err: string) => reject(new Error(err)));
-    });
-  }
-
-  public static resetLocale(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      NativeYamapModule.resetLocale(() => resolve(), (err: string) => reject(new Error(err)));
-    });
-  }
-
-  public findRoutes(points: Point[], vehicles: Vehicles[], callback: (event: RoutesFoundEvent<DrivingInfo | MasstransitInfo>) => void) {
-    this._findRoutes(points, vehicles, callback);
-  }
-
-  public findMasstransitRoutes(points: Point[], callback: (event: RoutesFoundEvent<MasstransitInfo>) => void) {
-    this._findRoutes(points, YaMap.ALL_MASSTRANSIT_VEHICLES, callback);
-  }
-
-  public findPedestrianRoutes(points: Point[], callback: (event: RoutesFoundEvent<MasstransitInfo>) => void) {
-    this._findRoutes(points, [], callback);
-  }
-
-  public findDrivingRoutes(points: Point[], callback: (event: RoutesFoundEvent<DrivingInfo>) => void) {
-    this._findRoutes(points, ['car'], callback);
-  }
-
-  public fitAllMarkers() {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('fitAllMarkers'),
-      []
-    );
-  }
-
-  public setTrafficVisible(isVisible: boolean) {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('setTrafficVisible'),
-      [isVisible]
-    );
-  }
-
-  public fitMarkers(points: Point[]) {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('fitMarkers'),
-      [points]
-    );
-  }
-
-  public setCenter(center: { lon: number, lat: number, zoom?: number }, zoom: number = center.zoom || 10, azimuth: number = 0, tilt: number = 0, duration: number = 0, animation: Animation = Animation.SMOOTH) {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('setCenter'),
-      [center, zoom, azimuth, tilt, duration, animation]
-    );
-  }
-
-  public setBounds(bottomLeft: { lon: number, lat: number }, topRight: { lon: number, lat: number }, offset: number = 0, duration: number = 0, animation: Animation = Animation.SMOOTH) {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('setBounds'),
-      [bottomLeft, topRight, offset, duration, animation]
-    );
-  }
-
-  public setZoom(zoom: number, duration: number = 0, animation: Animation = Animation.SMOOTH) {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('setZoom'),
-      [zoom, duration, animation]
-    );
-  }
-
-  public getCameraPosition(callback: (position: CameraPosition) => void) {
-    const cbId = CallbacksManager.addCallback(callback);
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('getCameraPosition'),
-      [cbId]
-    );
-  }
-
-  public getVisibleRegion(callback: (VisibleRegion: VisibleRegion) => void) {
-    const cbId = CallbacksManager.addCallback(callback);
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('getVisibleRegion'),
-      [cbId]
-    );
-  }
-
-  public getScreenPoints(points: Point[], callback: (screenPoint: ScreenPoint) => void) {
-    const cbId = CallbacksManager.addCallback(callback);
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('getScreenPoints'),
-      [points, cbId]
-    );
-  }
-
-  public getWorldPoints(points: ScreenPoint[], callback: (point: Point) => void) {
-    const cbId = CallbacksManager.addCallback(callback);
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('getWorldPoints'),
-      [points, cbId]
-    );
-  }
-
-  private _findRoutes(points: Point[], vehicles: Vehicles[], callback: ((event: RoutesFoundEvent<DrivingInfo | MasstransitInfo>) => void) | ((event: RoutesFoundEvent<DrivingInfo>) => void) | ((event: RoutesFoundEvent<MasstransitInfo>) => void)) {
-    const cbId = CallbacksManager.addCallback(callback);
-    const args = Platform.OS === 'ios' ? [{ points, vehicles, id: cbId }] : [points, vehicles, cbId];
-
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(this),
-      this.getCommand('findRoutes'),
-      args
-    );
-  }
-
-  private getCommand(cmd: string): any {
-    return Platform.OS === 'ios' ? UIManager.getViewManagerConfig('YamapView').Commands[cmd] : cmd;
-  }
-
-  private processRoute(event: NativeSyntheticEvent<{ id: string } & RoutesFoundEvent<DrivingInfo | MasstransitInfo>>) {
-    const { id, ...routes } = event.nativeEvent;
-    CallbacksManager.call(id, routes);
-  }
-
-  private processCameraPosition(event: NativeSyntheticEvent<{ id: string } & CameraPosition>) {
-    const { id, ...point } = event.nativeEvent;
-    CallbacksManager.call(id, point);
-  }
-
-  private processVisibleRegion(event: NativeSyntheticEvent<{ id: string } & VisibleRegion>) {
-    const { id, ...visibleRegion } = event.nativeEvent;
-    CallbacksManager.call(id, visibleRegion);
-  }
-
-  private processWorldToScreenPointsReceived(event: NativeSyntheticEvent<{ id: string } & ScreenPoint[]>) {
-    const { id, ...screenPoints } = event.nativeEvent;
-    CallbacksManager.call(id, screenPoints);
-  }
-
-  private processScreenToWorldPointsReceived(event: NativeSyntheticEvent<{ id: string } & Point[]>) {
-    const { id, ...worldPoints } = event.nativeEvent;
-    CallbacksManager.call(id, worldPoints);
-  }
-
-  private resolveImageUri(img: ImageSourcePropType) {
-    return img ? resolveAssetSource(img).uri : '';
-  }
-
-  private getProps() {
-    const props = {
-      ...this.props,
-      onRouteFound: this.processRoute,
-      onCameraPositionReceived: this.processCameraPosition,
-      onVisibleRegionReceived: this.processVisibleRegion,
-      onWorldToScreenPointsReceived: this.processWorldToScreenPointsReceived,
-      onScreenToWorldPointsReceived: this.processScreenToWorldPointsReceived,
-      userLocationIcon: this.props.userLocationIcon ? this.resolveImageUri(this.props.userLocationIcon) : undefined
+  useImperativeHandle(ref, () => {
+    const setBounds: YamapRef['setBounds'] = async (p) => {
+      const pr = callbackManager.register<CameraMoveNativeEvent>();
+      Commands.commandSetBounds(
+        getRef(),
+        pr.id,
+        p.rectangle.bottomLeft.lat,
+        p.rectangle.bottomLeft.lon,
+        p.rectangle.topRight.lat,
+        p.rectangle.topRight.lon,
+        p.minZoom ?? 0,
+        p.maxZoom ?? 0,
+        p.offset ?? 0,
+        p.animation?.type === 'smooth' ? 1 : 0,
+        p.animation?.duration ?? 0
+      );
+      return pr.promise;
     };
 
-    processColorProps(props, 'clusterColor' as keyof YaMapProps);
-    processColorProps(props, 'userLocationAccuracyFillColor' as keyof YaMapProps);
-    processColorProps(props, 'userLocationAccuracyStrokeColor' as keyof YaMapProps);
+    const fitPoints: YamapRef['fitPoints'] = async ({ points, ...p }) => {
+      if (!points.length) return { completed: true };
+      let minLat = null;
+      let minLon = null;
+      let maxLat = null;
+      let maxLon = null;
+      for (const point of points) {
+        if (minLat == null || point.lat < minLat) minLat = point.lat;
+        if (minLon == null || point.lon < minLon) minLon = point.lon;
+        if (maxLat == null || point.lat > maxLat) maxLat = point.lat;
+        if (maxLon == null || point.lon > maxLon) maxLon = point.lon;
+      }
+      return setBounds({
+        rectangle: {
+          bottomLeft: { lat: minLat!, lon: minLon! },
+          topRight: { lat: maxLat!, lon: maxLon! },
+        },
+        ...p,
+      });
+    };
 
-    return props;
-  }
+    return {
+      setCenter: async (p) => {
+        const pr = callbackManager.register<CameraMoveNativeEvent>();
+        Commands.commandSetCenter(
+          getRef(),
+          pr.id,
+          p.center.lat,
+          p.center.lon,
+          p.zoom ?? 0,
+          p.azimuth ?? 0,
+          p.tilt ?? 0,
+          p.offset ?? 0,
+          p.animation?.type === 'smooth' ? 1 : 0,
+          p.animation?.duration ?? 0
+        );
+        return pr.promise;
+      },
+      setBounds,
+      fitPoints,
+      setZoom: async (p) => {
+        const pr = callbackManager.register<CameraMoveNativeEvent>();
+        Commands.commandSetZoom(
+          getRef(),
+          pr.id,
+          p.zoom,
+          p.offset ?? 0,
+          p.animation?.type === 'smooth' ? 1 : 0,
+          p.animation?.duration ?? 0
+        );
+        return pr.promise;
+      },
+      getCameraPosition: async () => {
+        const pr = callbackManager.register<CameraPositionReceivedEvent>();
+        Commands.commandGetCameraPosition(getRef(), pr.id);
+        const pos = await pr.promise;
+        return pos;
+      },
+      getVisibleRegion: async () => {
+        const pr = callbackManager.register<VisibleRegionReceivedEvent>();
+        Commands.commandGetVisibleRegion(getRef(), pr.id);
+        return pr.promise;
+      },
+    };
+  }, [callbackManager, getRef]);
 
-  render() {
-    return (
-      <YaMapNativeComponent
-        {...this.getProps()}
-        ref={this.map}
-      />
-    );
-  }
-}
+  return (
+    <YamapNativeComponent
+      ref={nativeRef}
+      {...props}
+      nightMode={nightMode}
+      mapType={mapType}
+      scrollGesturesEnabled={scrollGesturesEnabled}
+      zoomGesturesEnabled={zoomGesturesEnabled}
+      maxFps={maxFps}
+      onCommandSetCenterReceived={callbackManager.createListener(
+        'onCommandSetCenterReceived'
+      )}
+      onCommandSetBoundsReceived={callbackManager.createListener(
+        'onCommandSetBoundsReceived'
+      )}
+      onCommandSetZoomReceived={callbackManager.createListener(
+        'onCommandSetZoomReceived'
+      )}
+      onCommandGetCameraPositionReceived={callbackManager.createListener(
+        'onCommandGetCameraPositionReceived'
+      )}
+      onCommandGetVisibleRegionReceived={callbackManager.createListener(
+        'onCommandGetVisibleRegionReceived'
+      )}
+    />
+  );
+};

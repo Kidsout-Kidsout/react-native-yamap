@@ -1,6 +1,6 @@
 import Query from './Query';
 import { GeocodingApiError } from './GeocodingApiError';
-import { Point } from '../interfaces';
+import { type Point } from '../interfaces';
 
 export type ObjectKind = 'house' | 'street' | 'metro' | 'district' | 'locality';
 export type Lang = 'ru_RU' | 'uk_UA' | 'be_BY' | 'en_RU' | 'en_US' | 'tr_TR';
@@ -11,7 +11,7 @@ export interface Address {
   country_code: string;
   formatted: string;
   postal_code: string;
-  Components: {kind: string, name: string}[];
+  Components: { kind: string; name: string }[];
 }
 
 export class Geocoder {
@@ -28,8 +28,8 @@ export class Geocoder {
         method: 'get',
         headers: {
           'content-type': 'application/json',
-          accept: 'application/json',
-        }
+          'accept': 'application/json',
+        },
       }
     );
 
@@ -45,7 +45,13 @@ export class Geocoder {
     return Object.values(response.GeoObjectCollection.featureMember[0])[0];
   }
 
-  static async geocode(geocode: Point, kind?: ObjectKind, results?: number, skip?: number, lang?: Lang): Promise<YandexGeoResponse> {
+  static async geocode(
+    geocode: Point,
+    kind?: ObjectKind,
+    results?: number,
+    skip?: number,
+    lang?: Lang
+  ): Promise<YandexGeoResponse> {
     const query = new Query({
       apikey: Geocoder.API_KEY,
       geocode: `${geocode.lat},${geocode.lon}`,
@@ -60,7 +66,17 @@ export class Geocoder {
     return Geocoder.requestWithQuery(query);
   }
 
-  static reverseGeocode(geocode: string, kind?: ObjectKind, results?: number, skip?: number, lang?: Lang, rspn?: 0 | 1, ll?: Point, spn?: [number, number], bbox?: [Point, Point]): Promise<YandexGeoResponse> {
+  static reverseGeocode(
+    geocode: string,
+    _kind?: ObjectKind,
+    results?: number,
+    skip?: number,
+    lang?: Lang,
+    rspn?: 0 | 1,
+    ll?: Point,
+    spn?: [number, number],
+    bbox?: [Point, Point]
+  ): Promise<YandexGeoResponse> {
     const query = new Query({
       apikey: Geocoder.API_KEY,
       geocode,
@@ -73,7 +89,7 @@ export class Geocoder {
       spn: spn ? `${spn[0]},${spn[1]}` : undefined,
       bbox: bbox
         ? `${bbox[0].lat},${bbox[0].lon}-${bbox[1].lat},${bbox[1].lon}`
-        : undefined
+        : undefined,
     });
 
     return Geocoder.requestWithQuery(query);
@@ -83,9 +99,9 @@ export class Geocoder {
     const { response } = await Geocoder.reverseGeocode(address);
 
     if (
-      response.GeoObjectCollection
-      && response.GeoObjectCollection.featureMember
-      && response.GeoObjectCollection.featureMember.length > 0
+      response.GeoObjectCollection &&
+      response.GeoObjectCollection.featureMember &&
+      response.GeoObjectCollection.featureMember.length > 0
     ) {
       const obj = Geocoder.getFirst(response);
 
@@ -102,9 +118,9 @@ export class Geocoder {
     const { response } = await Geocoder.geocode(geo);
 
     if (
-      response.GeoObjectCollection
-      && response.GeoObjectCollection.featureMember
-      && response.GeoObjectCollection.featureMember.length > 0
+      response.GeoObjectCollection &&
+      response.GeoObjectCollection.featureMember &&
+      response.GeoObjectCollection.featureMember.length > 0
     ) {
       const obj = Geocoder.getFirst(response);
       return obj.metaDataProperty.GeocoderMetaData.Address;

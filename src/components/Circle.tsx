@@ -1,7 +1,8 @@
-import React from 'react';
-import { requireNativeComponent } from 'react-native';
-import { processColorProps } from '../utils';
-import { Point } from '../interfaces';
+import { useMemo, type FunctionComponent } from 'react';
+import { type Point } from '../interfaces';
+import YamapCircle from '../specs/NativeYamapCircleView';
+import { processColor } from 'react-native';
+import { usePreventedCallback } from '../utils/preventedCallback';
 
 export interface CircleProps {
   fillColor?: string;
@@ -11,21 +12,29 @@ export interface CircleProps {
   onPress?: () => void;
   center: Point;
   radius: number;
-  children?: undefined;
 }
 
-const NativeCircleComponent = requireNativeComponent<CircleProps>('YamapCircle');
+export const Circle: FunctionComponent<CircleProps> = ({
+  onPress,
+  ...props
+}) => {
+  const handlePress = usePreventedCallback(onPress);
 
-export class Circle extends React.Component<CircleProps> {
-  static defaultProps = {
-  };
+  const styling = useMemo(
+    () => ({
+      fillColor: processColor(props.fillColor) ?? undefined,
+      strokeColor: processColor(props.strokeColor) ?? undefined,
+      strokeWidth: props.strokeWidth,
+    }),
+    [props.fillColor, props.strokeColor, props.strokeWidth]
+  );
 
-  render() {
-    const props = { ...this.props };
-
-    processColorProps(props, 'fillColor' as keyof CircleProps);
-    processColorProps(props, 'strokeColor' as keyof CircleProps);
-
-    return <NativeCircleComponent {...props} />;
-  }
-}
+  return (
+    <YamapCircle
+      {...props}
+      onPress={handlePress}
+      styling={styling}
+      lIndex={props.zIndex ?? 1}
+    />
+  );
+};

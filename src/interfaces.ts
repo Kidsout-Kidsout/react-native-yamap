@@ -1,3 +1,5 @@
+export type Animation = { type: 'smooth' | 'linear'; duration: number };
+
 export interface Point {
   lat: number;
   lon: number;
@@ -29,80 +31,43 @@ export interface InitialRegion {
 }
 
 export type AddressComponent =
-  | "unknown"
-  | "country"
-  | "region"
-  | "province"
-  | "area"
-  | "locality"
-  | "district"
-  | "street"
-  | "house"
-  | "entrance"
-  | "route"
-  | "station"
-  | "metro"
-  | "railway"
-  | "vegetation"
-  | "hydro"
-  | "airport"
-  | "other";
+  | 'unknown'
+  | 'country'
+  | 'region'
+  | 'province'
+  | 'area'
+  | 'locality'
+  | 'district'
+  | 'street'
+  | 'house'
+  | 'entrance'
+  | 'route'
+  | 'station'
+  | 'metro'
+  | 'railway'
+  | 'vegetation'
+  | 'hydro'
+  | 'airport'
+  | 'other';
 
 export type MasstransitVehicles =
-  | "bus"
-  | "trolleybus"
-  | "tramway"
-  | "minibus"
-  | "suburban"
-  | "underground"
-  | "ferry"
-  | "cable"
-  | "funicular";
+  | 'bus'
+  | 'trolleybus'
+  | 'tramway'
+  | 'minibus'
+  | 'suburban'
+  | 'underground'
+  | 'ferry'
+  | 'cable'
+  | 'funicular';
 
-export type Vehicles = MasstransitVehicles | "walk" | "car";
-
-export type MapType = "none" | "raster" | "vector";
-
-export interface DrivingInfo {
-  time: string;
-  timeWithTraffic: string;
-  distance: number;
-}
-
-export interface MasstransitInfo {
-  time: string;
-  transferCount: number;
-  walkingDistance: number;
-}
-
-export interface RouteInfo<T extends DrivingInfo | MasstransitInfo> {
-  id: string;
-  sections: {
-    points: Point[];
-    sectionInfo: T;
-    routeInfo: T;
-    routeIndex: number;
-    stops: any[];
-    type: string;
-    transports?: any;
-    sectionColor?: string;
-  }[];
-}
-
-export interface RoutesFoundEvent<T extends DrivingInfo | MasstransitInfo> {
-  nativeEvent: {
-    status: "success" | "error";
-    id: string;
-    routes: RouteInfo<T>[];
-  };
-}
+export type MapType = 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
 
 export interface CameraPosition {
+  point: Point;
   zoom: number;
   tilt: number;
   azimuth: number;
-  point: Point;
-  finished: boolean;
 }
 
 export type VisibleRegion = {
@@ -111,8 +76,3 @@ export type VisibleRegion = {
   topLeft: Point;
   topRight: Point;
 };
-
-export enum Animation {
-  SMOOTH,
-  LINEAR,
-}

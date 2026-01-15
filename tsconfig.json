@@ -1,18 +1,31 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "module": "commonjs",
-    "strict": true,
+    "rootDir": ".",
+    "paths": {
+      "@kidsout-kidsout/react-native-yamap": ["./src/index"]
+    },
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "customConditions": ["react-native-strict-api"],
     "esModuleInterop": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "jsx": "react",
-    "lib": ["dom", "es5", "es6", "scripthost"],
-    "target": "es5",
-    "rootDir": "./src",
-    "outDir": "build",
-    "sourceMap": true,
-    "skipLibCheck": true
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "noStrictGenericChecks": false,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "verbatimModuleSyntax": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "build", "demo"]

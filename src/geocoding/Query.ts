@@ -18,7 +18,7 @@ export default class Query {
 
     for (const key in this._data) {
       const AMPERSAND = res.length > 0 ? '&' : '';
-      res = `${res}${AMPERSAND}${encodeURIComponent(key)}=${encodeURIComponent(this._data[key])}`;
+      res = `${res}${AMPERSAND}${encodeURIComponent(key)}=${encodeURIComponent(this._data[key] as string)}`;
     }
 
     return res;
