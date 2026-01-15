@@ -1,11 +1,11 @@
-export * from "./components/Yamap";
-export * from "./components/Marker";
-export * from "./components/Polygon";
-export * from "./components/Polyline";
-export * from "./components/Circle";
-export * from "./geocoding";
-export * from "./interfaces";
-export { Suggest } from "./Suggest";
-export { Geocode } from "./Geocode";
+export * from './components/Yamap';
+export * from './components/Marker';
+export * from './components/Polygon';
+export * from './components/Polyline';
+export * from './components/Circle';
+export * from './geocoding';
+export * from './interfaces';
+export { Suggest } from './Suggest';
+export { Geocode } from './Geocode';
 
-export { YaMap as default } from "./components/Yamap";
+export { YaMap as default } from './components/Yamap';
