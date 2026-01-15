@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-kidsout-yamap": ["./src/index"]
+      "@kidsout-kidsout/react-native-yamap": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

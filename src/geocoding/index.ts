@@ -68,7 +68,7 @@ export class Geocoder {
 
   static reverseGeocode(
     geocode: string,
-    kind?: ObjectKind,
+    _kind?: ObjectKind,
     results?: number,
     skip?: number,
     lang?: Lang,

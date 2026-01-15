@@ -1,6 +1,6 @@
-import { AddressComponent, Point } from "./interfaces";
-import NativeModule from "./specs/YamapGeocode";
-import { invariant } from "./utils/invariant";
+import { type AddressComponent, type Point } from './interfaces';
+import NativeModule from './specs/YamapGeocode';
+import { invariant } from './utils/invariant';
 
 export type YamapGeocodeResult = {
   name: string;
@@ -13,7 +13,7 @@ export type YamapGeocodeResult = {
 };
 
 const getModule = () =>
-  NativeModule ?? invariant("YamapGeocode native module is not linked.");
+  NativeModule ?? invariant('YamapGeocode native module is not linked.');
 
 type GeocodeFetcher = (
   query: string | { uri: string } | Point
@@ -21,11 +21,11 @@ type GeocodeFetcher = (
 const geocode: GeocodeFetcher = (query) => {
   const YamapGeocode = getModule();
 
-  if (typeof query === "string") {
+  if (typeof query === 'string') {
     return YamapGeocode.geocode(query);
   }
 
-  if ("uri" in query) {
+  if ('uri' in query) {
     return YamapGeocode.geocodeUri(query.uri);
   }
 

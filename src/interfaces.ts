@@ -29,39 +29,39 @@ export interface InitialRegion {
 }
 
 export type AddressComponent =
-  | "unknown"
-  | "country"
-  | "region"
-  | "province"
-  | "area"
-  | "locality"
-  | "district"
-  | "street"
-  | "house"
-  | "entrance"
-  | "route"
-  | "station"
-  | "metro"
-  | "railway"
-  | "vegetation"
-  | "hydro"
-  | "airport"
-  | "other";
+  | 'unknown'
+  | 'country'
+  | 'region'
+  | 'province'
+  | 'area'
+  | 'locality'
+  | 'district'
+  | 'street'
+  | 'house'
+  | 'entrance'
+  | 'route'
+  | 'station'
+  | 'metro'
+  | 'railway'
+  | 'vegetation'
+  | 'hydro'
+  | 'airport'
+  | 'other';
 
 export type MasstransitVehicles =
-  | "bus"
-  | "trolleybus"
-  | "tramway"
-  | "minibus"
-  | "suburban"
-  | "underground"
-  | "ferry"
-  | "cable"
-  | "funicular";
+  | 'bus'
+  | 'trolleybus'
+  | 'tramway'
+  | 'minibus'
+  | 'suburban'
+  | 'underground'
+  | 'ferry'
+  | 'cable'
+  | 'funicular';
 
-export type Vehicles = MasstransitVehicles | "walk" | "car";
+export type Vehicles = MasstransitVehicles | 'walk' | 'car';
 
-export type MapType = "none" | "raster" | "vector";
+export type MapType = 'none' | 'raster' | 'vector';
 
 export interface DrivingInfo {
   time: string;
@@ -91,7 +91,7 @@ export interface RouteInfo<T extends DrivingInfo | MasstransitInfo> {
 
 export interface RoutesFoundEvent<T extends DrivingInfo | MasstransitInfo> {
   nativeEvent: {
-    status: "success" | "error";
+    status: 'success' | 'error';
     id: string;
     routes: RouteInfo<T>[];
   };
