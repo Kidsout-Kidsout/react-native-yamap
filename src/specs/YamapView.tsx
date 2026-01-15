@@ -7,7 +7,7 @@ import type {
   Double,
   WithDefault,
   UnsafeMixed,
-} from 'react-native/Libraries/Types/CodegenTypes';
+} from 'react-native/Libraries/Types/CodegenTypesNamespace';
 import type { Ref } from 'react';
 
 interface Point {

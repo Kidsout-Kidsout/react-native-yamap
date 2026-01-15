@@ -1,28 +1,28 @@
-import type { TurboModule } from "react-native/Libraries/TurboModule/RCTExport";
-import { TurboModuleRegistry } from "react-native";
-import { Double } from "react-native/Libraries/Types/CodegenTypes";
+import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
+import { TurboModuleRegistry } from 'react-native';
+import { type Double } from 'react-native/Libraries/Types/CodegenTypesNamespace';
 
 type Point = { lat: Double; lon: Double };
 
 type AddressComponent =
-  | "unknown"
-  | "country"
-  | "region"
-  | "province"
-  | "area"
-  | "locality"
-  | "district"
-  | "street"
-  | "house"
-  | "entrance"
-  | "route"
-  | "station"
-  | "metro"
-  | "railway"
-  | "vegetation"
-  | "hydro"
-  | "airport"
-  | "other";
+  | 'unknown'
+  | 'country'
+  | 'region'
+  | 'province'
+  | 'area'
+  | 'locality'
+  | 'district'
+  | 'street'
+  | 'house'
+  | 'entrance'
+  | 'route'
+  | 'station'
+  | 'metro'
+  | 'railway'
+  | 'vegetation'
+  | 'hydro'
+  | 'airport'
+  | 'other';
 
 export type YamapGeocodeResult = {
   name: string;
@@ -40,4 +40,4 @@ export interface Spec extends TurboModule {
   geocodePoint(coords: number[]): Promise<YamapGeocodeResult | undefined>;
 }
 
-export default TurboModuleRegistry.get<Spec>("YamapGeocode");
+export default TurboModuleRegistry.get<Spec>('YamapGeocode');

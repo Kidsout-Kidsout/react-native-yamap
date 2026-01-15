@@ -4,7 +4,7 @@ import type {
   DirectEventHandler,
   Int32,
   Double,
-} from 'react-native/Libraries/Types/CodegenTypes';
+} from 'react-native/Libraries/Types/CodegenTypesNamespace';
 
 type Point = { lat: Double; lon: Double };
 

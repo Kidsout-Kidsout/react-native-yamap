@@ -1,10 +1,10 @@
-import type { ViewProps, ColorValue } from "react-native";
-import codegenNativeComponent from "react-native/Libraries/Utilities/codegenNativeComponent";
+import type { ViewProps, ColorValue } from 'react-native';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type {
   DirectEventHandler,
   Int32,
   Double,
-} from "react-native/Libraries/Types/CodegenTypes";
+} from 'react-native/Libraries/Types/CodegenTypesNamespace';
 
 type Point = { lat: Double; lon: Double };
 
@@ -21,4 +21,4 @@ export interface NativeProps extends ViewProps {
   points: ReadonlyArray<Point>;
 }
 
-export default codegenNativeComponent<NativeProps>("YamapPolyline");
+export default codegenNativeComponent<NativeProps>('YamapPolyline');

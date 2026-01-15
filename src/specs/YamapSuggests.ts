@@ -1,6 +1,6 @@
-import type { TurboModule } from "react-native/Libraries/TurboModule/RCTExport";
-import { TurboModuleRegistry } from "react-native";
-import { Double } from "react-native/Libraries/Types/CodegenTypes";
+import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
+import { TurboModuleRegistry } from 'react-native';
+import { type Double } from 'react-native/Libraries/Types/CodegenTypesNamespace';
 
 type Point = {
   lat: Double;
@@ -37,4 +37,4 @@ export interface YamapSuggestSpec extends TurboModule {
   reset(): Promise<void>;
 }
 
-export default TurboModuleRegistry.get<YamapSuggestSpec>("YamapSuggests");
+export default TurboModuleRegistry.get<YamapSuggestSpec>('YamapSuggests');
