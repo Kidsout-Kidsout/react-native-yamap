@@ -1,6 +1,6 @@
 import type { HostComponent, ViewProps } from 'react-native';
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
+import { codegenNativeComponent } from 'react-native';
+import { codegenNativeCommands } from 'react-native';
 import type {
   BubblingEventHandler,
   Int32,
@@ -70,16 +70,8 @@ type Vehicles =
 
 type Animation = Int32; // SMOOTH | LINEAR
 
-interface CameraPositionEvent {
-  zoom: Double;
-  tilt: Double;
-  azimuth: Double;
-  finished?: boolean;
+interface CameraPositionEvent extends CameraPosition {
   reason?: string;
-  point: {
-    lat: Double;
-    lon: Double;
-  };
 }
 
 interface CameraPositionCallbackEvent extends CameraPositionEvent {
@@ -92,24 +84,8 @@ interface RoutesEventPayload {
   routes: UnsafeMixed;
 }
 
-interface VisibleRegionEvent {
+interface VisibleRegionEvent extends VisibleRegion {
   id: string;
-  bottomLeft: {
-    lat: Double;
-    lon: Double;
-  };
-  bottomRight: {
-    lat: Double;
-    lon: Double;
-  };
-  topLeft: {
-    lat: Double;
-    lon: Double;
-  };
-  topRight: {
-    lat: Double;
-    lon: Double;
-  };
 }
 
 interface WorldToScreenPointsEvent {
