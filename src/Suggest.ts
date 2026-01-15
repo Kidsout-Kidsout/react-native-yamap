@@ -1,9 +1,9 @@
-import { Point } from "./interfaces";
-import NativeModule from "./specs/YamapSuggests";
-import { invariant } from "./utils/invariant";
+import { type Point } from './interfaces';
+import NativeModule from './specs/YamapSuggests';
+import { invariant } from './utils/invariant';
 
 const getModule = () =>
-  NativeModule ?? invariant("YamapSuggests native module is not linked.");
+  NativeModule ?? invariant('YamapSuggests native module is not linked.');
 
 export type YamapSuggest = {
   title: string;
@@ -75,13 +75,13 @@ const reset: SuggestResetter = () => {
 type LatLonGetter = (suggest: YamapSuggest) => YamapCoords | undefined;
 const getCoordsFromSuggest: LatLonGetter = (suggest) => {
   const coords = suggest.uri
-    ?.split("?")[1]
-    ?.split("&")
-    ?.find((param) => param.startsWith("ll"))
-    ?.split("=")[1];
+    ?.split('?')[1]
+    ?.split('&')
+    ?.find((param) => param.startsWith('ll'))
+    ?.split('=')[1];
   if (!coords) return;
 
-  const splittedCoords = coords.split("%2C");
+  const splittedCoords = coords.split('%2C');
   const lon = Number(splittedCoords[0]);
   const lat = Number(splittedCoords[1]);
 

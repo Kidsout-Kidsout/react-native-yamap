@@ -1,14 +1,14 @@
-import type { HostComponent, ViewProps } from "react-native";
-import codegenNativeComponent from "react-native/Libraries/Utilities/codegenNativeComponent";
-import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
+import type { HostComponent, ViewProps } from 'react-native';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 import type {
   BubblingEventHandler,
   Int32,
   Double,
   WithDefault,
   UnsafeMixed,
-} from "react-native/Libraries/Types/CodegenTypes";
-import * as React from "react";
+} from 'react-native/Libraries/Types/CodegenTypes';
+import type { Ref } from 'react';
 
 interface Point {
   lat: Double;
@@ -56,17 +56,17 @@ interface MapLoaded {
 }
 
 type Vehicles =
-  | "bus"
-  | "trolleybus"
-  | "tramway"
-  | "minibus"
-  | "suburban"
-  | "underground"
-  | "ferry"
-  | "cable"
-  | "funicular"
-  | "walk"
-  | "car";
+  | 'bus'
+  | 'trolleybus'
+  | 'tramway'
+  | 'minibus'
+  | 'suburban'
+  | 'underground'
+  | 'ferry'
+  | 'cable'
+  | 'funicular'
+  | 'walk'
+  | 'car';
 
 type Animation = Int32; // SMOOTH | LINEAR
 
@@ -140,7 +140,7 @@ export interface NativeProps extends ViewProps {
   showUserPosition?: boolean;
   nightMode?: boolean;
   mapStyle?: string;
-  mapType?: WithDefault<"none" | "raster" | "vector", "vector">;
+  mapType?: WithDefault<'none' | 'raster' | 'vector', 'vector'>;
   userLocationAccuracyFillColor?: Int32;
   userLocationAccuracyStrokeColor?: Int32;
   userLocationAccuracyStrokeWidth?: Double;
@@ -167,17 +167,14 @@ export interface NativeProps extends ViewProps {
 }
 
 interface NativeCommands {
-  fitAllMarkers: (ref: React.ElementRef<HostComponent<NativeProps>>) => void;
+  fitAllMarkers: (ref: Ref<HostComponent<NativeProps>>) => void;
   setTrafficVisible: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     isVisible: boolean
   ) => void;
-  fitMarkers: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
-    points: Point[]
-  ) => void;
+  fitMarkers: (ref: Ref<HostComponent<NativeProps>>, points: Point[]) => void;
   setCenter: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     latitude: Double,
     longitude: Double,
     zoom: Double,
@@ -187,7 +184,7 @@ interface NativeCommands {
     animation: Animation
   ) => void;
   setBounds: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     bottomLeftLatitude: Double,
     bottomLeftLongitude: Double,
     topRightLatitude: Double,
@@ -197,31 +194,31 @@ interface NativeCommands {
     animation: Animation
   ) => void;
   setZoom: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     zoom: Double,
     duration: Double,
     animation: Animation
   ) => void;
   getCameraPosition: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     callbackId: string
   ) => void;
   getVisibleRegion: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     callbackId: string
   ) => void;
   getScreenPoints: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     points: Point[],
     callbackId: string
   ) => void;
   getWorldPoints: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     points: ScreenPoint[],
     callbackId: string
   ) => void;
   findRoutes: (
-    ref: React.ElementRef<HostComponent<NativeProps>>,
+    ref: Ref<HostComponent<NativeProps>>,
     points: Point[],
     vehicles: Vehicles[],
     id: string
@@ -230,18 +227,18 @@ interface NativeCommands {
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: [
-    "fitAllMarkers",
-    "setTrafficVisible",
-    "fitMarkers",
-    "setCenter",
-    "setBounds",
-    "setZoom",
-    "getCameraPosition",
-    "getVisibleRegion",
-    "getScreenPoints",
-    "getWorldPoints",
-    "findRoutes",
+    'fitAllMarkers',
+    'setTrafficVisible',
+    'fitMarkers',
+    'setCenter',
+    'setBounds',
+    'setZoom',
+    'getCameraPosition',
+    'getVisibleRegion',
+    'getScreenPoints',
+    'getWorldPoints',
+    'findRoutes',
   ],
 });
 
-export default codegenNativeComponent<NativeProps>("YamapView");
+export default codegenNativeComponent<NativeProps>('YamapView');

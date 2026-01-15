@@ -1,31 +1,31 @@
-import React, { PropsWithChildren } from "react";
+import React, { type PropsWithChildren } from 'react';
 import {
-  ViewProps,
-  ImageSourcePropType,
-  NativeSyntheticEvent,
-} from "react-native";
+  type ViewProps,
+  type ImageSourcePropType,
+  type NativeSyntheticEvent,
+} from 'react-native';
 // @ts-ignore
-import resolveAssetSource from "react-native/Libraries/Image/resolveAssetSource";
-import CallbacksManager from "../utils/CallbacksManager";
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import CallbacksManager from '../utils/CallbacksManager';
 import {
-  Point,
-  ScreenPoint,
-  DrivingInfo,
-  MasstransitInfo,
-  RoutesFoundEvent,
-  Vehicles,
-  CameraPosition,
-  VisibleRegion,
-  InitialRegion,
-  MapType,
+  type Point,
+  type ScreenPoint,
+  type DrivingInfo,
+  type MasstransitInfo,
+  type RoutesFoundEvent,
+  type Vehicles,
+  type CameraPosition,
+  type VisibleRegion,
+  type InitialRegion,
+  type MapType,
   Animation,
-  MapLoaded,
-} from "../interfaces";
-import { processColorProps } from "../utils";
-import NativeModule from "../specs/Yamap";
+  type MapLoaded,
+} from '../interfaces';
+import { processColorProps } from '../utils';
+import NativeModule from '../specs/Yamap';
 
 const getModule = () =>
-  NativeModule ?? invariant("Yamap native module is not linked.");
+  NativeModule ?? invariant('Yamap native module is not linked.');
 
 export interface YaMapProps extends PropsWithChildren<ViewProps> {
   userLocationIcon?: ImageSourcePropType;
@@ -58,14 +58,14 @@ export interface YaMapProps extends PropsWithChildren<ViewProps> {
 
 import YamapNativeComponent, {
   Commands as YamapCommands,
-} from "../specs/YamapView";
-import type { NativeProps as YamapNativeProps } from "../specs/YamapView";
-import { invariant } from "../utils/invariant";
+} from '../specs/YamapView';
+import type { NativeProps as YamapNativeProps } from '../specs/YamapView';
+import { invariant } from '../utils/invariant';
 
 export class YaMap extends React.Component<YaMapProps> {
   static defaultProps = {
     showUserPosition: true,
-    clusterColor: "red",
+    clusterColor: 'red',
     maxFps: 60,
   };
 
@@ -73,15 +73,15 @@ export class YaMap extends React.Component<YaMapProps> {
   private hasLaidOut = false;
 
   static ALL_MASSTRANSIT_VEHICLES: Vehicles[] = [
-    "bus",
-    "trolleybus",
-    "tramway",
-    "minibus",
-    "suburban",
-    "underground",
-    "ferry",
-    "cable",
-    "funicular",
+    'bus',
+    'trolleybus',
+    'tramway',
+    'minibus',
+    'suburban',
+    'underground',
+    'ferry',
+    'cable',
+    'funicular',
   ];
 
   public static init(apiKey: string): Promise<void> {
@@ -130,7 +130,7 @@ export class YaMap extends React.Component<YaMapProps> {
     points: Point[],
     callback: (event: RoutesFoundEvent<DrivingInfo>) => void
   ) {
-    this._findRoutes(points, ["car"], callback);
+    this._findRoutes(points, ['car'], callback);
   }
 
   public fitAllMarkers() {
@@ -290,7 +290,7 @@ export class YaMap extends React.Component<YaMapProps> {
   }
 
   private resolveImageUri(img: ImageSourcePropType) {
-    return img ? resolveAssetSource(img).uri : "";
+    return img ? resolveAssetSource(img).uri : '';
   }
 
   private getProps(): Partial<YamapNativeProps> & ViewProps {
@@ -306,26 +306,26 @@ export class YaMap extends React.Component<YaMapProps> {
         : undefined,
     };
 
-    processColorProps(props, "clusterColor" as keyof YaMapProps);
+    processColorProps(props, 'clusterColor' as keyof YaMapProps);
     processColorProps(
       props,
-      "userLocationAccuracyFillColor" as keyof YaMapProps
+      'userLocationAccuracyFillColor' as keyof YaMapProps
     );
     processColorProps(
       props,
-      "userLocationAccuracyStrokeColor" as keyof YaMapProps
+      'userLocationAccuracyStrokeColor' as keyof YaMapProps
     );
 
     return props;
   }
 
-  private handleLayout: ViewProps["onLayout"] = (e) => {
+  private handleLayout: ViewProps['onLayout'] = (e) => {
     const { width, height } = e.nativeEvent.layout || { width: 0, height: 0 };
     if (!this.hasLaidOut && width > 0 && height > 0) {
       this.hasLaidOut = true;
     }
     // Relay to user-provided onLayout if present
-    if (typeof this.props.onLayout === "function") {
+    if (typeof this.props.onLayout === 'function') {
       this.props.onLayout(e);
     }
   };
