@@ -1,9 +1,9 @@
-import type { HostComponent, ViewProps } from 'react-native';
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
-import type { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
-import type { Int32, Double } from 'react-native/Libraries/Types/CodegenTypes';
-import * as React from 'react';
+import type { HostComponent, ViewProps } from "react-native";
+import codegenNativeComponent from "react-native/Libraries/Utilities/codegenNativeComponent";
+import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
+import type { DirectEventHandler } from "react-native/Libraries/Types/CodegenTypes";
+import type { Int32, Double } from "react-native/Libraries/Types/CodegenTypes";
+import * as React from "react";
 
 interface Point {
   lat: Double;
@@ -35,7 +35,7 @@ interface NativeCommands {
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['animatedMoveTo', 'animatedRotateTo'],
+  supportedCommands: ["animatedMoveTo", "animatedRotateTo"],
 });
 
-export default codegenNativeComponent<YamapMarkerNativeProps>('YamapMarker');
+export default codegenNativeComponent<YamapMarkerNativeProps>("YamapMarker");
