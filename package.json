@@ -1,5 +1,5 @@
 {
-  "name": "react-native-kidsout-yamap",
+  "name": "@kidsout-kidsout/react-native-yamap",
   "version": "0.1.0",
   "description": "whatever",
   "main": "./lib/module/index.js",

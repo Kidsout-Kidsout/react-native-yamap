@@ -13,7 +13,7 @@ export interface CircleProps {
   children?: undefined;
 }
 
-import YamapCircle from '../specs/YamapCircle';
+import YamapCircle from '../specs/NativeYamapCircle';
 
 export class Circle extends React.Component<CircleProps> {
   static defaultProps = {};

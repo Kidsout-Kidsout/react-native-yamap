@@ -1,5 +1,5 @@
 import { type AddressComponent, type Point } from './interfaces';
-import NativeModule from './specs/YamapGeocode';
+import NativeModule from './specs/NativeYamapGeocode';
 import { invariant } from './utils/invariant';
 
 export type YamapGeocodeResult = {

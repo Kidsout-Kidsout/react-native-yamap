@@ -5,7 +5,7 @@ import type {
   Int32,
   Double,
 } from 'react-native/Libraries/Types/CodegenTypesNamespace';
-import type { Ref } from 'react';
+import * as React from 'react';
 
 interface Point {
   lat: Double;
@@ -24,13 +24,13 @@ export interface YamapMarkerNativeProps extends ViewProps {
 
 interface NativeCommands {
   animatedMoveTo: (
-    ref: Ref<HostComponent<YamapMarkerNativeProps>>,
+    ref: React.ElementRef<HostComponent<YamapMarkerNativeProps>>,
     latitude: Double,
     longitude: Double,
     duration: Double
   ) => void;
   animatedRotateTo: (
-    ref: Ref<HostComponent<YamapMarkerNativeProps>>,
+    ref: React.ElementRef<HostComponent<YamapMarkerNativeProps>>,
     angle: Double,
     duration: Double
   ) => void;

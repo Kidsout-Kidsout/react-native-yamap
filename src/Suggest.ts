@@ -1,5 +1,5 @@
 import { type Point } from './interfaces';
-import NativeModule from './specs/YamapSuggests';
+import NativeModule from './specs/NativeYamapSuggests';
 import { invariant } from './utils/invariant';
 
 const getModule = () =>

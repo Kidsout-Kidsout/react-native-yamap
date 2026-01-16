@@ -5,7 +5,7 @@ import {
   type NativeSyntheticEvent,
 } from 'react-native';
 // @ts-ignore
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { resolveAssetSource } from 'react-native';
 import CallbacksManager from '../utils/CallbacksManager';
 import {
   type Point,
@@ -22,7 +22,7 @@ import {
   type MapLoaded,
 } from '../interfaces';
 import { processColorProps } from '../utils';
-import NativeModule from '../specs/Yamap';
+import NativeModule from '../specs/NativeYamap';
 
 const getModule = () =>
   NativeModule ?? invariant('Yamap native module is not linked.');
@@ -58,8 +58,8 @@ export interface YaMapProps extends PropsWithChildren<ViewProps> {
 
 import YamapNativeComponent, {
   Commands as YamapCommands,
-} from '../specs/YamapView';
-import type { NativeProps as YamapNativeProps } from '../specs/YamapView';
+  type NativeProps as YamapNativeProps,
+} from '../specs/NativeYamapView';
 import { invariant } from '../utils/invariant';
 
 export class YaMap extends React.Component<YaMapProps> {

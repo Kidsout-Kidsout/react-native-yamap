@@ -1,7 +1,7 @@
 import { guid } from './index';
 
 export default class CallbacksManager {
-  static callbacks: { [id: string]: (...arg: any[]) => void} = {};
+  static callbacks: { [id: string]: (...arg: any[]) => void } = {};
 
   static addCallback(callback: (...arg: any[]) => void) {
     const id = guid();

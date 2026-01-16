@@ -29,7 +29,7 @@ export type SuggestOptions = {
   suggestTypes?: SuggestTypes[];
 };
 
-export interface YamapSuggestSpec extends TurboModule {
+export interface Spec extends TurboModule {
   suggest(query: string): Promise<YamapSuggest[]>;
   suggestWithOptions(
     query: string,
@@ -38,4 +38,4 @@ export interface YamapSuggestSpec extends TurboModule {
   reset(): Promise<void>;
 }
 
-export default TurboModuleRegistry.get<YamapSuggestSpec>('YamapSuggests');
+export default TurboModuleRegistry.get<Spec>('YamapSuggests');

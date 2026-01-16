@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform, type ImageSourcePropType } from 'react-native';
 // @ts-ignore
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
+import { resolveAssetSource } from 'react-native';
 import { type Point } from '../interfaces';
 
 export interface MarkerProps {
@@ -15,7 +15,7 @@ export interface MarkerProps {
   visible?: boolean;
 }
 
-import YamapMarker, { Commands } from '../specs/YamapMarker';
+import YamapMarker, { Commands } from '../specs/NativeYamapMarker';
 
 interface State {
   recreateKey: boolean;

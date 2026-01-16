@@ -16,7 +16,7 @@ export interface PolylineProps {
   children?: undefined;
 }
 
-import YamapPolyline from '../specs/YamapPolyline';
+import YamapPolyline from '../specs/NativeYamapPolyline';
 
 export class Polyline extends React.Component<PolylineProps> {
   render() {

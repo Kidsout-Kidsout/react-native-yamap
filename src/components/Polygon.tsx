@@ -13,7 +13,7 @@ export interface PolygonProps {
   children?: undefined;
 }
 
-import YamapPolygon from '../specs/YamapPolygon';
+import YamapPolygon from '../specs/NativeYamapPolygon';
 
 export class Polygon extends React.Component<PolygonProps> {
   static defaultProps = {

@@ -1,4 +1,4 @@
-# react-native-kidsout-yamap
+# @kidsout-kidsout/react-native-yamap
 
 whatever
 
@@ -6,7 +6,7 @@ whatever
 
 
 ```sh
-npm install react-native-kidsout-yamap
+npm install @kidsout-kidsout/react-native-yamap
 ```
 
 
@@ -14,7 +14,7 @@ npm install react-native-kidsout-yamap
 
 
 ```js
-import { multiply } from 'react-native-kidsout-yamap';
+import { multiply } from '@kidsout-kidsout/react-native-yamap';
 
 // ...
 
