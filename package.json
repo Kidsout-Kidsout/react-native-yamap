@@ -105,8 +105,8 @@
     ]
   },
   "codegenConfig": {
-    "name": "KidsoutYamapSpec",
-    "type": "modules",
+    "name": "RNYamapSpec",
+    "type": "all",
     "jsSrcsDir": "src",
     "android": {
       "javaPackageName": "ru.kidsout.yamap"
