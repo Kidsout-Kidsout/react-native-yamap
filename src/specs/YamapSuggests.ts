@@ -1,5 +1,4 @@
-import type { TurboModule } from 'react-native/Libraries/TurboModule/RCTExport';
-import { TurboModuleRegistry } from 'react-native';
+import { TurboModuleRegistry, type TurboModule } from 'react-native';
 import { type Double } from 'react-native/Libraries/Types/CodegenTypesNamespace';
 
 type Point = {
@@ -18,7 +17,9 @@ export type YamapSuggest = {
 export enum SuggestTypes {
   YMKSuggestTypeUnspecified = 0b00,
   YMKSuggestTypeGeo = 0b01,
+  // eslint-disable-next-line no-bitwise
   YMKSuggestTypeBiz = 0b01 << 1,
+  // eslint-disable-next-line no-bitwise
   YMKSuggestTypeTransit = 0b01 << 2,
 }
 

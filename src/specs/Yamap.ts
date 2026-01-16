@@ -1,5 +1,5 @@
-import type { TurboModule } from "react-native/Libraries/TurboModule/RCTExport";
-import { TurboModuleRegistry } from "react-native";
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
 
 export interface YamapSpec extends TurboModule {
   init(apiKey: string): Promise<void>;
@@ -8,4 +8,4 @@ export interface YamapSpec extends TurboModule {
   resetLocale(): Promise<void>;
 }
 
-export default TurboModuleRegistry.get<YamapSpec>("Yamap");
+export default TurboModuleRegistry.get<YamapSpec>('Yamap');

@@ -1,6 +1,5 @@
 import type { HostComponent, ViewProps } from 'react-native';
-import { codegenNativeComponent } from 'react-native';
-import { codegenNativeCommands } from 'react-native';
+import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
 import type {
   BubblingEventHandler,
   Int32,

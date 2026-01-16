@@ -27,10 +27,12 @@ export enum SuggestTypes {
   /**
    * Companies.
    */
+  // eslint-disable-next-line no-bitwise
   YMKSuggestTypeBiz = 0b01 << 1,
   /**
    * Mass transit routes.
    */
+  // eslint-disable-next-line no-bitwise
   YMKSuggestTypeTransit = 0b01 << 2,
 }
 
