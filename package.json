@@ -6,7 +6,7 @@
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
     ".": {
-      "source": "./src/index.tsx",
+      "source": "./src/index.ts",
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
@@ -108,6 +108,27 @@
     "name": "RNYamapSpec",
     "type": "all",
     "jsSrcsDir": "src",
+    "ios": {
+      "modules": {
+        "Yamap": {
+          "className": "KDSTYamap",
+          "unstableRequiresMainQueueSetup": true
+        },
+        "YamapGeocode": {
+          "className": "KDSTYamapGeocode",
+          "unstableRequiresMainQueueSetup": true
+        },
+        "YamapSuggests": {
+          "className": "KDSTYamapSuggests",
+          "unstableRequiresMainQueueSetup": true
+        }
+      },
+      "components": {
+        "YamapView": {
+          "className": "KDSTYamapView"
+        }
+      }
+    },
     "android": {
       "javaPackageName": "ru.kidsout.yamap"
     }

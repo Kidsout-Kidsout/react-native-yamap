@@ -1,24 +1,13 @@
-#import "RNYamap.h"
+#import "KDSTYamap.h"
 #import <YandexMapsMobile/YMKMapKitFactory.h>
 #import <YandexMapsMobile/YRTI18nManager.h>
 
-@implementation Yamap
+@implementation KDSTYamap
 
 static NSString * _pinIcon;
 static NSString * _arrowIcon;
 static NSString * _markerIcon;
 static NSString * _selectedMarkerIcon;
-
-@synthesize map;
-
-- (instancetype) init {
-    self = [super init];
-    if (self) {
-        map = [[YamapView alloc] init];
-    }
-
-    return self;
-}
 
 + (BOOL)requiresMainQueueSetup
 {

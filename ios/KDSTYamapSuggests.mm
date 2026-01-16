@@ -1,4 +1,4 @@
-#import "YamapSuggests.h"
+#import "KDSTYamapSuggests.h"
 #import <YandexMapsMobile/YMKSearchManager.h>
 #import <YandexMapsMobile/YMKSearchSuggestSession.h>
 #import <YandexMapsMobile/YMKGeometry.h>
@@ -7,7 +7,7 @@
 #import <YandexMapsMobile/YMKSearch.h>
 #import <YandexMapsMobile/YMKSuggestResponse.h>
 
-@implementation YamapSuggests {
+@implementation KDSTYamapSuggests {
   YMKSearchManager* searchManager;
   YMKSearchSuggestSession* suggestClient;
   YMKBoundingBox* defaultBoundingBox;
@@ -21,7 +21,14 @@
   YMKPoint* northEastPoint = [YMKPoint pointWithLatitude:90.0 longitude:180.0];
   defaultBoundingBox = [YMKBoundingBox boundingBoxWithSouthWest:southWestPoint northEast:northEastPoint];
   suggestOptions = [YMKSuggestOptions suggestOptionsWithSuggestTypes: YMKSuggestTypeGeo userPosition:nil suggestWords:true strictBounds: false];
-  searchManager = [[YMKSearchFactory instance] createSearchManagerWithSearchManagerType:YMKSearchManagerTypeOnline];
+  
+  if([NSThread isMainThread]) {
+    searchManager = [[YMKSearchFactory instance] createSearchManagerWithSearchManagerType:YMKSearchManagerTypeOnline];
+  } else {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      searchManager = [[YMKSearchFactory instance] createSearchManagerWithSearchManagerType:YMKSearchManagerTypeOnline];
+    });
+  }
   
   return self;
 }

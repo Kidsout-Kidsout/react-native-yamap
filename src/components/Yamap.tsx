@@ -23,6 +23,10 @@ import {
 } from '../interfaces';
 import { processColorProps } from '../utils';
 import NativeModule from '../specs/NativeYamap';
+import YamapNativeComponent, {
+  type NativeProps as YamapNativeProps,
+} from '../specs/NativeYamapView';
+import { invariant } from '../utils/invariant';
 
 const getModule = () =>
   NativeModule ?? invariant('Yamap native module is not linked.');
@@ -55,12 +59,6 @@ export interface YaMapProps extends PropsWithChildren<ViewProps> {
   initialRegion?: InitialRegion;
   maxFps?: number;
 }
-
-import YamapNativeComponent, {
-  Commands as YamapCommands,
-  type NativeProps as YamapNativeProps,
-} from '../specs/NativeYamapView';
-import { invariant } from '../utils/invariant';
 
 export class YaMap extends React.Component<YaMapProps> {
   static defaultProps = {

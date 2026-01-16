@@ -40,4 +40,4 @@ export interface Spec extends TurboModule {
   geocodePoint(coords: number[]): Promise<YamapGeocodeResult | undefined>;
 }
 
-export default TurboModuleRegistry.get<Spec>('YamapGeocode');
+export default TurboModuleRegistry.getEnforcing<Spec>('YamapGeocode');

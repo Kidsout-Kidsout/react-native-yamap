@@ -2,6 +2,7 @@ import UIKit
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
+import YandexMapsMobile
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -20,6 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
+
+    let ymapsKey = "a45f8ca9-a1e9-42c4-8853-cdfb1709ff36"
+    YMKMapKit.setLocale("ru_RU")
+    YMKMapKit.setApiKey(ymapsKey)
+    YMKMapKit.sharedInstance().onStart()
 
     window = UIWindow(frame: UIScreen.main.bounds)
 
