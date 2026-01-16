@@ -1,7 +1,15 @@
 #import "YamapGeocode.h"
 #import "YamapUtils.h"
 
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKSearchManager.h>
+#import <YandexMapsMobile/YMKSearchOptions.h>
+#import <YandexMapsMobile/YMKSearchAddress.h>
+#import <YandexMapsMobile/YMKSearchResponse.h>
+#import <YandexMapsMobile/YMKSearch.h>
+#import <YandexMapsMobile/YMKGeometry.h>
+#import <YandexMapsMobile/YMKGeoObjectCollection.h>
+#import <YandexMapsMobile/YMKSearchToponymObjectMetadata.h>
 
 @implementation YamapGeocode {
     YMKSearchManager* searchManager;

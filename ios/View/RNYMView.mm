@@ -3,7 +3,32 @@
 
 #import <MapKit/MapKit.h>
 #import "../Converter/RCTConvert+Yamap.mm"
-@import YandexMapsMobile;
+
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKMapKit.h>
+#import <YandexMapsMobile/YMKMapKitFactory.h>
+#import <YandexMapsMobile/YMKVisibleRegion.h>
+#import <YandexMapsMobile/YMKMasstransitSession.h>
+#import <YandexMapsMobile/YMKMasstransitRouter.h>
+#import <YandexMapsMobile/YMKDrivingRouter.h>
+#import <YandexMapsMobile/YMKDrivingRoute.h>
+#import <YandexMapsMobile/YMKCluster.h>
+#import <YandexMapsMobile/YMKMapLoadStatistics.h>
+#import <YandexMapsMobile/YMKDrivingSession.h>
+#import <YandexMapsMobile/YMKPedestrianRouter.h>
+#import <YandexMapsMobile/YMKTransitOptions.h>
+#import <YandexMapsMobile/YMKRouteHelper.h>
+#import <YandexMapsMobile/YMKTrafficLayer.h>
+#import <YandexMapsMobile/YMKClusterizedPlacemarkCollection.h>
+#import <YandexMapsMobile/YMKMap.h>
+#import <YandexMapsMobile/YMKMapObjectCollection.h>
+#import <YandexMapsMobile/YMKDrivingWeight.h>
+#import <YandexMapsMobile/YMKMasstransitRoute.h>
+#import <YandexMapsMobile/YMKDrivingVehicleOptions.h>
+#import <YandexMapsMobile/YMKDrivingSession.h>
+#import <YandexMapsMobile/YMKTransport.h>
+#import <YandexMapsMobile/YMKDirections.h>
+#import <YandexMapsMobile/YMKSubpolylineHelper.h>
 
 #ifndef MAX
 #import <NSObjCRuntime.h>

@@ -2,7 +2,9 @@
 #import <React/UIView+React.h>
 
 #import <MapKit/MapKit.h>
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKPlacemark.h>
+#import <YandexMapsMobile/YMKIconStyle.h>
 
 #ifndef MAX
 #import <NSObjCRuntime.h>

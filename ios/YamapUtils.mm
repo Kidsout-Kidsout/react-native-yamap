@@ -1,6 +1,6 @@
 #import "YamapUtils.h"
 
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKSearchAddress.h>
 
 @implementation YamapUtils
 

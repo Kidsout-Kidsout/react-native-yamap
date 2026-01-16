@@ -6,7 +6,7 @@
 
 #import <react/renderer/core/EventEmitter.h>
 #import <folly/dynamic.h>
-#import <react/renderer/components/YamapComponents/ComponentDescriptors.h>
+#import <react/renderer/components/RNYamapSpec/ComponentDescriptors.h>
 
 static folly::dynamic RCTConvertIdToFollyDynamic(id obj) {
   if (obj == nil) {

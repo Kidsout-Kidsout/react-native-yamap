@@ -1,7 +1,9 @@
 #ifndef YamapCircleView_h
 #define YamapCircleView_h
 #import <React/RCTComponent.h>
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKCircle.h>
+#import <YandexMapsMobile/YMKPolygon.h>
 
 @interface YamapCircleView: UIView<YMKMapObjectTapListener>
 

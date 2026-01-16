@@ -1,5 +1,11 @@
 #import "YamapSuggests.h"
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKSearchManager.h>
+#import <YandexMapsMobile/YMKSearchSuggestSession.h>
+#import <YandexMapsMobile/YMKGeometry.h>
+#import <YandexMapsMobile/YMKSuggestOptions.h>
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKSearch.h>
+#import <YandexMapsMobile/YMKSuggestResponse.h>
 
 @implementation YamapSuggests {
   YMKSearchManager* searchManager;

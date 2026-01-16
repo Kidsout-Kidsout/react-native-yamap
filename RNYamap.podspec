@@ -19,9 +19,9 @@ Pod::Spec.new do |s|
   s.dependency "React"
   s.dependency "YandexMapsMobile", "4.29.0-full"
 
-  s.xcconfig = {
-    "OTHER_CPLUSPLUSFLAGS" => "$(inherited) -fcxx-modules -fmodules",
-  }
+  # s.xcconfig = {
+  #   "OTHER_CPLUSPLUSFLAGS" => "$(inherited) -fcxx-modules -fmodules",
+  # }
 
   install_modules_dependencies(s)
 end

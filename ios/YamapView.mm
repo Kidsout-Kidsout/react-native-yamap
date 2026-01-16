@@ -6,6 +6,8 @@
 #import "RNYamap.h"
 #import "View/RNYMView.h"
 
+#import <YandexMapsMobile/YMKMap.h>
+
 #ifndef MAX
 #import <NSObjCRuntime.h>
 #endif

@@ -1,7 +1,8 @@
 #import <React/RCTComponent.h>
 
 #import <MapKit/MapKit.h>
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKPolygon.h>
 
 #ifndef MAX
 #import <NSObjCRuntime.h>

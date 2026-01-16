@@ -3,7 +3,15 @@
 #import <React/RCTComponent.h>
 
 #import <MapKit/MapKit.h>
-@import YandexMapsMobile;
+#import <YandexMapsMobile/YMKPoint.h>
+#import <YandexMapsMobile/YMKRequestPoint.h>
+#import <YandexMapsMobile/YMKMapView.h>
+#import <YandexMapsMobile/YMKUserLocation.h>
+#import <YandexMapsMobile/YMKMapCameraListener.h>
+#import <YandexMapsMobile/YMKClusterListener.h>
+#import <YandexMapsMobile/YMKClusterTapListener.h>
+#import <YandexMapsMobile/YMKMapLoadedListener.h>
+#import <YandexMapsMobile/YMKTrafficListener.h>
 
 @class RCTBridge;
 
