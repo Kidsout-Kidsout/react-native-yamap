@@ -1,5 +1,5 @@
-#import "YamapUtils.h"
 #import "YamapGeocode.h"
+#import "YamapUtils.h"
 
 @import YandexMapsMobile;
 
@@ -9,6 +9,12 @@
     YMKBoundingBox* defaultBoundingBox;
     YMKGeometry* defaultGeometry;
     YMKSearchOptions* searchOptions;
+}
+
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+(const facebook::react::ObjCTurboModule::InitParams &)params
+{
+  return std::make_shared<facebook::react::NativeYamapGeocodeSpecJSI>(params);
 }
 
 -(id)init {
@@ -34,7 +40,7 @@
 NSString* ERR_GEOCODE_NO_REQUEST_ARG = @"YANDEX_ERR_GEOCODE_NO_REQUEST_ARG";
 NSString* ERR_GEOCODE_SEARCH_FAILED = @"YANDEX_ERR_GEOCODE_SEARCH_FAILED";
 
-RCT_EXPORT_METHOD(geocode:(nonnull NSString*) searchQuery
+- (void)geocode:(nonnull NSString*) searchQuery
                 resolver:(RCTPromiseResolveBlock) resolve
                 rejecter:(RCTPromiseRejectBlock) reject {
 
@@ -62,9 +68,9 @@ RCT_EXPORT_METHOD(geocode:(nonnull NSString*) searchQuery
             reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"Search request: %@", error], nil);
         }
     });
-})
+}
 
-RCT_EXPORT_METHOD(geocodeUri:(nonnull NSString*) uri
+- (void)geocodeUri:(nonnull NSString*) uri
                 resolver:(RCTPromiseResolveBlock) resolve
                 rejecter:(RCTPromiseRejectBlock) reject {
 
@@ -91,9 +97,9 @@ RCT_EXPORT_METHOD(geocodeUri:(nonnull NSString*) uri
             reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"Search request: %@", error], nil);
         }
     });
-})
+}
 
-RCT_EXPORT_METHOD(geocodePoint:(NSArray*) point
+- (void)geocodePoint:(NSArray*) point
                 resolver:(RCTPromiseResolveBlock) resolve
                 rejecter:(RCTPromiseRejectBlock) reject {
 
@@ -124,9 +130,7 @@ RCT_EXPORT_METHOD(geocodePoint:(NSArray*) point
             reject(ERR_GEOCODE_NO_REQUEST_ARG, [NSString stringWithFormat:@"Search request: %@", error], nil);
         }
     });
-})
-
-RCT_EXPORT_MODULE();
+}
 
 -(NSDictionary *) convert:(YMKSearchResponse*) response {
     YMKGeoObject* geoObject = nil;

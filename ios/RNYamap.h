@@ -1,7 +1,7 @@
 #import <RNYamapSpec/RNYamapSpec.h>
 #import "YamapView.h"
 
-@interface yamap : NSObject <RCTBridgeModule>
+@interface Yamap : NSObject <NativeYamapSpec>
 
 @property YamapView *map;
 

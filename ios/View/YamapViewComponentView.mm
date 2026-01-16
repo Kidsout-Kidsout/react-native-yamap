@@ -2,7 +2,7 @@
 #import <React/RCTViewComponentView.h>
 #import <UIKit/UIKit.h>
 #import "RNYMView.h"
-#import "../Converter/RCTConvert+Yamap.m"
+#import "../Converter/RCTConvert+Yamap.mm"
 
 #import <react/renderer/core/EventEmitter.h>
 #import <folly/dynamic.h>

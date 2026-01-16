@@ -2,7 +2,7 @@
 #import <React/UIView+React.h>
 
 #import <MapKit/MapKit.h>
-#import "../Converter/RCTConvert+Yamap.m"
+#import "../Converter/RCTConvert+Yamap.mm"
 @import YandexMapsMobile;
 
 #ifndef MAX
@@ -426,7 +426,7 @@
 
 - (void)emitCameraPositionToJS:(NSString*)_id {
     YMKCameraPosition* position = self.mapWindow.map.cameraPosition;
-    NSDictionary* cameraPosition = [self cameraPositionToJSON:position reason:1 finished:YES];
+    NSDictionary* cameraPosition = [self cameraPositionToJSON:position reason:YMKCameraUpdateReasonApplication finished:YES];
     NSMutableDictionary *response = [NSMutableDictionary dictionaryWithDictionary:cameraPosition];
     [response setValue:_id forKey:@"id"];
 

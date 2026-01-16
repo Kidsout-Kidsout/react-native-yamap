@@ -7,7 +7,7 @@
 #import "View/YamapCircleView.h"
 #import "View/RNYMView.h"
 
-#import "Converter/RCTConvert+Yamap.m"
+#import "Converter/RCTConvert+Yamap.mm"
 
 #ifndef MAX
 #import <NSObjCRuntime.h>

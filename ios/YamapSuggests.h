@@ -1,9 +1,5 @@
-#if __has_include("RCTBridgeModule.h")
-#import "RCTBridgeModule.h"
-#else
-#import <React/RCTBridgeModule.h>
-#endif
+#import <RNYamapSpec/RNYamapSpec.h>
 
-@interface YamapSuggests: NSObject <RCTBridgeModule>
+@interface YamapSuggests: NSObject <NativeYamapSuggestsSpec>
 
 @end

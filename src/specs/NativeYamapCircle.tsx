@@ -1,4 +1,4 @@
-import type { ViewProps, ColorValue } from 'react-native';
+import type { ViewProps } from 'react-native';
 import { codegenNativeComponent } from 'react-native';
 import type {
   DirectEventHandler,
@@ -9,8 +9,8 @@ import type {
 type Point = { lat: Double; lon: Double };
 
 export interface NativeProps extends ViewProps {
-  fillColor?: ColorValue;
-  strokeColor?: ColorValue;
+  fillColor?: string;
+  strokeColor?: string;
   strokeWidth?: Double;
   zIndex?: Int32;
   onPress?: DirectEventHandler<{}>;
