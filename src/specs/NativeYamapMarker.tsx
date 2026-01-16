@@ -1,38 +1,33 @@
-import type { HostComponent, ViewProps } from 'react-native';
-import { codegenNativeComponent, codegenNativeCommands } from 'react-native';
-import type {
-  DirectEventHandler,
-  Int32,
-  Double,
-} from 'react-native/Libraries/Types/CodegenTypesNamespace';
 import * as React from 'react';
-
-interface Point {
-  lat: Double;
-  lon: Double;
-}
+import {
+  type HostComponent,
+  type ViewProps,
+  codegenNativeComponent,
+  codegenNativeCommands,
+  type CodegenTypes,
+} from 'react-native';
 
 export interface YamapMarkerNativeProps extends ViewProps {
-  zIndex?: Int32;
-  scale?: Double;
-  onPress?: DirectEventHandler<{}>;
-  point: Point;
-  source?: string; // resolved URI
-  anchor?: { x: Double; y: Double };
+  zIndex?: CodegenTypes.Int32;
+  scale?: CodegenTypes.Double;
+  onPress?: CodegenTypes.DirectEventHandler<{}>;
+  point: { lat: CodegenTypes.Double; lon: CodegenTypes.Double };
+  source?: string;
+  anchor?: { x: CodegenTypes.Double; y: CodegenTypes.Double };
   visible?: boolean;
 }
 
 interface NativeCommands {
   animatedMoveTo: (
     ref: React.ElementRef<HostComponent<YamapMarkerNativeProps>>,
-    latitude: Double,
-    longitude: Double,
-    duration: Double
+    latitude: CodegenTypes.Double,
+    longitude: CodegenTypes.Double,
+    duration: CodegenTypes.Double
   ) => void;
   animatedRotateTo: (
     ref: React.ElementRef<HostComponent<YamapMarkerNativeProps>>,
-    angle: Double,
-    duration: Double
+    angle: CodegenTypes.Double,
+    duration: CodegenTypes.Double
   ) => void;
 }
 

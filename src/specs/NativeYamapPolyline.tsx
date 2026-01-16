@@ -1,24 +1,20 @@
-import type { ViewProps, ColorValue } from 'react-native';
-import { codegenNativeComponent } from 'react-native';
-import type {
-  DirectEventHandler,
-  Int32,
-  Double,
-} from 'react-native/Libraries/Types/CodegenTypesNamespace';
-
-type Point = { lat: Double; lon: Double };
+import {
+  codegenNativeComponent,
+  type ViewProps,
+  type CodegenTypes,
+} from 'react-native';
 
 export interface NativeProps extends ViewProps {
-  strokeColor?: ColorValue;
-  outlineColor?: ColorValue;
-  strokeWidth?: Double;
-  outlineWidth?: Double;
-  dashLength?: Double;
-  dashOffset?: Double;
-  gapLength?: Double;
-  zIndex?: Int32;
-  onPress?: DirectEventHandler<{}>;
-  points: ReadonlyArray<Point>;
+  strokeColor?: string;
+  outlineColor?: string;
+  strokeWidth?: CodegenTypes.Double;
+  outlineWidth?: CodegenTypes.Double;
+  dashLength?: CodegenTypes.Double;
+  dashOffset?: CodegenTypes.Double;
+  gapLength?: CodegenTypes.Double;
+  zIndex?: CodegenTypes.Int32;
+  onPress?: CodegenTypes.DirectEventHandler<{}>;
+  points: { lat: CodegenTypes.Double; lon: CodegenTypes.Double }[];
 }
 
 export default codegenNativeComponent<NativeProps>('YamapPolyline');

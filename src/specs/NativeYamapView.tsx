@@ -1,62 +1,60 @@
 import * as React from 'react';
-import type { HostComponent, ViewProps } from 'react-native';
-import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
-import type {
-  BubblingEventHandler,
-  Int32,
-  Double,
-  WithDefault,
-  UnsafeMixed,
-} from 'react-native/Libraries/Types/CodegenTypesNamespace';
+import {
+  type HostComponent,
+  type ViewProps,
+  codegenNativeCommands,
+  codegenNativeComponent,
+  type CodegenTypes,
+} from 'react-native';
 
 interface CameraPosition {
-  zoom: Double;
-  tilt: Double;
-  azimuth: Double;
+  zoom: CodegenTypes.Double;
+  tilt: CodegenTypes.Double;
+  azimuth: CodegenTypes.Double;
   point: {
-    lat: Double;
-    lon: Double;
+    lat: CodegenTypes.Double;
+    lon: CodegenTypes.Double;
   };
   finished?: boolean;
 }
 
 interface VisibleRegion {
   bottomLeft: {
-    lat: Double;
-    lon: Double;
+    lat: CodegenTypes.Double;
+    lon: CodegenTypes.Double;
   };
   bottomRight: {
-    lat: Double;
-    lon: Double;
+    lat: CodegenTypes.Double;
+    lon: CodegenTypes.Double;
   };
   topLeft: {
-    lat: Double;
-    lon: Double;
+    lat: CodegenTypes.Double;
+    lon: CodegenTypes.Double;
   };
   topRight: {
-    lat: Double;
-    lon: Double;
+    lat: CodegenTypes.Double;
+    lon: CodegenTypes.Double;
   };
 }
 
 interface InitialRegion {
-  lat: Double;
-  lon: Double;
-  zoom?: Double;
-  azimuth?: Double;
-  tilt?: Double;
+  lat: CodegenTypes.Double;
+  lon: CodegenTypes.Double;
+  zoom?: CodegenTypes.Double;
+  azimuth?: CodegenTypes.Double;
+  tilt?: CodegenTypes.Double;
 }
 
 interface MapLoaded {
-  renderObjectCount: Int32;
-  curZoomModelsLoaded: Int32;
-  curZoomPlacemarksLoaded: Int32;
-  curZoomLabelsLoaded: Int32;
-  curZoomGeometryLoaded: Int32;
-  tileMemoryUsage: Int32;
-  delayedGeometryLoaded: Int32;
-  fullyAppeared: Int32;
-  fullyLoaded: Int32;
+  renderObjectCount: CodegenTypes.Int32;
+  curZoomModelsLoaded: CodegenTypes.Int32;
+  curZoomPlacemarksLoaded: CodegenTypes.Int32;
+  curZoomLabelsLoaded: CodegenTypes.Int32;
+  curZoomGeometryLoaded: CodegenTypes.Int32;
+  tileMemoryUsage: CodegenTypes.Int32;
+  delayedGeometryLoaded: CodegenTypes.Int32;
+  fullyAppeared: CodegenTypes.Int32;
+  fullyLoaded: CodegenTypes.Int32;
 }
 
 type Vehicles =
@@ -72,7 +70,7 @@ type Vehicles =
   | 'walk'
   | 'car';
 
-type Animation = Int32; // SMOOTH | LINEAR
+type Animation = CodegenTypes.Int32; // SMOOTH | LINEAR
 
 interface CameraPositionEvent extends CameraPosition {
   reason?: string;
@@ -85,7 +83,7 @@ interface CameraPositionCallbackEvent extends CameraPositionEvent {
 interface RoutesEventPayload {
   id: string;
   status: string;
-  routes: UnsafeMixed;
+  routes: CodegenTypes.UnsafeMixed;
 }
 
 interface VisibleRegionEvent extends VisibleRegion {
@@ -95,55 +93,55 @@ interface VisibleRegionEvent extends VisibleRegion {
 interface WorldToScreenPointsEvent {
   id: string;
   screenPoints: {
-    x: Double;
-    y: Double;
+    x: CodegenTypes.Double;
+    y: CodegenTypes.Double;
   }[];
 }
 
 interface ScreenToWorldPointsEvent {
   id: string;
   worldPoints: {
-    lat: Double;
-    lon: Double;
+    lat: CodegenTypes.Double;
+    lon: CodegenTypes.Double;
   }[];
 }
 
 interface MapPointEvent {
-  lat: Double;
-  lon: Double;
+  lat: CodegenTypes.Double;
+  lon: CodegenTypes.Double;
 }
 
 export interface NativeProps extends ViewProps {
   userLocationIcon?: string; // resolved URI
   withClusters?: boolean;
-  clusterColor?: Int32;
+  clusterColor?: CodegenTypes.Int32;
   showUserPosition?: boolean;
   nightMode?: boolean;
   mapStyle?: string;
-  mapType?: WithDefault<'none' | 'raster' | 'vector', 'vector'>;
-  userLocationAccuracyFillColor?: Int32;
-  userLocationAccuracyStrokeColor?: Int32;
-  userLocationAccuracyStrokeWidth?: Double;
+  mapType?: CodegenTypes.WithDefault<'none' | 'raster' | 'vector', 'vector'>;
+  userLocationAccuracyFillColor?: CodegenTypes.Int32;
+  userLocationAccuracyStrokeColor?: CodegenTypes.Int32;
+  userLocationAccuracyStrokeWidth?: CodegenTypes.Double;
   scrollGesturesEnabled?: boolean;
   zoomGesturesEnabled?: boolean;
   tiltGesturesEnabled?: boolean;
   rotateGesturesEnabled?: boolean;
   fastTapEnabled?: boolean;
   initialRegion?: InitialRegion;
-  maxFps?: Int32;
+  maxFps?: CodegenTypes.Int32;
 
-  onCameraPositionChange?: BubblingEventHandler<CameraPositionEvent>;
-  onCameraPositionChangeEnd?: BubblingEventHandler<CameraPositionEvent>;
-  onMapPress?: BubblingEventHandler<MapPointEvent>;
-  onMapLongPress?: BubblingEventHandler<MapPointEvent>;
-  onMapLoaded?: BubblingEventHandler<MapLoaded>;
+  onCameraPositionChange?: CodegenTypes.BubblingEventHandler<CameraPositionEvent>;
+  onCameraPositionChangeEnd?: CodegenTypes.BubblingEventHandler<CameraPositionEvent>;
+  onMapPress?: CodegenTypes.BubblingEventHandler<MapPointEvent>;
+  onMapLongPress?: CodegenTypes.BubblingEventHandler<MapPointEvent>;
+  onMapLoaded?: CodegenTypes.BubblingEventHandler<MapLoaded>;
 
   // Callback-emitted events for command responses
-  onRouteFound?: BubblingEventHandler<RoutesEventPayload>;
-  onCameraPositionReceived?: BubblingEventHandler<CameraPositionCallbackEvent>;
-  onVisibleRegionReceived?: BubblingEventHandler<VisibleRegionEvent>;
-  onWorldToScreenPointsReceived?: BubblingEventHandler<WorldToScreenPointsEvent>;
-  onScreenToWorldPointsReceived?: BubblingEventHandler<ScreenToWorldPointsEvent>;
+  onRouteFound?: CodegenTypes.BubblingEventHandler<RoutesEventPayload>;
+  onCameraPositionReceived?: CodegenTypes.BubblingEventHandler<CameraPositionCallbackEvent>;
+  onVisibleRegionReceived?: CodegenTypes.BubblingEventHandler<VisibleRegionEvent>;
+  onWorldToScreenPointsReceived?: CodegenTypes.BubblingEventHandler<WorldToScreenPointsEvent>;
+  onScreenToWorldPointsReceived?: CodegenTypes.BubblingEventHandler<ScreenToWorldPointsEvent>;
 }
 
 interface NativeCommands {
@@ -154,32 +152,32 @@ interface NativeCommands {
   ) => void;
   fitMarkers: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    points: UnsafeMixed[]
+    points: CodegenTypes.UnsafeMixed[]
   ) => void;
   setCenter: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    latitude: Double,
-    longitude: Double,
-    zoom: Double,
-    azimuth: Double,
-    tilt: Double,
-    duration: Double,
+    latitude: CodegenTypes.Double,
+    longitude: CodegenTypes.Double,
+    zoom: CodegenTypes.Double,
+    azimuth: CodegenTypes.Double,
+    tilt: CodegenTypes.Double,
+    duration: CodegenTypes.Double,
     animation: Animation
   ) => void;
   setBounds: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    bottomLeftLatitude: Double,
-    bottomLeftLongitude: Double,
-    topRightLatitude: Double,
-    topRightLongitude: Double,
-    offset: Double,
-    duration: Double,
+    bottomLeftLatitude: CodegenTypes.Double,
+    bottomLeftLongitude: CodegenTypes.Double,
+    topRightLatitude: CodegenTypes.Double,
+    topRightLongitude: CodegenTypes.Double,
+    offset: CodegenTypes.Double,
+    duration: CodegenTypes.Double,
     animation: Animation
   ) => void;
   setZoom: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    zoom: Double,
-    duration: Double,
+    zoom: CodegenTypes.Double,
+    duration: CodegenTypes.Double,
     animation: Animation
   ) => void;
   getCameraPosition: (
@@ -192,17 +190,17 @@ interface NativeCommands {
   ) => void;
   getScreenPoints: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    points: UnsafeMixed[],
+    points: CodegenTypes.UnsafeMixed[],
     callbackId: string
   ) => void;
   getWorldPoints: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    points: UnsafeMixed[],
+    points: CodegenTypes.UnsafeMixed[],
     callbackId: string
   ) => void;
   findRoutes: (
     ref: React.ElementRef<HostComponent<NativeProps>>,
-    points: UnsafeMixed[],
+    points: CodegenTypes.UnsafeMixed[],
     vehicles: Vehicles[],
     id: string
   ) => void;

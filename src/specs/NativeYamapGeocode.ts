@@ -1,8 +1,8 @@
-import type { TurboModule } from 'react-native';
-import { TurboModuleRegistry } from 'react-native';
-import { type Double } from 'react-native/Libraries/Types/CodegenTypesNamespace';
-
-type Point = { lat: Double; lon: Double };
+import {
+  TurboModuleRegistry,
+  type TurboModule,
+  type CodegenTypes,
+} from 'react-native';
 
 type AddressComponent =
   | 'unknown'
@@ -28,9 +28,9 @@ export type YamapGeocodeResult = {
   name: string;
   descriptionText: string;
   formattedAddress: string;
-  coords: Point;
-  upperCorner: Point;
-  lowerCorner: Point;
+  coords: { lat: CodegenTypes.Double; lon: CodegenTypes.Double };
+  upperCorner: { lat: CodegenTypes.Double; lon: CodegenTypes.Double };
+  lowerCorner: { lat: CodegenTypes.Double; lon: CodegenTypes.Double };
   components: { name: string; kinds: AddressComponent[] }[];
 };
 

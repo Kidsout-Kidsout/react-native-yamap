@@ -3,6 +3,7 @@
 #import <UIKit/UIKit.h>
 #import "RNYMView.h"
 #import "../Converter/RCTConvert+Yamap.mm"
+#import <YandexMapsMobile/YMKMap.h>
 
 #import <react/renderer/core/EventEmitter.h>
 #import <folly/dynamic.h>
@@ -96,80 +97,81 @@ static folly::dynamic RCTConvertIdToFollyDynamic(id obj) {
 
   using namespace facebook::react;
   const auto &newProps = *std::static_pointer_cast<const YamapViewProps>(props);
+  const auto &oProps = *std::static_pointer_cast<const YamapViewProps>(oldProps);
 
   // Apply boolean and numeric props
-  if (newProps.nightMode.has_value()) {
-    BOOL enabled = newProps.nightMode.value();
+  if (newProps.nightMode != oProps.nightMode) {
+    BOOL enabled = newProps.nightMode;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setNightMode:enabled]; });
   }
-  if (newProps.withClusters.has_value()) {
-    BOOL enabled = newProps.withClusters.value();
+  if (newProps.withClusters != oProps.withClusters) {
+    BOOL enabled = newProps.withClusters;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setClusters:enabled]; });
   }
-  if (newProps.clusterColor.has_value()) {
-    NSInteger color = (NSInteger)newProps.clusterColor.value();
+  if (newProps.clusterColor != oProps.clusterColor) {
+    NSInteger color = (NSInteger)newProps.clusterColor;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setClusterColor:[RCTConvert UIColor:@(color)]]; });
   }
-  if (newProps.showUserPosition.has_value()) {
-    BOOL enabled = newProps.showUserPosition.value();
+  if (newProps.showUserPosition != oProps.showUserPosition) {
+    BOOL enabled = newProps.showUserPosition;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setListenUserLocation:enabled]; });
   }
-  if (newProps.userLocationIcon.has_value()) {
-    NSString *uri = [NSString stringWithUTF8String:newProps.userLocationIcon->c_str()];
+  if (newProps.userLocationIcon != oProps.userLocationIcon) {
+    NSString *uri = [NSString stringWithUTF8String:newProps.userLocationIcon.c_str()];
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setUserLocationIcon:uri]; });
   }
-  if (newProps.userLocationAccuracyFillColor.has_value()) {
-    NSInteger color = (NSInteger)newProps.userLocationAccuracyFillColor.value();
+  if (newProps.userLocationAccuracyFillColor != oProps.userLocationAccuracyFillColor) {
+    NSInteger color = (NSInteger)newProps.userLocationAccuracyFillColor;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setUserLocationAccuracyFillColor:[RCTConvert UIColor:@(color)]]; });
   }
-  if (newProps.userLocationAccuracyStrokeColor.has_value()) {
-    NSInteger color = (NSInteger)newProps.userLocationAccuracyStrokeColor.value();
+  if (newProps.userLocationAccuracyStrokeColor != oProps.userLocationAccuracyStrokeColor) {
+    NSInteger color = (NSInteger)newProps.userLocationAccuracyStrokeColor;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setUserLocationAccuracyStrokeColor:[RCTConvert UIColor:@(color)]]; });
   }
-  if (newProps.userLocationAccuracyStrokeWidth.has_value()) {
-    CGFloat width = (CGFloat)newProps.userLocationAccuracyStrokeWidth.value();
+  if (newProps.userLocationAccuracyStrokeWidth != oProps.userLocationAccuracyStrokeColor) {
+    CGFloat width = (CGFloat)newProps.userLocationAccuracyStrokeWidth;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setUserLocationAccuracyStrokeWidth:width]; });
   }
-  if (newProps.mapStyle.has_value()) {
-    NSString *style = [NSString stringWithUTF8String:newProps.mapStyle->c_str()];
+  if (newProps.mapStyle != oProps.mapStyle) {
+    NSString *style = [NSString stringWithUTF8String:newProps.mapStyle.c_str()];
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView.mapWindow.map setMapStyleWithStyle:style]; });
   }
-  if (newProps.mapType.has_value()) {
-    NSString *type = [NSString stringWithUTF8String:newProps.mapType->c_str()];
+  if (newProps.mapType != oProps.mapType) {
+    NSString *type = [NSString stringWithUTF8String:toString(newProps.mapType).c_str()];
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setMapType:type]; });
   }
-  if (newProps.zoomGesturesEnabled.has_value()) {
-    BOOL v = newProps.zoomGesturesEnabled.value();
+  if (newProps.zoomGesturesEnabled != oProps.zoomGesturesEnabled) {
+    BOOL v = newProps.zoomGesturesEnabled;
     dispatch_async(dispatch_get_main_queue(), ^{ self->_mapView.mapWindow.map.zoomGesturesEnabled = v; });
   }
-  if (newProps.scrollGesturesEnabled.has_value()) {
-    BOOL v = newProps.scrollGesturesEnabled.value();
+  if (newProps.scrollGesturesEnabled != oProps.scrollGesturesEnabled) {
+    BOOL v = newProps.scrollGesturesEnabled;
     dispatch_async(dispatch_get_main_queue(), ^{ self->_mapView.mapWindow.map.scrollGesturesEnabled = v; });
   }
-  if (newProps.tiltGesturesEnabled.has_value()) {
-    BOOL v = newProps.tiltGesturesEnabled.value();
+  if (newProps.tiltGesturesEnabled != oProps.tiltGesturesEnabled) {
+    BOOL v = newProps.tiltGesturesEnabled;
     dispatch_async(dispatch_get_main_queue(), ^{ self->_mapView.mapWindow.map.tiltGesturesEnabled = v; });
   }
-  if (newProps.rotateGesturesEnabled.has_value()) {
-    BOOL v = newProps.rotateGesturesEnabled.value();
+  if (newProps.rotateGesturesEnabled != oProps.rotateGesturesEnabled) {
+    BOOL v = newProps.rotateGesturesEnabled;
     dispatch_async(dispatch_get_main_queue(), ^{ self->_mapView.mapWindow.map.rotateGesturesEnabled = v; });
   }
-  if (newProps.fastTapEnabled.has_value()) {
-    BOOL v = newProps.fastTapEnabled.value();
+  if (newProps.fastTapEnabled != oProps.fastTapEnabled) {
+    BOOL v = newProps.fastTapEnabled;
     dispatch_async(dispatch_get_main_queue(), ^{ self->_mapView.mapWindow.map.fastTapEnabled = v; });
   }
-  if (newProps.maxFps.has_value()) {
-    CGFloat fps = (CGFloat)newProps.maxFps.value();
+  if (newProps.maxFps != oProps.maxFps) {
+    CGFloat fps = (CGFloat)newProps.maxFps;
     dispatch_async(dispatch_get_main_queue(), ^{ [self->_mapView setMaxFps:fps]; });
   }
-  if (newProps.initialRegion.has_value()) {
-    auto r = newProps.initialRegion.value();
+  if (&newProps.initialRegion != &oProps.initialRegion) {
+    auto r = newProps.initialRegion;
     NSMutableDictionary *initial = [NSMutableDictionary new];
     initial[@"lat"] = @(r.lat);
     initial[@"lon"] = @(r.lon);
-    if (r.zoom.has_value()) initial[@"zoom"] = @(r.zoom.value());
-    if (r.azimuth.has_value()) initial[@"azimuth"] = @(r.azimuth.value());
-    if (r.tilt.has_value()) initial[@"tilt"] = @(r.tilt.value());
+    if (r.zoom) initial[@"zoom"] = @(r.zoom);
+    if (r.azimuth) initial[@"azimuth"] = @(r.azimuth);
+    if (r.tilt) initial[@"tilt"] = @(r.tilt);
     if (!_hasSizedUp) {
       _pendingInitialRegion = initial;
     } else if (!_initialApplied) {
@@ -195,7 +197,7 @@ static folly::dynamic RCTConvertIdToFollyDynamic(id obj) {
   frame.size.height = layoutMetrics.frame.size.height;
   dispatch_async(dispatch_get_main_queue(), ^{
     // Ensure YMKMapView receives proper resize notifications
-    [self->_mapView reactSetFrame:frame];
+    [self->_mapView setFrame:frame];
     [self->_mapView setNeedsLayout];
     [self->_mapView layoutIfNeeded];
     if (!self->_hasSizedUp && frame.size.width > 0 && frame.size.height > 0) {

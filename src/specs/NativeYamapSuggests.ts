@@ -1,10 +1,8 @@
-import { TurboModuleRegistry, type TurboModule } from 'react-native';
-import { type Double } from 'react-native/Libraries/Types/CodegenTypesNamespace';
-
-type Point = {
-  lat: Double;
-  lon: Double;
-};
+import {
+  TurboModuleRegistry,
+  type TurboModule,
+  type CodegenTypes,
+} from 'react-native';
 
 export type YamapSuggest = {
   title: string;
@@ -24,7 +22,7 @@ export enum SuggestTypes {
 }
 
 export type SuggestOptions = {
-  userPosition?: Point;
+  userPosition?: { lat: CodegenTypes.Double; lon: CodegenTypes.Double };
   suggestWords?: boolean;
   suggestTypes?: SuggestTypes[];
 };
