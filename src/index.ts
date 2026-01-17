@@ -1,4 +1,5 @@
 export * from './components/Yamap';
+export * from './components/Circle';
 export * from './geocoding';
 export * from './interfaces';
 export { Suggest } from './Suggest';

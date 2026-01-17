@@ -126,6 +126,9 @@
       "components": {
         "YamapView": {
           "className": "KDSTYamapView"
+        },
+        "YamapCircleView": {
+          "className": "KDSTYamapCircleView"
         }
       }
     },

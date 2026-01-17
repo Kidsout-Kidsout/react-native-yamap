@@ -6,16 +6,13 @@
  */
 
 import {
-  codegenNativeComponent,
-  NativeModules,
   StatusBar,
   StyleSheet,
   Text,
-  TurboModuleRegistry,
   useColorScheme,
   View,
 } from 'react-native';
-import { YaMap } from '@kidsout-kidsout/react-native-yamap';
+import { YaMap, Circle } from '@kidsout-kidsout/react-native-yamap';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   FunctionComponent,
@@ -122,6 +119,21 @@ const MapDemo: FunctionComponent<{
     });
   }, [point]);
 
+  const inner = [
+    <Circle
+      key={1}
+      center={point}
+      radius={20000}
+      fillColor="#f43c098f"
+      strokeColor="#095bf4d4"
+      strokeWidth={2}
+      onPress={() => {
+        // eslint-disable-next-line no-alert
+        alert('Circle pressed');
+      }}
+    />,
+  ];
+
   const map = (
     <YaMap
       ref={rref}
@@ -131,7 +143,9 @@ const MapDemo: FunctionComponent<{
       nightMode={nightMode}
       rotateGesturesEnabled={false}
       showUserPosition={false}
-    />
+    >
+      {inner}
+    </YaMap>
   );
 
   return <View style={styles.mapContainer}>{map}</View>;
