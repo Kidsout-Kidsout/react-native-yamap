@@ -1,21 +1,22 @@
 import { type FunctionComponent } from 'react';
 import { type Point } from '../interfaces';
-import YamapCircle from '../specs/NativeYamapCircleView';
+
+import YamapPolygon from '../specs/NativeYamapPolygonView';
 import { processColor } from 'react-native';
 
-export interface CircleProps {
+export interface PolygonProps {
   fillColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
   zIndex?: number;
   onPress?: () => void;
-  center: Point;
-  radius: number;
+  points: Point[];
+  innerRings?: Point[][];
 }
 
-export const Circle: FunctionComponent<CircleProps> = (props) => {
+export const Polygon: FunctionComponent<PolygonProps> = (props) => {
   return (
-    <YamapCircle
+    <YamapPolygon
       {...props}
       fillColor={processColor(props.fillColor) ?? undefined}
       strokeColor={processColor(props.strokeColor) ?? undefined}

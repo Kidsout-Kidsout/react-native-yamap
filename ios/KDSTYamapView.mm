@@ -1,6 +1,7 @@
 #import "KDSTYamapView.h"
 
 #import "KDSTYamapCircleView.h"
+#import "KDSTYamapPolygonView.h"
 
 #import <react/renderer/components/RNYamapSpec/ComponentDescriptors.h>
 #import <react/renderer/components/RNYamapSpec/EventEmitters.h>
@@ -58,19 +59,32 @@ using namespace facebook::react;
   
   if ([childComponentView isKindOfClass:[KDSTYamapCircleView class]]) {
     dispatch_async(dispatch_get_main_queue(), ^{
-      KDSTYamapCircleView *circleView = (KDSTYamapCircleView *)childComponentView;
-      [circleView setCollection:objects];
+      auto *view = (KDSTYamapCircleView *)childComponentView;
+      [view setCollection:objects];
     });
     return;
   }
   
-//  [super mountChildComponentView:childComponentView index:index];
+  if ([childComponentView isKindOfClass:[KDSTYamapPolygonView class]]) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      auto *view = (KDSTYamapPolygonView *)childComponentView;
+      [view setCollection:objects];
+    });
+    return;
+  }
+  
+  [super mountChildComponentView:childComponentView index:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
   if ([childComponentView isKindOfClass:[KDSTYamapCircleView class]]) {
-    KDSTYamapCircleView *circleView = (KDSTYamapCircleView *)childComponentView;
-    [circleView unmount];
+    auto *view = (KDSTYamapCircleView *)childComponentView;
+    [view unmount];
+    return;
+  }
+  if ([childComponentView isKindOfClass:[KDSTYamapPolygonView class]]) {
+    auto *view = (KDSTYamapPolygonView *)childComponentView;
+    [view unmount];
     return;
   }
   

@@ -12,7 +12,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { YaMap, Circle } from '@kidsout-kidsout/react-native-yamap';
+import { YaMap, Circle, Polygon } from '@kidsout-kidsout/react-native-yamap';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   FunctionComponent,
@@ -41,8 +41,13 @@ function AppContent() {
   const [registered, setRegistered] = useState(false);
   const [renderCount, setRenderCount] = useState(0);
   const nightMode = useColorScheme() === 'dark';
+  const [overlay, overlayControl] = useBoolean('Overlay', false);
   const [clustered, clusteredControl] = useBoolean('Clustered', false);
-  const [type, typeControl] = useListToggle('Marker', ['marker', 'circle']);
+  const [type, typeControl] = useListToggle('Marker', [
+    'circle',
+    'polygon',
+    'marker',
+  ]);
   const mapRef = useRef<YaMap>(null);
   const [position, setPosition] = useState<string>('');
 
@@ -64,14 +69,6 @@ function AppContent() {
 
   const map = !registered ? (
     <Text>Loading map...</Text>
-  ) : clustered ? (
-    <ClusterMapDemo
-      ref={mapRef}
-      handlePositionChange={handlePositionChange}
-      type={type}
-      key={renderCount}
-      nightMode={nightMode}
-    />
   ) : (
     <MapDemo
       ref={mapRef}
@@ -79,6 +76,7 @@ function AppContent() {
       type={type}
       key={renderCount}
       nightMode={nightMode}
+      overlay={overlay}
     />
   );
 
@@ -93,6 +91,7 @@ function AppContent() {
           >
             Rerender
           </Text>
+          {overlayControl}
           {clusteredControl}
           {typeControl}
         </View>
@@ -105,10 +104,11 @@ function AppContent() {
 
 const MapDemo: FunctionComponent<{
   nightMode: boolean;
-  type: 'marker' | 'circle';
+  type: 'circle' | 'polygon' | 'marker';
   handlePositionChange?: () => void;
+  overlay: boolean;
   ref?: Ref<YaMap>;
-}> = ({ nightMode, type, handlePositionChange, ref }) => {
+}> = ({ nightMode, type, handlePositionChange, overlay, ref }) => {
   const localRef = useRef<YaMap>(null);
   const point = useMemo(() => ({ lat: 55.7522, lon: 37.6156 }), []);
   const rref = useMergedRefs<YaMap>(localRef, ref);
@@ -119,20 +119,54 @@ const MapDemo: FunctionComponent<{
     });
   }, [point]);
 
-  const inner = [
-    <Circle
-      key={1}
-      center={point}
-      radius={20000}
-      fillColor="#f43c098f"
-      strokeColor="#095bf4d4"
-      strokeWidth={2}
-      onPress={() => {
-        // eslint-disable-next-line no-alert
-        alert('Circle pressed');
-      }}
-    />,
-  ];
+  const inner =
+    type === 'polygon' ? (
+      <Polygon
+        points={[
+          { lat: point.lat - 0.8, lon: point.lon + 1 },
+          { lat: point.lat + 1, lon: point.lon + 1.2 },
+          { lat: point.lat + 0.8, lon: point.lon - 1 },
+          { lat: point.lat - 1, lon: point.lon - 1.2 },
+        ]}
+        fillColor="#f43c098f"
+        strokeColor="#095bf4d4"
+        strokeWidth={2}
+        onPress={() => {
+          // eslint-disable-next-line no-alert
+          alert('Object pressed');
+        }}
+      />
+    ) : (
+      <Circle
+        center={point}
+        radius={20000}
+        fillColor="#f43c098f"
+        strokeColor="#095bf4d4"
+        strokeWidth={2}
+        onPress={() => {
+          // eslint-disable-next-line no-alert
+          alert('Object pressed');
+        }}
+      />
+    );
+
+  const overlayElement = overlay ? (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{
+          backgroundColor: 'rgba(0,0,0,0.2)',
+          color: 'black',
+          textAlign: 'center',
+          pointerEvents: 'none',
+          padding: 10,
+          margin: 20,
+        }}
+      >
+        Custom overlay
+      </Text>
+    </View>
+  ) : null;
 
   const map = (
     <YaMap
@@ -145,46 +179,8 @@ const MapDemo: FunctionComponent<{
       showUserPosition={false}
     >
       {inner}
+      {overlayElement}
     </YaMap>
-  );
-
-  return <View style={styles.mapContainer}>{map}</View>;
-};
-
-const ClusterMapDemo: FunctionComponent<{
-  nightMode: boolean;
-  type: 'marker' | 'circle';
-  handlePositionChange?: () => void;
-  ref?: Ref<YaMap>;
-}> = ({ nightMode, type, handlePositionChange, ref }) => {
-  const localRef = useRef<YaMap>(null);
-  const point = useMemo(() => ({ lat: 55.7522, lon: 37.6156 }), []);
-  const points = useMemo(() => {
-    return new Array(100).fill(0).map((_, index) => ({
-      index,
-      lat: 55.75 + (Math.random() - 0.5) * 0.1,
-      lon: 37.6 + (Math.random() - 0.5) * 0.1,
-    }));
-  }, []);
-  const rref = useMergedRefs<YaMap>(localRef, ref);
-
-  useEffect(() => {
-    sleep(500).then(() => {
-      localRef.current?.setCenter(point, 14);
-    });
-  }, [point]);
-
-  const map = (
-    <YaMap
-      withClusters={true}
-      ref={rref}
-      onCameraPositionChange={handlePositionChange}
-      style={styles.map}
-      mapType="raster"
-      nightMode={nightMode}
-      rotateGesturesEnabled={false}
-      showUserPosition={false}
-    />
   );
 
   return <View style={styles.mapContainer}>{map}</View>;
@@ -197,6 +193,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
     gap: 10,
   },
   content: {

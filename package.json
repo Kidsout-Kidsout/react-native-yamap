@@ -129,6 +129,9 @@
         },
         "YamapCircleView": {
           "className": "KDSTYamapCircleView"
+        },
+        "YamapPolygonView": {
+          "className": "KDSTYamapPolygonView"
         }
       }
     },
