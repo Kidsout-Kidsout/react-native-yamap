@@ -18,6 +18,7 @@ const getModule = () =>
 type GeocodeFetcher = (
   query: string | { uri: string } | Point
 ) => Promise<YamapGeocodeResult | undefined>;
+
 const geocode: GeocodeFetcher = (query) => {
   const YamapGeocode = getModule();
 

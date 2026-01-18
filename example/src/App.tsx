@@ -13,7 +13,9 @@ import {
   View,
 } from 'react-native';
 import {
-  YaMap,
+  YamapConfig,
+  Yamap,
+  YamapRef,
   Circle,
   Polygon,
   Marker,
@@ -53,7 +55,7 @@ function AppContent() {
     'polygon',
     'marker',
   ]);
-  const mapRef = useRef<YaMap>(null);
+  const mapRef = useRef<YamapRef>(null);
   const [position, setPosition] = useState<string>('');
 
   const handlePositionChange = useCallback(() => {
@@ -67,7 +69,7 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    YaMap.init('a45f8ca9-a1e9-42c4-8853-cdfb1709ff36').then(() => {
+    YamapConfig.init('a45f8ca9-a1e9-42c4-8853-cdfb1709ff36').then(() => {
       setRegistered(true);
     });
   }, []);
@@ -114,9 +116,9 @@ const MapDemo: FunctionComponent<{
   overlay: boolean;
   ref?: Ref<YaMap>;
 }> = ({ nightMode, type, handlePositionChange, overlay, ref }) => {
-  const localRef = useRef<YaMap>(null);
+  const localRef = useRef<YamapRef>(null);
   const point = useMemo(() => ({ lat: 55.7522, lon: 37.6156 }), []);
-  const rref = useMergedRefs<YaMap>(localRef, ref);
+  const rref = useMergedRefs<YamapRef>(localRef, ref);
   const [markerText, setMarkerText] = useState(0);
 
   useEffect(() => {
@@ -212,18 +214,17 @@ const MapDemo: FunctionComponent<{
   ) : null;
 
   const map = (
-    <YaMap
+    <Yamap
       ref={rref}
       onCameraPositionChange={handlePositionChange}
       style={styles.map}
       mapType="raster"
       nightMode={nightMode}
       rotateGesturesEnabled={false}
-      showUserPosition={false}
     >
       {inner}
       {overlayElement}
-    </YaMap>
+    </Yamap>
   );
 
   return <View style={styles.mapContainer}>{map}</View>;

@@ -4,7 +4,6 @@ export * from './components/Marker';
 export * from './components/Polygon';
 export * from './geocoding';
 export * from './interfaces';
+export { YamapConfig } from './YamapConfig';
 export { Suggest } from './Suggest';
 export { Geocode } from './Geocode';
-
-export { YaMap as default } from './components/Yamap';

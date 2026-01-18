@@ -59,43 +59,7 @@ export type MasstransitVehicles =
   | 'cable'
   | 'funicular';
 
-export type Vehicles = MasstransitVehicles | 'walk' | 'car';
-
-export type MapType = 'none' | 'raster' | 'vector';
-
-export interface DrivingInfo {
-  time: string;
-  timeWithTraffic: string;
-  distance: number;
-}
-
-export interface MasstransitInfo {
-  time: string;
-  transferCount: number;
-  walkingDistance: number;
-}
-
-export interface RouteInfo<T extends DrivingInfo | MasstransitInfo> {
-  id: string;
-  sections: {
-    points: Point[];
-    sectionInfo: T;
-    routeInfo: T;
-    routeIndex: number;
-    stops: any[];
-    type: string;
-    transports?: any;
-    sectionColor?: string;
-  }[];
-}
-
-export interface RoutesFoundEvent<T extends DrivingInfo | MasstransitInfo> {
-  nativeEvent: {
-    status: 'success' | 'error';
-    id: string;
-    routes: RouteInfo<T>[];
-  };
-}
+export type MapType = 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
 
 export interface CameraPosition {
   zoom: number;
