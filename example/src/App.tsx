@@ -58,14 +58,14 @@ function AppContent() {
   const mapRef = useRef<YamapRef>(null);
   const [position, setPosition] = useState<string>('');
 
-  const handlePositionChange = useCallback(() => {
-    mapRef.current?.getCameraPosition((p) => {
-      setPosition(
-        `lat: ${p.point.lat.toFixed(5)}, lon: ${p.point.lon.toFixed(
-          5
-        )}, zoom: ${p.zoom.toFixed(2)}`
-      );
-    });
+  const handlePositionChange = useCallback(async () => {
+    const p = await mapRef.current?.getCameraPosition();
+    if (!p) return;
+    setPosition(
+      `lat: ${p.point.lat.toFixed(5)}, lon: ${p.point.lon.toFixed(
+        5
+      )}, zoom: ${p.zoom.toFixed(2)}`
+    );
   }, []);
 
   useEffect(() => {
@@ -114,7 +114,7 @@ const MapDemo: FunctionComponent<{
   type: 'circle' | 'marker' | 'polygon';
   handlePositionChange?: () => void;
   overlay: boolean;
-  ref?: Ref<YaMap>;
+  ref?: Ref<YamapRef>;
 }> = ({ nightMode, type, handlePositionChange, overlay, ref }) => {
   const localRef = useRef<YamapRef>(null);
   const point = useMemo(() => ({ lat: 55.7522, lon: 37.6156 }), []);
@@ -123,7 +123,7 @@ const MapDemo: FunctionComponent<{
 
   useEffect(() => {
     sleep(500).then(() => {
-      localRef.current?.setCenter(point, 14);
+      localRef.current?.setCenter({ center: point, zoom: 14 });
     });
   }, [point]);
 
@@ -168,10 +168,10 @@ const MapDemo: FunctionComponent<{
     ) : type === 'polygon' ? (
       <Polygon
         points={[
-          { lat: point.lat - 0.8, lon: point.lon + 1 },
-          { lat: point.lat + 1, lon: point.lon + 1.2 },
-          { lat: point.lat + 0.8, lon: point.lon - 1 },
-          { lat: point.lat - 1, lon: point.lon - 1.2 },
+          { lat: point.lat - 0.8 * 0.01, lon: point.lon + 1 * 0.01 },
+          { lat: point.lat + 1 * 0.01, lon: point.lon + 1.2 * 0.01 },
+          { lat: point.lat + 0.8 * 0.01, lon: point.lon - 1 * 0.01 },
+          { lat: point.lat - 1 * 0.01, lon: point.lon - 1.2 * 0.01 },
         ]}
         fillColor="#f43c098f"
         strokeColor="#095bf4d4"
@@ -184,7 +184,7 @@ const MapDemo: FunctionComponent<{
     ) : (
       <Circle
         center={point}
-        radius={20000}
+        radius={500}
         fillColor="#f43c098f"
         strokeColor="#095bf4d4"
         strokeWidth={2}

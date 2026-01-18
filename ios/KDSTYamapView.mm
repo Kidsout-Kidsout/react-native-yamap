@@ -23,6 +23,7 @@
 #import <YandexMapsMobile/YMKTrafficListener.h>
 #import <YandexMapsMobile/YMKMapObjectCollection.h>
 #import <YandexMapsMobile/YMKMapLoadStatistics.h>
+#import <YandexMapsMobile/YMKVisibleRegion.h>
 
 using namespace facebook::react;
 
@@ -158,6 +159,8 @@ using namespace facebook::react;
   [super unmountChildComponentView:childComponentView index:index];
 }
 
+// Events
+
 - (void)onCameraPositionChangedWithMap:(YMKMap *)map cameraPosition:(YMKCameraPosition *)cameraPosition cameraUpdateReason:(YMKCameraUpdateReason)cameraUpdateReason finished:(BOOL)finished {
   auto em = [self eventEmitter];
   YamapViewEventEmitter::OnCameraPositionChangePoint point;
@@ -210,6 +213,103 @@ using namespace facebook::react;
   em.onMapLongPress(value);
 }
 
+// Commands
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
+  RCTYamapViewHandleCommand(self, commandName, args);
+}
+
+- (void)commandSetCenter:(NSString *)cid lat:(double)lat lon:(double)lon zoom:(double)zoom azimuth:(double)azimuth tilt:(double)tilt offset:(double)offset animationType:(NSInteger)animationType animationDuration:(double)animationDuration {
+  auto cpos = [_mapView.mapWindow.map cameraPosition];
+  YMKPoint *point = [YMKPoint pointWithLatitude:lat longitude:lon];
+  auto nzoom = zoom == 0 ? cpos.zoom : zoom;
+  if (zoom != 0) {
+    nzoom = zoom - offset;
+  }
+  auto nazimuth = azimuth == 0 ? cpos.azimuth : azimuth;
+  auto ntilt = tilt == 0 ? cpos.tilt : tilt;
+  YMKCameraPosition *pos = [YMKCameraPosition cameraPositionWithTarget:point zoom:nzoom azimuth:nazimuth tilt:ntilt];
+  auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
+  YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
+  
+  [_mapView.mapWindow.map moveWithCameraPosition:pos animation:anim cameraCallback:^(BOOL completed) {
+    auto em = [self eventEmitter];
+    
+    YamapViewEventEmitter::OnCommandSetCenterReceived value;
+    value.cid = std::string([cid UTF8String]);
+    value.completed = completed;
+    em.onCommandSetCenterReceived(value);
+  }];
+}
+
+- (void)commandSetBounds:(NSString *)cid bottomLeftPointLat:(double)bottomLeftPointLat bottomLeftPointLon:(double)bottomLeftPointLon topRightPointLat:(double)topRightPointLat topRightPointLon:(double)topRightPointLon offset:(double)offset animationType:(NSInteger)animationType animationDuration:(double)animationDuration {
+  auto cpos = [_mapView.mapWindow.map cameraPosition];
+  YMKPoint *sw = [YMKPoint pointWithLatitude:bottomLeftPointLat longitude:bottomLeftPointLon];
+  YMKPoint *ne = [YMKPoint pointWithLatitude:topRightPointLat longitude:topRightPointLon];
+  YMKBoundingBox *box = [YMKBoundingBox boundingBoxWithSouthWest:sw northEast:ne];
+  YMKCameraPosition *pos = [_mapView.mapWindow.map cameraPositionWithGeometry:[YMKGeometry geometryWithBoundingBox:box]];
+  if (offset != 0) {
+    pos = [YMKCameraPosition cameraPositionWithTarget:pos.target zoom:pos.zoom - offset azimuth:pos.azimuth tilt:pos.tilt];
+  }
+  auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
+  YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
+  
+  [_mapView.mapWindow.map moveWithCameraPosition:pos animation:anim cameraCallback:^(BOOL completed) {
+    auto em = [self eventEmitter];
+    
+    YamapViewEventEmitter::OnCommandSetBoundsReceived value;
+    value.cid = std::string([cid UTF8String]);
+    value.completed = completed;
+    em.onCommandSetBoundsReceived(value);
+  }];
+}
+
+- (void)commandSetZoom:(NSString *)cid zoom:(double)zoom offset:(double)offset animationType:(NSInteger)animationType animationDuration:(double)animationDuration {
+  auto cpos = [_mapView.mapWindow.map cameraPosition];
+  YMKCameraPosition *pos = [YMKCameraPosition cameraPositionWithTarget:cpos.target zoom:zoom - offset azimuth:cpos.azimuth tilt:cpos.tilt];
+  auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
+  YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
+  
+  [_mapView.mapWindow.map moveWithCameraPosition:pos animation:anim cameraCallback:^(BOOL completed) {
+    auto em = [self eventEmitter];
+    
+    YamapViewEventEmitter::OnCommandSetZoomReceived value;
+    value.cid = std::string([cid UTF8String]);
+    value.completed = completed;
+    em.onCommandSetZoomReceived(value);
+  }];
+}
+
+- (void)commandGetCameraPosition:(NSString *)cid {
+  auto em = [self eventEmitter];
+  auto pos = [_mapView.mapWindow.map cameraPosition];
+  
+  YamapViewEventEmitter::OnCommandGetCameraPositionReceived value;
+  value.cid = std::string([cid UTF8String]);
+  value.point.lat = pos.target.latitude;
+  value.point.lon = pos.target.longitude;
+  value.zoom = pos.zoom;
+  value.azimuth = pos.azimuth;
+  value.tilt = pos.tilt;
+  em.onCommandGetCameraPositionReceived(value);
+}
+
+- (void)commandGetVisibleRegion:(NSString *)cid {
+  auto em = [self eventEmitter];
+  auto cpos = [_mapView.mapWindow.map visibleRegion];
+  
+  YamapViewEventEmitter::OnCommandGetVisibleRegionReceived value;
+  value.cid = std::string([cid UTF8String]);
+  value.bottomLeft.lat = cpos.bottomLeft.latitude;
+  value.bottomLeft.lon = cpos.bottomLeft.longitude;
+  value.bottomRight.lat = cpos.bottomRight.latitude;
+  value.bottomRight.lon = cpos.bottomRight.longitude;
+  value.topLeft.lat = cpos.topLeft.latitude;
+  value.topLeft.lon = cpos.topLeft.longitude;
+  value.topRight.lat = cpos.topRight.latitude;
+  value.topRight.lon = cpos.topRight.longitude;
+  em.onCommandGetVisibleRegionReceived(value);
+}
 
 // Event emitter convenience method
 - (const YamapViewEventEmitter &)eventEmitter

@@ -6,20 +6,19 @@ import {
   type CodegenTypes,
 } from 'react-native';
 
-export interface CameraPositionEvent {
+export interface CameraPosition {
   zoom: CodegenTypes.Double;
   tilt: CodegenTypes.Double;
   azimuth: CodegenTypes.Double;
-  finished?: boolean;
-  reason?: 'application' | 'gesture';
   point: {
     lat: CodegenTypes.Double;
     lon: CodegenTypes.Double;
   };
 }
 
-export interface CameraPositionCallbackEvent extends CameraPositionEvent {
-  id: string;
+export interface CameraPositionEvent extends CameraPosition {
+  reason?: 'application' | 'gesture';
+  finished?: boolean;
 }
 
 export interface MapLoadedEvent {
@@ -34,8 +33,7 @@ export interface MapLoadedEvent {
   fullyLoaded: CodegenTypes.Int32;
 }
 
-export interface VisibleRegionEvent {
-  id: string;
+export interface VisibleRegion {
   bottomLeft: {
     lat: CodegenTypes.Double;
     lon: CodegenTypes.Double;
@@ -54,23 +52,22 @@ export interface VisibleRegionEvent {
   };
 }
 
-export interface WorldToScreenPointsEvent {
-  screenPoints: {
-    x: CodegenTypes.Double;
-    y: CodegenTypes.Double;
-  }[];
-}
-
-export interface ScreenToWorldPointsEvent {
-  worldPoints: {
-    lat: CodegenTypes.Double;
-    lon: CodegenTypes.Double;
-  }[];
-}
-
 export interface MapPointEvent {
   lat: CodegenTypes.Double;
   lon: CodegenTypes.Double;
+}
+
+export interface CameraMoveNativeEvent {
+  cid: string;
+  completed: boolean;
+}
+
+export interface CameraPositionReceivedEvent extends CameraPosition {
+  cid: string;
+}
+
+export interface VisibleRegionReceivedEvent extends VisibleRegion {
+  cid: string;
 }
 
 export interface NativeProps extends ViewProps {
@@ -90,6 +87,67 @@ export interface NativeProps extends ViewProps {
   onMapPress?: CodegenTypes.BubblingEventHandler<MapPointEvent>;
   onMapLongPress?: CodegenTypes.BubblingEventHandler<MapPointEvent>;
   onCameraPositionChange?: CodegenTypes.BubblingEventHandler<CameraPositionEvent>;
+
+  onCommandSetCenterReceived: CodegenTypes.DirectEventHandler<CameraMoveNativeEvent>;
+  onCommandSetBoundsReceived: CodegenTypes.DirectEventHandler<CameraMoveNativeEvent>;
+  onCommandSetZoomReceived: CodegenTypes.DirectEventHandler<CameraMoveNativeEvent>;
+  onCommandGetCameraPositionReceived: CodegenTypes.DirectEventHandler<CameraPositionReceivedEvent>;
+  onCommandGetVisibleRegionReceived: CodegenTypes.DirectEventHandler<VisibleRegionReceivedEvent>;
 }
+
+interface NativeCommands {
+  commandSetCenter: (
+    ref: React.ElementRef<HostComponent<NativeProps>>,
+    cid: string,
+    lat: CodegenTypes.Double,
+    lon: CodegenTypes.Double,
+    zoom: CodegenTypes.Double,
+    azimuth: CodegenTypes.Double,
+    tilt: CodegenTypes.Double,
+    offset: CodegenTypes.Double,
+
+    animationType: CodegenTypes.Int32, // 0 - linear, 1 - smooth
+    animationDuration: CodegenTypes.Double
+  ) => void;
+  commandSetBounds: (
+    ref: React.ElementRef<HostComponent<NativeProps>>,
+    cid: string,
+    bottomLeftPointLat: CodegenTypes.Double,
+    bottomLeftPointLon: CodegenTypes.Double,
+    topRightPointLat: CodegenTypes.Double,
+    topRightPointLon: CodegenTypes.Double,
+    offset: CodegenTypes.Double,
+
+    animationType: CodegenTypes.Int32, // 0 - linear, 1 - smooth
+    animationDuration: CodegenTypes.Double
+  ) => void;
+  commandSetZoom: (
+    ref: React.ElementRef<HostComponent<NativeProps>>,
+    cid: string,
+    zoom: CodegenTypes.Double,
+    offset: CodegenTypes.Double,
+
+    animationType: CodegenTypes.Int32, // 0 - linear, 1 - smooth
+    animationDuration: CodegenTypes.Double
+  ) => void;
+  commandGetCameraPosition: (
+    ref: React.ElementRef<HostComponent<NativeProps>>,
+    cid: string
+  ) => void;
+  commandGetVisibleRegion: (
+    ref: React.ElementRef<HostComponent<NativeProps>>,
+    cid: string
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: [
+    'commandSetCenter',
+    'commandSetBounds',
+    'commandSetZoom',
+    'commandGetCameraPosition',
+    'commandGetVisibleRegion',
+  ],
+});
 
 export default codegenNativeComponent<NativeProps>('YamapView');

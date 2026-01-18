@@ -1,3 +1,5 @@
+export type Animation = { type: 'smooth' | 'linear'; duration: number };
+
 export interface Point {
   lat: number;
   lon: number;
@@ -62,11 +64,10 @@ export type MasstransitVehicles =
 export type MapType = 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
 
 export interface CameraPosition {
+  point: Point;
   zoom: number;
   tilt: number;
   azimuth: number;
-  point: Point;
-  finished: boolean;
 }
 
 export type VisibleRegion = {
@@ -75,8 +76,3 @@ export type VisibleRegion = {
   topLeft: Point;
   topRight: Point;
 };
-
-export enum Animation {
-  SMOOTH,
-  LINEAR,
-}
