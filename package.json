@@ -130,6 +130,9 @@
         "YamapCircleView": {
           "className": "KDSTYamapCircleView"
         },
+        "YamapMarkerView": {
+          "className": "KDSTYamapMarkerView"
+        },
         "YamapPolygonView": {
           "className": "KDSTYamapPolygonView"
         }

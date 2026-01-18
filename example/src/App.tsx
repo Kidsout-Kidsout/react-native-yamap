@@ -12,7 +12,12 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { YaMap, Circle, Polygon } from '@kidsout-kidsout/react-native-yamap';
+import {
+  YaMap,
+  Circle,
+  Polygon,
+  Marker,
+} from '@kidsout-kidsout/react-native-yamap';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   FunctionComponent,
@@ -104,7 +109,7 @@ function AppContent() {
 
 const MapDemo: FunctionComponent<{
   nightMode: boolean;
-  type: 'circle' | 'polygon' | 'marker';
+  type: 'circle' | 'marker' | 'polygon';
   handlePositionChange?: () => void;
   overlay: boolean;
   ref?: Ref<YaMap>;
@@ -112,6 +117,7 @@ const MapDemo: FunctionComponent<{
   const localRef = useRef<YaMap>(null);
   const point = useMemo(() => ({ lat: 55.7522, lon: 37.6156 }), []);
   const rref = useMergedRefs<YaMap>(localRef, ref);
+  const [markerText, setMarkerText] = useState(0);
 
   useEffect(() => {
     sleep(500).then(() => {
@@ -119,8 +125,45 @@ const MapDemo: FunctionComponent<{
     });
   }, [point]);
 
+  useEffect(() => {
+    const i = setInterval(() => {
+      setMarkerText((t) => (t + 1 === 10 ? 0 : t + 1));
+    }, 2000);
+    return () => {
+      clearInterval(i);
+    };
+  }, []);
+
   const inner =
-    type === 'polygon' ? (
+    type === 'marker' ? (
+      <Marker
+        center={point}
+        onPress={() => {
+          // eslint-disable-next-line no-alert
+          alert('Object pressed');
+        }}
+        text={String(markerText)}
+        marker={
+          <View
+            // eslint-disable-next-line react-native/no-inline-styles
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 32 / 2,
+              borderColor: 'green',
+              backgroundColor: 'white',
+              borderWidth: 2,
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
+              display: 'flex',
+              top: 0,
+              left: 0,
+            }}
+          />
+        }
+      />
+    ) : type === 'polygon' ? (
       <Polygon
         points={[
           { lat: point.lat - 0.8, lon: point.lon + 1 },

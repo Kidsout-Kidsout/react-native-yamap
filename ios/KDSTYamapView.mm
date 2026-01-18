@@ -1,6 +1,7 @@
 #import "KDSTYamapView.h"
 
 #import "KDSTYamapCircleView.h"
+#import "KDSTYamapMarkerView.h"
 #import "KDSTYamapPolygonView.h"
 
 #import <react/renderer/components/RNYamapSpec/ComponentDescriptors.h>
@@ -65,6 +66,14 @@ using namespace facebook::react;
     return;
   }
   
+  if ([childComponentView isKindOfClass:[KDSTYamapMarkerView class]]) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      auto *view = (KDSTYamapMarkerView *)childComponentView;
+      [view setCollection:objects];
+    });
+    return;
+  }
+  
   if ([childComponentView isKindOfClass:[KDSTYamapPolygonView class]]) {
     dispatch_async(dispatch_get_main_queue(), ^{
       auto *view = (KDSTYamapPolygonView *)childComponentView;
@@ -78,6 +87,11 @@ using namespace facebook::react;
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
   if ([childComponentView isKindOfClass:[KDSTYamapCircleView class]]) {
+    auto *view = (KDSTYamapCircleView *)childComponentView;
+    [view unmount];
+    return;
+  }
+  if ([childComponentView isKindOfClass:[KDSTYamapMarkerView class]]) {
     auto *view = (KDSTYamapCircleView *)childComponentView;
     [view unmount];
     return;
