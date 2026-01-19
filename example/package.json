@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --list-devices --no-packager",
     "ios": "react-native run-ios --list-devices --no-packager",
     "codegen:ios": "react-native codegen --platform ios --outputPath ./ios",
     "pods": "react-native run-ios --only-pods",
+    "android": "react-native run-android --list-devices --no-packager",
+    "codegen:android": "rm -rf ../android/build && cd android && ./gradlew generateCodegenArtifactsFromSchema",
+    "clean:android": "rm -rf ../android/build && rm -rf android/build && rm -rf android/app/.cxx && rm -rf android/app/build",
     "start": "react-native start",
     "build:android": "react-native build-android --extra-params \"--no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a\"",
     "build:ios": "react-native build-ios --mode Debug"

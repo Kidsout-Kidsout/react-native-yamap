@@ -1,4 +1,4 @@
-package kidsoutyamap.example
+package ru.kidsout.yamap.example
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

@@ -1,4 +1,4 @@
-package kidsoutyamap.example
+package ru.kidsout.yamap.example
 
 import android.app.Application
 import com.facebook.react.PackageList
