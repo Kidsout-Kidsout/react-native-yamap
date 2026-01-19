@@ -11,6 +11,8 @@
 #import <YandexMapsMobile/YMKRequestPoint.h>
 #import <YandexMapsMobile/YMKMapObjectTapListener.h>
 #import <YandexMapsMobile/YMKMapObjectCollection.h>
+#import <YandexMapsMobile/YMKBaseMapObjectCollection.h>
+#import <YandexMapsMobile/YMKClusterizedPlacemarkCollection.h>
 
 #import <YamapUtils.h>
 #import <UIKit/UIKit.h>
@@ -19,7 +21,7 @@
 using namespace facebook::react;
 
 @interface KDSTYamapMarkerView () <RCTYamapMarkerViewViewProtocol, YMKMapObjectTapListener>
-@property (atomic, strong) YMKMapObjectCollection *col;
+@property (atomic, strong) YMKBaseMapObjectCollection *col;
 @property (atomic, strong) YMKPlacemarkMapObject *obj;
 @property (atomic) const YamapMarkerViewProps *rprops;
 @property (atomic, strong) UIView *inner;
@@ -27,10 +29,17 @@ using namespace facebook::react;
 
 @implementation KDSTYamapMarkerView {}
 
-- (void)setCollection:(YMKMapObjectCollection *)collection{
+- (void)setCollection:(YMKBaseMapObjectCollection *)collection{
   self->_col = collection;
   dispatch_async(dispatch_get_main_queue(), ^{
-    self->_obj = [collection addPlacemark];
+    if ([collection isKindOfClass:[YMKMapObjectCollection class]]) {
+      auto col = (YMKMapObjectCollection *)collection;
+      self->_obj = [col addPlacemark];
+    }
+    if ([collection isKindOfClass:[YMKClusterizedPlacemarkCollection class]]) {
+      auto col = (YMKClusterizedPlacemarkCollection *)collection;
+      self->_obj = [col addPlacemark];
+    }
     [self->_obj addTapListenerWithTapListener:self];
     [self updateObject];
     [self updateChild];
@@ -54,6 +63,9 @@ using namespace facebook::react;
     [obj setGeometry:[YMKPoint pointWithLatitude:p->center.lat longitude:p->center.lon]];
     [obj setTextWithText:[NSString stringWithUTF8String:p->text.c_str()]];
     [obj setZIndex:p->lIndex];
+    auto data = [[YamapMarkerUserData alloc] init];
+    data.id = [NSString stringWithUTF8String:p->id.c_str()];
+    [obj setUserData:(id)data];
   });
 }
 
@@ -104,7 +116,10 @@ using namespace facebook::react;
 
 - (BOOL)onMapObjectTapWithMapObject:(YMKMapObject *)mapObject point:(YMKPoint *)point {
   auto emitter = [self eventEmitter];
-  emitter.onPress({});
+  YamapMarkerViewEventEmitter::OnPress value;
+  YamapMarkerUserData *data = (YamapMarkerUserData *)self->_obj.userData;
+  value.id = std::string([data.id UTF8String]);
+  emitter.onPress(value);
 
   return true;
 }

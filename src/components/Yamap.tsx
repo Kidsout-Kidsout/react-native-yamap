@@ -35,11 +35,20 @@ export type YamapRef = {
   }) => Promise<{ completed: boolean }>;
   setBounds: (p: {
     rectangle: { bottomLeft: Point; topRight: Point };
+    minZoom?: number;
+    maxZoom?: number;
     offset?: number;
     animation?: Animation;
   }) => Promise<{ completed: boolean }>;
   setZoom: (p: {
     zoom: number;
+    offset?: number;
+    animation?: Animation;
+  }) => Promise<{ completed: boolean }>;
+  fitPoints: (p: {
+    points: Point[];
+    minZoom?: number;
+    maxZoom?: number;
     offset?: number;
     animation?: Animation;
   }) => Promise<{ completed: boolean }>;
@@ -81,9 +90,47 @@ export const Yamap: FunctionComponent<YamapProps> = ({
 
   const [callbackManager] = useState(() => new CallbacksManager());
 
-  useImperativeHandle(
-    ref,
-    () => ({
+  useImperativeHandle(ref, () => {
+    const setBounds: YamapRef['setBounds'] = async (p) => {
+      const pr = callbackManager.register<CameraMoveNativeEvent>();
+      Commands.commandSetBounds(
+        getRef(),
+        pr.id,
+        p.rectangle.bottomLeft.lat,
+        p.rectangle.bottomLeft.lon,
+        p.rectangle.topRight.lat,
+        p.rectangle.topRight.lon,
+        p.minZoom ?? 0,
+        p.maxZoom ?? 0,
+        p.offset ?? 0,
+        p.animation?.type === 'smooth' ? 1 : 0,
+        p.animation?.duration ?? 0
+      );
+      return pr.promise;
+    };
+
+    const fitPoints: YamapRef['fitPoints'] = async ({ points, ...p }) => {
+      if (!points.length) return { completed: true };
+      let minLat = null;
+      let minLon = null;
+      let maxLat = null;
+      let maxLon = null;
+      for (const point of points) {
+        if (minLat == null || point.lat < minLat) minLat = point.lat;
+        if (minLon == null || point.lon < minLon) minLon = point.lon;
+        if (maxLat == null || point.lat > maxLat) maxLat = point.lat;
+        if (maxLon == null || point.lon > maxLon) maxLon = point.lon;
+      }
+      return setBounds({
+        rectangle: {
+          bottomLeft: { lat: minLat!, lon: minLon! },
+          topRight: { lat: maxLat!, lon: maxLon! },
+        },
+        ...p,
+      });
+    };
+
+    return {
       setCenter: async (p) => {
         const pr = callbackManager.register<CameraMoveNativeEvent>();
         Commands.commandSetCenter(
@@ -100,21 +147,8 @@ export const Yamap: FunctionComponent<YamapProps> = ({
         );
         return pr.promise;
       },
-      setBounds: async (p) => {
-        const pr = callbackManager.register<CameraMoveNativeEvent>();
-        Commands.commandSetBounds(
-          getRef(),
-          pr.id,
-          p.rectangle.bottomLeft.lat,
-          p.rectangle.bottomLeft.lon,
-          p.rectangle.topRight.lat,
-          p.rectangle.topRight.lon,
-          p.offset ?? 0,
-          p.animation?.type === 'smooth' ? 1 : 0,
-          p.animation?.duration ?? 0
-        );
-        return pr.promise;
-      },
+      setBounds,
+      fitPoints,
       setZoom: async (p) => {
         const pr = callbackManager.register<CameraMoveNativeEvent>();
         Commands.commandSetZoom(
@@ -138,13 +172,13 @@ export const Yamap: FunctionComponent<YamapProps> = ({
         Commands.commandGetVisibleRegion(getRef(), pr.id);
         return pr.promise;
       },
-    }),
-    [callbackManager, getRef]
-  );
+    };
+  }, [callbackManager, getRef]);
 
   return (
     <YamapNativeComponent
       ref={nativeRef}
+      {...props}
       nightMode={nightMode}
       mapType={mapType}
       scrollGesturesEnabled={scrollGesturesEnabled}
@@ -165,7 +199,6 @@ export const Yamap: FunctionComponent<YamapProps> = ({
       onCommandGetVisibleRegionReceived={callbackManager.createListener(
         'onCommandGetVisibleRegionReceived'
       )}
-      {...props}
     />
   );
 };

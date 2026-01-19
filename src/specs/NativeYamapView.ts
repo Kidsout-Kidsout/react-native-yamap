@@ -83,10 +83,10 @@ export interface NativeProps extends ViewProps {
   fastTapEnabled?: boolean;
   maxFps?: CodegenTypes.Int32;
 
-  onMapLoaded?: CodegenTypes.BubblingEventHandler<MapLoadedEvent>;
-  onMapPress?: CodegenTypes.BubblingEventHandler<MapPointEvent>;
-  onMapLongPress?: CodegenTypes.BubblingEventHandler<MapPointEvent>;
-  onCameraPositionChange?: CodegenTypes.BubblingEventHandler<CameraPositionEvent>;
+  onMapLoaded?: CodegenTypes.DirectEventHandler<MapLoadedEvent>;
+  onMapPress?: CodegenTypes.DirectEventHandler<MapPointEvent>;
+  onMapLongPress?: CodegenTypes.DirectEventHandler<MapPointEvent>;
+  onCameraPositionChange?: CodegenTypes.DirectEventHandler<CameraPositionEvent>;
 
   onCommandSetCenterReceived: CodegenTypes.DirectEventHandler<CameraMoveNativeEvent>;
   onCommandSetBoundsReceived: CodegenTypes.DirectEventHandler<CameraMoveNativeEvent>;
@@ -116,6 +116,8 @@ interface NativeCommands {
     bottomLeftPointLon: CodegenTypes.Double,
     topRightPointLat: CodegenTypes.Double,
     topRightPointLon: CodegenTypes.Double,
+    minZoom: CodegenTypes.Double,
+    maxZoom: CodegenTypes.Double,
     offset: CodegenTypes.Double,
 
     animationType: CodegenTypes.Int32, // 0 - linear, 1 - smooth

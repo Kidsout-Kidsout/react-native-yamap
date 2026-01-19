@@ -47,7 +47,10 @@ static NSMutableDictionary* kindDict = nil;
 + (UIColor *)uiColorFromColor:(facebook::react::SharedColor)color{
   auto c = (*color).getColorComponents();
   // Yep, that how bad react native is
-  return [UIColor colorWithRed:c.green green:c.blue blue:c.alpha alpha:c.red];
+  return [UIColor colorWithRed:c.red green:c.green blue:c.blue alpha:c.alpha];
 }
 
+@end
+
+@implementation YamapMarkerUserData
 @end

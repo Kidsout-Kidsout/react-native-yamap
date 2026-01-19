@@ -1,7 +1,8 @@
-import { type FunctionComponent } from 'react';
+import { useMemo, type FunctionComponent } from 'react';
 import { type Point } from '../interfaces';
 import YamapCircle from '../specs/NativeYamapCircleView';
 import { processColor } from 'react-native';
+import { usePreventedCallback } from '../utils/preventedCallback';
 
 export interface CircleProps {
   fillColor?: string;
@@ -13,12 +14,26 @@ export interface CircleProps {
   radius: number;
 }
 
-export const Circle: FunctionComponent<CircleProps> = (props) => {
+export const Circle: FunctionComponent<CircleProps> = ({
+  onPress,
+  ...props
+}) => {
+  const handlePress = usePreventedCallback(onPress);
+
+  const styling = useMemo(
+    () => ({
+      fillColor: processColor(props.fillColor) ?? undefined,
+      strokeColor: processColor(props.strokeColor) ?? undefined,
+      strokeWidth: props.strokeWidth,
+    }),
+    [props.fillColor, props.strokeColor, props.strokeWidth]
+  );
+
   return (
     <YamapCircle
       {...props}
-      fillColor={processColor(props.fillColor) ?? undefined}
-      strokeColor={processColor(props.strokeColor) ?? undefined}
+      onPress={handlePress}
+      styling={styling}
       lIndex={props.zIndex ?? 1}
     />
   );

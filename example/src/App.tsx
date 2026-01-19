@@ -19,6 +19,7 @@ import {
   Circle,
   Polygon,
   Marker,
+  Clusters,
 } from '@kidsout-kidsout/react-native-yamap';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -49,11 +50,15 @@ function AppContent() {
   const [renderCount, setRenderCount] = useState(0);
   const nightMode = useColorScheme() === 'dark';
   const [overlay, overlayControl] = useBoolean('Overlay', false);
-  const [clustered, clusteredControl] = useBoolean('Clustered', false);
+  const [clusterColor, clusterColorControl] = useListToggle('Cluster Color', [
+    '#f00',
+    '#0f0',
+  ]);
   const [type, typeControl] = useListToggle('Marker', [
     'circle',
     'polygon',
     'marker',
+    'clusters',
   ]);
   const mapRef = useRef<YamapRef>(null);
   const [position, setPosition] = useState<string>('');
@@ -79,6 +84,7 @@ function AppContent() {
   ) : (
     <MapDemo
       ref={mapRef}
+      clusterColor={clusterColor}
       handlePositionChange={handlePositionChange}
       type={type}
       key={renderCount}
@@ -98,9 +104,24 @@ function AppContent() {
           >
             Rerender
           </Text>
+          <Text
+            style={styles.button}
+            onPress={() => {
+              mapRef.current?.setBounds({
+                rectangle: {
+                  bottomLeft: { lat: 55.7522 - 0.1, lon: 37.6156 - 0.1 },
+                  topRight: { lat: 55.7522 + 0.1, lon: 37.6156 + 0.1 },
+                },
+                offset: 0.2,
+                animation: { duration: 1, type: 'smooth' },
+              });
+            }}
+          >
+            Set bounds
+          </Text>
           {overlayControl}
-          {clusteredControl}
           {typeControl}
+          {type === 'clusters' && clusterColorControl}
         </View>
         {map}
         <Text>State: {position}</Text>
@@ -111,15 +132,52 @@ function AppContent() {
 
 const MapDemo: FunctionComponent<{
   nightMode: boolean;
-  type: 'circle' | 'marker' | 'polygon';
+  type: 'circle' | 'marker' | 'polygon' | 'clusters';
+  clusterColor: string;
   handlePositionChange?: () => void;
   overlay: boolean;
   ref?: Ref<YamapRef>;
-}> = ({ nightMode, type, handlePositionChange, overlay, ref }) => {
+}> = ({
+  nightMode,
+  type,
+  clusterColor,
+  handlePositionChange,
+  overlay,
+  ref,
+}) => {
   const localRef = useRef<YamapRef>(null);
   const point = useMemo(() => ({ lat: 55.7522, lon: 37.6156 }), []);
   const rref = useMergedRefs<YamapRef>(localRef, ref);
   const [markerText, setMarkerText] = useState(0);
+
+  const getMarker = (
+    id: string,
+    p: { lat: number; lon: number },
+    text: number,
+    key?: string | number
+  ) => (
+    <Marker
+      id={id}
+      key={key}
+      center={p}
+      onPress={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // eslint-disable-next-line no-alert
+        alert(`Object ${e.nativeEvent.id} pressed`);
+      }}
+      text={String(text)}
+      marker={<View style={styles.markerStyle} />}
+    />
+  );
+
+  const clusterPoints = useMemo(() => {
+    return [...Array(50).keys()].map((i) => {
+      const offsetLat = (Math.random() - 0.5) * 0.1;
+      const offsetLon = (Math.random() - 0.5) * 0.1;
+      return { id: i, lat: point.lat + offsetLat, lon: point.lon + offsetLon };
+    });
+  }, [point]);
 
   useEffect(() => {
     sleep(500).then(() => {
@@ -137,34 +195,35 @@ const MapDemo: FunctionComponent<{
   }, []);
 
   const inner =
-    type === 'marker' ? (
-      <Marker
-        center={point}
-        onPress={() => {
-          // eslint-disable-next-line no-alert
-          alert('Object pressed');
+    type === 'clusters' ? (
+      <Clusters
+        clusterStyle={{
+          strokeColor: clusterColor,
+          fontSize: 16,
         }}
-        text={String(markerText)}
-        marker={
-          <View
-            // eslint-disable-next-line react-native/no-inline-styles
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 32 / 2,
-              borderColor: 'green',
-              backgroundColor: 'white',
-              borderWidth: 2,
-              position: 'absolute',
-              alignItems: 'center',
-              justifyContent: 'center',
-              display: 'flex',
-              top: 0,
-              left: 0,
-            }}
-          />
-        }
-      />
+        onPress={(e) => {
+          const p = e.nativeEvent.ids.join(', ');
+          // eslint-disable-next-line no-alert
+          alert(`Cluster with points: ${p} pressed`);
+
+          const points = clusterPoints.filter((pt) =>
+            e.nativeEvent.ids.includes(`cluster-point-${pt.id}`)
+          );
+
+          localRef.current?.fitPoints({
+            points,
+            maxZoom: 15,
+            offset: 0.2,
+            animation: { type: 'smooth', duration: 1 },
+          });
+        }}
+      >
+        {clusterPoints.map((p) =>
+          getMarker(`cluster-point-${p.id}`, p, p.id, p.id)
+        )}
+      </Clusters>
+    ) : type === 'marker' ? (
+      getMarker('marker', point, markerText)
     ) : type === 'polygon' ? (
       <Polygon
         points={[
@@ -257,6 +316,20 @@ const styles = StyleSheet.create({
   },
   button: {
     color: BUTTON_COLOR,
+  },
+  markerStyle: {
+    width: 32,
+    height: 32,
+    borderRadius: 32 / 2,
+    borderColor: 'green',
+    backgroundColor: 'white',
+    borderWidth: 2,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    top: 0,
+    left: 0,
   },
 });
 

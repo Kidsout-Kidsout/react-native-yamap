@@ -30,7 +30,9 @@ using namespace facebook::react;
 - (void)setCollection:(YMKMapObjectCollection *)collection{
   self->_col = collection;
   dispatch_async(dispatch_get_main_queue(), ^{
-    self->_obj = [collection addPolygonWithPolygon:[YMKPolygon polygonWithOuterRing:[YMKLinearRing linearRingWithPoints:[NSArray array]] innerRings:[NSArray array]]];
+    auto polygon = [YMKPolygon polygonWithOuterRing:[YMKLinearRing linearRingWithPoints:[NSArray array]] innerRings:[NSArray array]];
+    self->_obj = [collection
+                  addPolygonWithPolygon:polygon];
     [self->_obj addTapListenerWithTapListener:self];
     [self updateObject];
   });
@@ -45,10 +47,10 @@ using namespace facebook::react;
 - (void)updateObject {
   if (_rprops == NULL) return;
   if (_obj == NULL) return;
-
+  
   auto obj = _obj;
   auto p = self->_rprops;
-
+  
   dispatch_async(dispatch_get_main_queue(), ^{
     auto points = [NSMutableArray arrayWithCapacity:p->points.size()];
     for (int i = 0; i < p->points.size(); i++) {
@@ -65,12 +67,13 @@ using namespace facebook::react;
         [points addObject:[YMKPoint pointWithLatitude:po.lat longitude:po.lon]];
       }
       auto ir = [YMKLinearRing linearRingWithPoints:points];
+      [innerRings addObject:ir];
     }
     
     [obj setGeometry: [YMKPolygon polygonWithOuterRing:ring innerRings:innerRings]];
-    [obj setFillColor:[YamapUtils uiColorFromColor:p->fillColor]];
-    [obj setStrokeColor:[YamapUtils uiColorFromColor:p->strokeColor]];
-    [obj setStrokeWidth:p->strokeWidth];
+    [obj setFillColor:[YamapUtils uiColorFromColor:p->styling.fillColor]];
+    [obj setStrokeColor:[YamapUtils uiColorFromColor:p->styling.strokeColor]];
+    [obj setStrokeWidth:p->styling.strokeWidth];
     [obj setZIndex:p->lIndex];
   });
 }
@@ -85,7 +88,7 @@ using namespace facebook::react;
 {
   const auto &n = std::static_pointer_cast<YamapPolygonViewProps const>(props).get();
   _rprops = n;
-
+  
   [self updateObject];
   [super updateProps:props oldProps:oldProps];
 }
@@ -93,7 +96,7 @@ using namespace facebook::react;
 - (BOOL)onMapObjectTapWithMapObject:(YMKMapObject *)mapObject point:(YMKPoint *)point {
   auto emitter = [self eventEmitter];
   emitter.onPress({});
-
+  
   return true;
 }
 

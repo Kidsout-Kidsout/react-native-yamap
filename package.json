@@ -136,6 +136,9 @@
         },
         "YamapPolygonView": {
           "className": "KDSTYamapPolygonView"
+        },
+        "YamapClustersView": {
+          "className": "KDSTYamapClustersView"
         }
       }
     },

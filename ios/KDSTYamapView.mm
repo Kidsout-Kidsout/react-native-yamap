@@ -3,6 +3,7 @@
 #import "KDSTYamapCircleView.h"
 #import "KDSTYamapMarkerView.h"
 #import "KDSTYamapPolygonView.h"
+#import "KDSTYamapClustersView.h"
 
 #import <react/renderer/components/RNYamapSpec/ComponentDescriptors.h>
 #import <react/renderer/components/RNYamapSpec/EventEmitters.h>
@@ -136,6 +137,14 @@ using namespace facebook::react;
     return;
   }
   
+  if ([childComponentView isKindOfClass:[KDSTYamapClustersView class]]) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      auto *view = (KDSTYamapClustersView *)childComponentView;
+      [view setCollection:objects];
+    });
+    return;
+  }
+  
   [super mountChildComponentView:childComponentView index:index];
 }
 
@@ -152,6 +161,11 @@ using namespace facebook::react;
   }
   if ([childComponentView isKindOfClass:[KDSTYamapPolygonView class]]) {
     auto *view = (KDSTYamapPolygonView *)childComponentView;
+    [view unmount];
+    return;
+  }
+  if ([childComponentView isKindOfClass:[KDSTYamapClustersView class]]) {
+    auto *view = (KDSTYamapClustersView *)childComponentView;
     [view unmount];
     return;
   }
@@ -242,14 +256,20 @@ using namespace facebook::react;
   }];
 }
 
-- (void)commandSetBounds:(NSString *)cid bottomLeftPointLat:(double)bottomLeftPointLat bottomLeftPointLon:(double)bottomLeftPointLon topRightPointLat:(double)topRightPointLat topRightPointLon:(double)topRightPointLon offset:(double)offset animationType:(NSInteger)animationType animationDuration:(double)animationDuration {
-  auto cpos = [_mapView.mapWindow.map cameraPosition];
+- (void)commandSetBounds:(NSString *)cid bottomLeftPointLat:(double)bottomLeftPointLat bottomLeftPointLon:(double)bottomLeftPointLon topRightPointLat:(double)topRightPointLat topRightPointLon:(double)topRightPointLon minZoom:(double)minZoom maxZoom:(double)maxZoom offset:(double)offset animationType:(NSInteger)animationType animationDuration:(double)animationDuration {
   YMKPoint *sw = [YMKPoint pointWithLatitude:bottomLeftPointLat longitude:bottomLeftPointLon];
   YMKPoint *ne = [YMKPoint pointWithLatitude:topRightPointLat longitude:topRightPointLon];
   YMKBoundingBox *box = [YMKBoundingBox boundingBoxWithSouthWest:sw northEast:ne];
   YMKCameraPosition *pos = [_mapView.mapWindow.map cameraPositionWithGeometry:[YMKGeometry geometryWithBoundingBox:box]];
+  auto zoom = pos.zoom - offset;
+  if(minZoom != 0 && zoom < minZoom) {
+    zoom = minZoom;
+  }
+  if(maxZoom != 0 && zoom > maxZoom) {
+    zoom = maxZoom;
+  }
   if (offset != 0) {
-    pos = [YMKCameraPosition cameraPositionWithTarget:pos.target zoom:pos.zoom - offset azimuth:pos.azimuth tilt:pos.tilt];
+    pos = [YMKCameraPosition cameraPositionWithTarget:pos.target zoom:zoom azimuth:pos.azimuth tilt:pos.tilt];
   }
   auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
   YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];

@@ -50,9 +50,9 @@ using namespace facebook::react;
   
   dispatch_async(dispatch_get_main_queue(), ^{
     [obj setGeometry: [YMKCircle circleWithCenter:[YMKPoint pointWithLatitude:p->center.lat longitude:p->center.lon] radius:p->radius]];
-    [obj setFillColor:[YamapUtils uiColorFromColor:p->fillColor]];
-    [obj setStrokeColor:[YamapUtils uiColorFromColor:p->strokeColor]];
-    [obj setStrokeWidth:p->strokeWidth];
+    [obj setFillColor:[YamapUtils uiColorFromColor:p->styling.fillColor]];
+    [obj setStrokeColor:[YamapUtils uiColorFromColor:p->styling.strokeColor]];
+    [obj setStrokeWidth:p->styling.strokeWidth];
     [obj setZIndex:p->lIndex];
   });
 }
