@@ -36,6 +36,12 @@ using namespace facebook::react;
   });
 }
 
+- (void)dealloc {
+  if (_obj != NULL) {
+    [self->_obj removeTapListenerWithTapListener:self];
+  }
+}
+
 - (void)updateObject {
   if (_rprops == NULL) return;
   if (_obj == NULL) return;
