@@ -22,6 +22,7 @@ export default defineConfig([
       'react/react-in-jsx-scope': 'off',
       'prettier/prettier': 'error',
       '@typescript-eslint/no-shadow': 'off',
+      'no-console': ['error', { allow: ['info', 'warn', 'error'] }],
     },
   },
   {
