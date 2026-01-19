@@ -13,6 +13,7 @@
 #import <YandexMapsMobile/YMKMapObjectCollection.h>
 #import <YandexMapsMobile/YMKBaseMapObjectCollection.h>
 #import <YandexMapsMobile/YMKClusterizedPlacemarkCollection.h>
+#import <YandexMapsMobile/YMKTextStyle.h>
 
 #import <YamapUtils.h>
 #import <UIKit/UIKit.h>
@@ -61,7 +62,8 @@ using namespace facebook::react;
 
   dispatch_async(dispatch_get_main_queue(), ^{
     [obj setGeometry:[YMKPoint pointWithLatitude:p->center.lat longitude:p->center.lon]];
-    [obj setTextWithText:[NSString stringWithUTF8String:p->text.c_str()]];
+    auto style = [YMKTextStyle textStyleWithSize:p->styling.fontSize color:[YamapUtils uiColorFromColor:p->styling.fontColor] outlineWidth:0 outlineColor:UIColor.clearColor placement:YMKTextStylePlacementCenter offset:0 offsetFromIcon:false textOptional:false];
+    [obj setTextWithText:[NSString stringWithUTF8String:p->text.c_str()] style:style];
     [obj setZIndex:p->lIndex];
     auto data = [[YamapMarkerUserData alloc] init];
     data.id = [NSString stringWithUTF8String:p->id.c_str()];

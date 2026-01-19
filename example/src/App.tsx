@@ -197,6 +197,7 @@ const MapDemo: FunctionComponent<{
   const inner =
     type === 'clusters' ? (
       <Clusters
+        // eslint-disable-next-line react-native/no-inline-styles
         clusterStyle={{
           strokeColor: clusterColor,
           fontSize: 16,
@@ -255,6 +256,7 @@ const MapDemo: FunctionComponent<{
     );
 
   const overlayElement = overlay ? (
+    // eslint-disable-next-line react-native/no-inline-styles
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text
         // eslint-disable-next-line react-native/no-inline-styles
