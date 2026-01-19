@@ -146,7 +146,7 @@ using namespace facebook::react;
     return;
   }
   if ([childComponentView isKindOfClass:[KDSTYamapMarkerView class]]) {
-    auto *view = (KDSTYamapCircleView *)childComponentView;
+    auto *view = (KDSTYamapMarkerView *)childComponentView;
     [view unmount];
     return;
   }
