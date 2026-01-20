@@ -16,7 +16,6 @@ import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 
 class MapGeocodeClient() {
-
   private val searchManager: SearchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
   private val searchOptions = SearchOptions()
 
