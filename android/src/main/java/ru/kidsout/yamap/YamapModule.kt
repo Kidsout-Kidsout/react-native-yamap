@@ -19,7 +19,6 @@ class YamapModule(reactContext: ReactApplicationContext) :
   }
 
   override fun init(apiKey: String?, promise: Promise?) {
-    Log.i("YamapModule", "sms1 INITED with key ${apiKey}")
     MapKitFactory.setApiKey(apiKey!!)
     promise?.resolve(null)
   }

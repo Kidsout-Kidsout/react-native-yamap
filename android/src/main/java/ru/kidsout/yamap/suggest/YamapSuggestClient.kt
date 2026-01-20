@@ -7,7 +7,7 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 
-class SuggestClient() {
+class YamapSuggestClient() {
   private val searchManager: SearchManager by lazy {
     SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
   }
@@ -30,7 +30,7 @@ class SuggestClient() {
   private fun suggestHandler(
     text: String,
     options: SuggestOptions,
-    onSuccess: (List<MapSuggestItem>) -> Unit,
+    onSuccess: (List<YamapMapSuggestResult>) -> Unit,
     onError: (Throwable) -> Unit
   ) {
     if (suggestSession == null) {
@@ -43,16 +43,16 @@ class SuggestClient() {
       options,
       object : SuggestSession.SuggestListener {
         override fun onResponse(suggestResponse: SuggestResponse) {
-          val result: MutableList<MapSuggestItem> = ArrayList(suggestResponse.items.size)
+          val result: MutableList<YamapMapSuggestResult> = ArrayList(suggestResponse.items.size)
           for (i in suggestResponse.items.indices) {
               val rawSuggest = suggestResponse.items[i]
-              val suggest = MapSuggestItem()
-              suggest.searchText = rawSuggest.searchText
-              suggest.title = rawSuggest.title.text
-              if (rawSuggest.subtitle != null) {
-                  suggest.subtitle = rawSuggest.subtitle!!.text
-              }
-              suggest.uri = rawSuggest.uri
+              val suggest = YamapMapSuggestResult(
+                rawSuggest.title.text,
+                rawSuggest.subtitle?.text,
+                rawSuggest.uri,
+                rawSuggest.searchText,
+               rawSuggest.displayText ?: rawSuggest.title.text
+              )
               result.add(suggest)
           }
           onSuccess.invoke(result)
@@ -67,7 +67,7 @@ class SuggestClient() {
 
   fun suggest(
     text: String,
-    onSuccess: (List<MapSuggestItem>) -> Unit,
+    onSuccess: (List<YamapMapSuggestResult>) -> Unit,
     onError: (Throwable) -> Unit
   ) {
     suggestHandler(text, suggestOptions, onSuccess, onError)
@@ -76,7 +76,7 @@ class SuggestClient() {
   fun suggest(
     text: String,
     options: ReadableMap,
-    onSuccess: (List<MapSuggestItem>) -> Unit,
+    onSuccess: (List<YamapMapSuggestResult>) -> Unit,
     onError: (Throwable) -> Unit
   ) {
     val userPositionKey = "userPosition"

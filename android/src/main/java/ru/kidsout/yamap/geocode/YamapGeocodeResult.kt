@@ -1,29 +1,40 @@
 package ru.kidsout.yamap.geocode
 
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
+import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Address
 
-class ArgsHelper {
-  fun createResultItemFrom(data: MapGeocodeItem): WritableMap {
+data class YamapGeocodeResult(
+  var name: String,
+  var descriptionText: String,
+  var formattedAddress: String,
+  var coords: Point,
+  var box: BoundingBox,
+  var components: List<Address.Component>,
+) {
+  fun toMap(): ReadableMap {
     val result = Arguments.createMap()
     val components = Arguments.createArray()
-    result.putString("name", data.name)
-    result.putString("descriptionText", data.descriptionText)
-    result.putString("formattedAddress", data.formattedAddress)
-    result.putMap("coords", data.coords?.let { pointToMap(it) })
-    result.putMap("upperCorner", data.upperCorner?.let { pointToMap(it) })
-    result.putMap("lowerCorner", data.lowerCorner?.let { pointToMap(it) })
+    result.putString("name", name)
+    result.putString("descriptionText", descriptionText)
+    result.putString("formattedAddress", formattedAddress)
+    result.putMap("coords", pointToMap(coords))
+    result.putMap("upperCorner", pointToMap(box.northEast))
+    result.putMap("lowerCorner", pointToMap(box.southWest))
 
-    for (component in data.components ?: listOf()) {
+    for (component in this.components) {
       val item = Arguments.createMap()
-      val kinds = Arguments.createArray()
       item.putString("name", component.name)
+
+      val kinds = Arguments.createArray()
       for (kind in component.kinds) {
         kinds.pushString(getKindString(kind))
       }
       item.putArray("kinds", kinds)
+
       components.pushMap(item)
     }
 

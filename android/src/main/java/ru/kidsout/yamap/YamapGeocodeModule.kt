@@ -6,15 +6,13 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.yandex.mapkit.geometry.Point
-import ru.kidsout.yamap.geocode.ArgsHelper
-import ru.kidsout.yamap.geocode.MapGeocodeClient
-import ru.kidsout.yamap.geocode.MapGeocodeItem
+import ru.kidsout.yamap.geocode.YamapGeocodeClient
+import ru.kidsout.yamap.geocode.YamapGeocodeResult
 
 @ReactModule(name = YamapGeocodeModule.NAME)
 class YamapGeocodeModule(reactContext: ReactApplicationContext) :
   NativeYamapGeocodeSpec(reactContext) {
-  private val argsHelper = ArgsHelper()
-  private var geocodeClient: MapGeocodeClient = MapGeocodeClient()
+  private var geocodeClient: YamapGeocodeClient = YamapGeocodeClient()
 
   override fun getName(): String {
     return NAME
@@ -70,10 +68,10 @@ class YamapGeocodeModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  private fun createResolveCallback(promise: Promise): (MapGeocodeItem) -> Unit {
+  private fun createResolveCallback(promise: Promise): (YamapGeocodeResult) -> Unit {
     return { arg ->
       try {
-        promise.resolve(argsHelper.createResultItemFrom(arg))
+        promise.resolve(arg.toMap())
       } catch (error: Exception) {
         promise.reject(ERR_GEOCODE_FAILED, error)
       }

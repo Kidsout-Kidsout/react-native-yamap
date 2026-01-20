@@ -5,17 +5,14 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.facebook.react.module.annotations.ReactModule
-import ru.kidsout.yamap.NativeYamapSuggestsSpec
-import ru.kidsout.yamap.suggest.ArgsHelper
-import ru.kidsout.yamap.suggest.MapSuggestItem
-import ru.kidsout.yamap.suggest.SuggestClient
+import ru.kidsout.yamap.suggest.YamapMapSuggestResult
+import ru.kidsout.yamap.suggest.YamapSuggestClient
 
 @ReactModule(name = YamapSuggestsModule.NAME)
 class YamapSuggestsModule(reactContext: ReactApplicationContext) :
   NativeYamapSuggestsSpec(reactContext) {
 
-  private var suggestClient = SuggestClient()
-  private val argsHelper = ArgsHelper()
+  private var suggestClient = YamapSuggestClient()
 
   override fun getName(): String = NAME
 
@@ -67,10 +64,10 @@ class YamapSuggestsModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  private fun createResolveCallback(promise: Promise): (List<MapSuggestItem>) -> Unit {
+  private fun createResolveCallback(promise: Promise): (List<YamapMapSuggestResult>) -> Unit {
     return { result ->
       try {
-        promise.resolve(argsHelper.createSuggestsMapFrom(result))
+        promise.resolve(result.map { it.toMap() })
       } catch (error: Exception) {
         promise.reject(ERR_SUGGEST_FAILED, error)
       }

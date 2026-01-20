@@ -15,7 +15,7 @@ import com.yandex.mapkit.search.Session
 import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 
-class MapGeocodeClient() {
+class YamapGeocodeClient() {
   private val searchManager: SearchManager by lazy {
     SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
   }
@@ -32,7 +32,7 @@ class MapGeocodeClient() {
     searchOptions.disableSpellingCorrection = true
   }
 
-  fun geocode(text: String, onSuccess: (MapGeocodeItem) -> Unit, onError: (Throwable) -> Unit) {
+  fun geocode(text: String, onSuccess: (YamapGeocodeResult) -> Unit, onError: (Throwable) -> Unit) {
     searchManager.submit(
       text,
       Geometry.fromBoundingBox(defaultGeometry),
@@ -48,7 +48,7 @@ class MapGeocodeClient() {
     )
   }
 
-  fun geocodeUri(uri: String, onSuccess: (MapGeocodeItem) -> Unit, onError: (Throwable) -> Unit) {
+  fun geocodeUri(uri: String, onSuccess: (YamapGeocodeResult) -> Unit, onError: (Throwable) -> Unit) {
     searchManager.resolveURI(
       uri,
       searchOptions,
@@ -64,7 +64,7 @@ class MapGeocodeClient() {
     )
   }
 
-  fun geocodePoint(point: Point, onSuccess: (MapGeocodeItem) -> Unit, onError: (Throwable) -> Unit) {
+  fun geocodePoint(point: Point, onSuccess: (YamapGeocodeResult) -> Unit, onError: (Throwable) -> Unit) {
     searchManager.submit(
       point,
       0,
@@ -81,7 +81,7 @@ class MapGeocodeClient() {
     )
   }
 
-  private fun extract(response: Response): MapGeocodeItem? {
+  private fun extract(response: Response): YamapGeocodeResult? {
     var geoObject: GeoObject? = null
     var point: Point? = null
     var address: Address? = null
@@ -115,14 +115,13 @@ class MapGeocodeClient() {
 
     if (geoObject == null) return null
 
-    return MapGeocodeItem().apply {
-      name = geoObject.name
-      descriptionText = geoObject.descriptionText
-      formattedAddress = address?.formattedAddress
-      coords = point
-      upperCorner = box?.northEast
-      lowerCorner = box?.southWest
-      components = address?.components
-    }
+    return YamapGeocodeResult(
+      geoObject.name ?: "",
+      geoObject.descriptionText ?: "",
+      address?.formattedAddress ?: "",
+      point!!,
+      box!!,
+      address?.components!!
+    )
   }
 }
