@@ -1,7 +1,6 @@
 package ru.kidsout.yamap
 
 import com.facebook.react.BaseReactPackage
-import com.facebook.react.bridge.ModuleSpec
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
@@ -23,6 +22,8 @@ class YamapPackage : BaseReactPackage() {
       YamapModule.NAME -> YamapModule(reactContext)
       YamapGeocodeModule.NAME -> YamapGeocodeModule(reactContext)
       YamapSuggestsModule.NAME -> YamapSuggestsModule(reactContext)
+      YamapViewManager.NAME -> YamapViewManager(reactContext)
+      YamapCircleViewManager.NAME -> YamapCircleViewManager(reactContext)
       else -> null
     }
   }

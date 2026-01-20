@@ -19,8 +19,12 @@ class YamapModule(reactContext: ReactApplicationContext) :
   }
 
   override fun init(apiKey: String?, promise: Promise?) {
-    MapKitFactory.setApiKey(apiKey!!)
-    promise?.resolve(null)
+    reactApplicationContext.currentActivity!!.runOnUiThread {
+      MapKitFactory.setApiKey(apiKey!!)
+      MapKitFactory.initialize(reactApplicationContext)
+      MapKitFactory.getInstance().onStart()
+      promise?.resolve(null)
+    }
   }
 
   override fun getLocale(promise: Promise?) {

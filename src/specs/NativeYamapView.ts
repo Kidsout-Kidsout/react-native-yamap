@@ -23,14 +23,14 @@ export interface CameraPositionEvent extends CameraPosition {
 
 export interface MapLoadedEvent {
   renderObjectCount: CodegenTypes.Int32;
-  curZoomModelsLoaded: CodegenTypes.Int32;
-  curZoomPlacemarksLoaded: CodegenTypes.Int32;
-  curZoomLabelsLoaded: CodegenTypes.Int32;
-  curZoomGeometryLoaded: CodegenTypes.Int32;
+  curZoomModelsLoaded: CodegenTypes.Double;
+  curZoomPlacemarksLoaded: CodegenTypes.Double;
+  curZoomLabelsLoaded: CodegenTypes.Double;
+  curZoomGeometryLoaded: CodegenTypes.Double;
   tileMemoryUsage: CodegenTypes.Int32;
-  delayedGeometryLoaded: CodegenTypes.Int32;
-  fullyAppeared: CodegenTypes.Int32;
-  fullyLoaded: CodegenTypes.Int32;
+  delayedGeometryLoaded: CodegenTypes.Double;
+  fullyAppeared: CodegenTypes.Double;
+  fullyLoaded: CodegenTypes.Double;
 }
 
 export interface VisibleRegion {

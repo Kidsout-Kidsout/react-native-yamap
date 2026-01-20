@@ -4,27 +4,27 @@ import com.facebook.react.uimanager.events.Event
 
 class YamapViewOnMapLoadedEvent : Event<YamapViewOnMapLoadedEvent> {
   var renderObjectCount: Int
-  var curZoomModelsLoaded: Int
-  var curZoomPlacemarksLoaded: Int
-  var curZoomLabelsLoaded: Int
-  var curZoomGeometryLoaded: Int
+  var curZoomModelsLoaded: Double
+  var curZoomPlacemarksLoaded: Double
+  var curZoomLabelsLoaded: Double
+  var curZoomGeometryLoaded: Double
   var tileMemoryUsage: Int
-  var delayedGeometryLoaded: Int
-  var fullyAppeared: Int
-  var fullyLoaded: Int
+  var delayedGeometryLoaded: Double
+  var fullyAppeared: Double
+  var fullyLoaded: Double
 
   constructor(
     surfaceId: Int,
     viewTag: Int,
     renderObjectCount: Int,
-    curZoomModelsLoaded: Int,
-    curZoomPlacemarksLoaded: Int,
-    curZoomLabelsLoaded: Int,
-    curZoomGeometryLoaded: Int,
+    curZoomModelsLoaded: Double,
+    curZoomPlacemarksLoaded: Double,
+    curZoomLabelsLoaded: Double,
+    curZoomGeometryLoaded: Double,
     tileMemoryUsage: Int,
-    delayedGeometryLoaded: Int,
-    fullyAppeared: Int,
-    fullyLoaded: Int
+    delayedGeometryLoaded: Double,
+    fullyAppeared: Double,
+    fullyLoaded: Double
   ) : super(surfaceId, viewTag) {
     this.renderObjectCount = renderObjectCount
     this.curZoomModelsLoaded = curZoomModelsLoaded

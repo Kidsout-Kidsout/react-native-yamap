@@ -54,6 +54,13 @@ function AppContent() {
     '#f00',
     '#0f0',
   ]);
+  const [mapType, mapTypeControl] = useListToggle('Map Type', [
+    'none',
+    'raster',
+    'vector',
+    'satellite',
+    'hybrid',
+  ]);
   const [type, typeControl] = useListToggle('Marker', [
     'circle',
     'polygon',
@@ -83,6 +90,7 @@ function AppContent() {
     <Text>Loading map...</Text>
   ) : (
     <MapDemo
+      mapType={mapType}
       ref={mapRef}
       clusterColor={clusterColor}
       handlePositionChange={handlePositionChange}
@@ -120,6 +128,7 @@ function AppContent() {
             Set bounds
           </Text>
           {overlayControl}
+          {mapTypeControl}
           {typeControl}
           {type === 'clusters' && clusterColorControl}
         </View>
@@ -131,6 +140,7 @@ function AppContent() {
 }
 
 const MapDemo: FunctionComponent<{
+  mapType: 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
   nightMode: boolean;
   type: 'circle' | 'marker' | 'polygon' | 'clusters';
   clusterColor: string;
@@ -138,6 +148,7 @@ const MapDemo: FunctionComponent<{
   overlay: boolean;
   ref?: Ref<YamapRef>;
 }> = ({
+  mapType,
   nightMode,
   type,
   clusterColor,
@@ -279,7 +290,7 @@ const MapDemo: FunctionComponent<{
       ref={rref}
       onCameraPositionChange={handlePositionChange}
       style={styles.map}
-      mapType="raster"
+      mapType={mapType}
       nightMode={nightMode}
       rotateGesturesEnabled={false}
     >

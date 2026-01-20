@@ -44,7 +44,7 @@ class YamapCircleView: View, YamapCircleViewManagerInterface<YamapCircleView> {
 
   fun setCollection(col: MapObjectCollection) {
     this.col = col
-    this.obj = col.addCircle(Circle())
+    this.obj = col.addCircle(Circle(Point(0.0, 0.0), 0.0f))
     obj!!.addTapListener { _, _ ->
       val dispatcher = getEventEmitter()
       val surfaceId = getSurfaceId()

@@ -11,4 +11,11 @@ class YamapViewProps {
   var rotateGesturesEnabled = false
   var fastTapEnabled = false
   var maxFps = 60
+
+  fun getEffectiveMapType(): MapType {
+    return when (mapType) {
+      MapType.NONE -> MapType.MAP
+      else -> mapType
+    }
+  }
 }

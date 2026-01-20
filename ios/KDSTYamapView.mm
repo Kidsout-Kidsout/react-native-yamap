@@ -58,7 +58,7 @@ using namespace facebook::react;
   const auto initial = oldProps == NULL;
   const auto &o = *std::static_pointer_cast<YamapViewProps const>(oldProps);
   const auto &n = *std::static_pointer_cast<YamapViewProps const>(props);
-  
+
   if (initial || n.nightMode != o.nightMode) {
     [_mapView.mapWindow.map setNightModeEnabled:n.nightMode];
   }
@@ -78,7 +78,7 @@ using namespace facebook::react;
         break;
       case facebook::react::YamapViewMapType::None:
       default:
-        [_mapView.mapWindow.map setMapType:YMKMapTypeNone];
+        [_mapView.mapWindow.map setMapType:YMKMapTypeMap];
         break;
     }
   }
@@ -100,7 +100,7 @@ using namespace facebook::react;
   if (initial || n.maxFps != o.maxFps ) {
     [_mapView.mapWindow setMaxFpsWithFps:n.maxFps];
   }
-  
+
   [super updateProps:props oldProps:oldProps];
 }
 
@@ -112,7 +112,7 @@ using namespace facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
   auto objects = _mapView.mapWindow.map.mapObjects;
-  
+
   if ([childComponentView isKindOfClass:[KDSTYamapCircleView class]]) {
     dispatch_async(dispatch_get_main_queue(), ^{
       auto *view = (KDSTYamapCircleView *)childComponentView;
@@ -120,7 +120,7 @@ using namespace facebook::react;
     });
     return;
   }
-  
+
   if ([childComponentView isKindOfClass:[KDSTYamapMarkerView class]]) {
     dispatch_async(dispatch_get_main_queue(), ^{
       auto *view = (KDSTYamapMarkerView *)childComponentView;
@@ -128,7 +128,7 @@ using namespace facebook::react;
     });
     return;
   }
-  
+
   if ([childComponentView isKindOfClass:[KDSTYamapPolygonView class]]) {
     dispatch_async(dispatch_get_main_queue(), ^{
       auto *view = (KDSTYamapPolygonView *)childComponentView;
@@ -136,7 +136,7 @@ using namespace facebook::react;
     });
     return;
   }
-  
+
   if ([childComponentView isKindOfClass:[KDSTYamapClustersView class]]) {
     dispatch_async(dispatch_get_main_queue(), ^{
       auto *view = (KDSTYamapClustersView *)childComponentView;
@@ -144,7 +144,7 @@ using namespace facebook::react;
     });
     return;
   }
-  
+
   [super mountChildComponentView:childComponentView index:index];
 }
 
@@ -169,7 +169,7 @@ using namespace facebook::react;
     [view unmount];
     return;
   }
-  
+
   [super unmountChildComponentView:childComponentView index:index];
 }
 
@@ -245,10 +245,10 @@ using namespace facebook::react;
   YMKCameraPosition *pos = [YMKCameraPosition cameraPositionWithTarget:point zoom:nzoom azimuth:nazimuth tilt:ntilt];
   auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
   YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
-  
+
   [_mapView.mapWindow.map moveWithCameraPosition:pos animation:anim cameraCallback:^(BOOL completed) {
     auto em = [self eventEmitter];
-    
+
     YamapViewEventEmitter::OnCommandSetCenterReceived value;
     value.cid = std::string([cid UTF8String]);
     value.completed = completed;
@@ -273,10 +273,10 @@ using namespace facebook::react;
   }
   auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
   YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
-  
+
   [_mapView.mapWindow.map moveWithCameraPosition:pos animation:anim cameraCallback:^(BOOL completed) {
     auto em = [self eventEmitter];
-    
+
     YamapViewEventEmitter::OnCommandSetBoundsReceived value;
     value.cid = std::string([cid UTF8String]);
     value.completed = completed;
@@ -289,10 +289,10 @@ using namespace facebook::react;
   YMKCameraPosition *pos = [YMKCameraPosition cameraPositionWithTarget:cpos.target zoom:zoom - offset azimuth:cpos.azimuth tilt:cpos.tilt];
   auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
   YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
-  
+
   [_mapView.mapWindow.map moveWithCameraPosition:pos animation:anim cameraCallback:^(BOOL completed) {
     auto em = [self eventEmitter];
-    
+
     YamapViewEventEmitter::OnCommandSetZoomReceived value;
     value.cid = std::string([cid UTF8String]);
     value.completed = completed;
@@ -303,7 +303,7 @@ using namespace facebook::react;
 - (void)commandGetCameraPosition:(NSString *)cid {
   auto em = [self eventEmitter];
   auto pos = [_mapView.mapWindow.map cameraPosition];
-  
+
   YamapViewEventEmitter::OnCommandGetCameraPositionReceived value;
   value.cid = std::string([cid UTF8String]);
   value.point.lat = pos.target.latitude;
@@ -317,7 +317,7 @@ using namespace facebook::react;
 - (void)commandGetVisibleRegion:(NSString *)cid {
   auto em = [self eventEmitter];
   auto cpos = [_mapView.mapWindow.map visibleRegion];
-  
+
   YamapViewEventEmitter::OnCommandGetVisibleRegionReceived value;
   value.cid = std::string([cid UTF8String]);
   value.bottomLeft.lat = cpos.bottomLeft.latitude;

@@ -1,7 +1,9 @@
 package ru.kidsout.yamap
 
+import android.view.View
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.uimanager.IViewGroupManager
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewManagerDelegate
@@ -12,7 +14,7 @@ import ru.kidsout.yamap.types.YamapViewProps
 import ru.kidsout.yamap.utils.BubblingDescriptor
 
 @ReactModule(name = YamapViewManager.NAME)
-class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<YamapView>(), YamapViewManagerInterface<YamapView> {
+class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<YamapView>(), IViewGroupManager<YamapView>, YamapViewManagerInterface<YamapView> {
   private var props = YamapViewProps()
   private val delegate: YamapViewManagerDelegate<YamapView, YamapViewManager> =
     YamapViewManagerDelegate(this)
@@ -46,6 +48,26 @@ class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<Yam
   }
   override fun setMaxFps(view: YamapView?, value: Int) {
     view?.setMaxFps(view, value)
+  }
+
+  override fun addView(parent: YamapView, child: View, index: Int) {
+    return parent.addSubview(child, index)
+  }
+
+  override fun removeViewAt(parent: YamapView, index: Int) {
+    return parent.removeSubviewAt(index)
+  }
+
+  override fun getChildAt(parent: YamapView, index: Int): View? {
+    return parent.getSubviewAt(index)
+  }
+
+  override fun getChildCount(parent: YamapView): Int {
+    return parent.getSubviewCount()
+  }
+
+  override fun needsCustomLayoutForChildren(): Boolean {
+    return false
   }
 
   override fun commandSetCenter(view: YamapView?, cid: String?, lat: Double, lon: Double, zoom: Double, azimuth: Double, tilt: Double, offset: Double, animationType: Int, animationDuration: Double) {

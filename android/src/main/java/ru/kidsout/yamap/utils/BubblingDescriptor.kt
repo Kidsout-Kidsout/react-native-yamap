@@ -2,8 +2,8 @@ package ru.kidsout.yamap.utils
 
 class BubblingDescriptor {
   companion object {
-    fun create(event: String) {
-      mapOf(
+    fun create(event: String): Map<String, Map<String, String>> {
+      return mapOf(
         "phasedRegistrationNames" to
             mapOf(
                 "bubbled" to event,
