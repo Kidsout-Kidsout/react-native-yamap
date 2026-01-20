@@ -13,10 +13,22 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.InputListener
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapLoadedListener
 import com.yandex.mapkit.map.MapType
 import com.yandex.mapkit.mapview.MapView
 import ru.kidsout.yamap.events.YamapViewOnMapLoadedEvent
+import ru.kidsout.yamap.events.YamapViewOnMapPressEvent
+import ru.kidsout.yamap.events.YamapViewOnMapLongPressEvent
+import ru.kidsout.yamap.events.YamapViewOnCameraPositionChangeEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandSetCenterReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandSetBoundsReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandSetZoomReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandGetCameraPositionReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandGetVisibleRegionReceivedEvent
 import ru.kidsout.yamap.types.YamapViewProps
 
 class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
@@ -123,7 +135,14 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
   override fun commandSetCenter(view: YamapView?, cid: String?, lat: Double, lon: Double, zoom: Double, azimuth: Double, tilt: Double, offset: Double, animationType: Int, animationDuration: Double) {
     val cp = CameraPosition(Point(lat, lon), zoom.toFloat(), azimuth.toFloat(), tilt.toFloat())
     val an = Animation(if (animationType == 1) Animation.Type.SMOOTH else Animation.Type.LINEAR, animationDuration.toFloat())
-    map.mapWindow.map.move(cp, an) { completed -> TODO("Not yet implemented") }
+    map.mapWindow.map.move(cp, an) { completed ->
+      getEventEmitter().dispatchEvent(YamapViewOnCommandSetCenterReceivedEvent(
+        getSurfaceId(),
+        id,
+        cid ?: "",
+        completed
+      ))
+    }
   }
 
   override fun commandSetBounds(view: YamapView?, cid: String?, bottomLeftPointLat: Double, bottomLeftPointLon: Double, topRightPointLat: Double, topRightPointLon: Double, minZoom: Double, maxZoom: Double, offset: Double, animationType: Int, animationDuration: Double) {
@@ -134,24 +153,54 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
 
     val cp = map.mapWindow.map.cameraPosition(Geometry.fromBoundingBox(bb))
     val an = Animation(if (animationType == 1) Animation.Type.SMOOTH else Animation.Type.LINEAR, animationDuration.toFloat())
-    map.mapWindow.map.move(cp, an) { completed -> TODO("Not yet implemented") }
+    map.mapWindow.map.move(cp, an) { completed ->
+      getEventEmitter().dispatchEvent(YamapViewOnCommandSetBoundsReceivedEvent(
+        getSurfaceId(),
+        id,
+        cid ?: "",
+        completed
+      ))
+    }
   }
 
   override fun commandSetZoom(view: YamapView?, cid: String?, zoom: Double, offset: Double, animationType: Int, animationDuration: Double) {
     val ccp = map.mapWindow.map.cameraPosition
     val cp = CameraPosition(ccp.target, zoom.toFloat(), ccp.azimuth, ccp.tilt)
     val an = Animation(if (animationType == 1) Animation.Type.SMOOTH else Animation.Type.LINEAR, animationDuration.toFloat())
-    map.mapWindow.map.move(cp, an) { completed -> TODO("Not yet implemented") }
+    map.mapWindow.map.move(cp, an) { completed ->
+      getEventEmitter().dispatchEvent(YamapViewOnCommandSetZoomReceivedEvent(
+        getSurfaceId(),
+        id,
+        cid ?: "",
+        completed
+      ))
+    }
   }
 
   override fun commandGetCameraPosition(view: YamapView?, cid: String?) {
     val cp = map.mapWindow.map.cameraPosition
-    TODO()
+    getEventEmitter().dispatchEvent(YamapViewOnCommandGetCameraPositionReceivedEvent(
+      getSurfaceId(),
+      id,
+      cid ?: "",
+      cp.zoom.toDouble(),
+      cp.tilt.toDouble(),
+      cp.azimuth.toDouble(),
+      cp.target
+    ))
   }
 
   override fun commandGetVisibleRegion(view: YamapView?, cid: String?) {
     val vr = map.mapWindow.map.visibleRegion
-    TODO()
+    getEventEmitter().dispatchEvent(YamapViewOnCommandGetVisibleRegionReceivedEvent(
+      getSurfaceId(),
+      id,
+      cid ?: "",
+      vr.bottomLeft,
+      vr.bottomRight,
+      vr.topLeft,
+      vr.topRight
+    ))
   }
 
   fun update() {
@@ -166,25 +215,54 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
   }
 
   private fun configureComponent() {
-    map.mapWindow.map.setMapLoadedListener { stats ->
-      getEventEmitter().dispatchEvent(YamapViewOnMapLoadedEvent(
-        getSurfaceId(),
-        id,
-        stats.renderObjectCount,
-        stats.curZoomModelsLoaded.toDouble(),
-        stats.curZoomPlacemarksLoaded.toDouble(),
-        stats.curZoomLabelsLoaded.toDouble(),
-        stats.curZoomGeometryLoaded.toDouble(),
-        stats.tileMemoryUsage,
-        stats.delayedGeometryLoaded.toDouble(),
-        stats.fullyAppeared.toDouble(),
-        stats.fullyLoaded.toDouble()
-      ))
-    }
+    map.mapWindow.map.setMapLoadedListener(mapLoadedListener)
+
+    map.mapWindow.map.addInputListener(inputListener)
+
+    map.mapWindow.map.addCameraListener(cameraListener)
 
     this.addView(map)
     map.onStart()
     this.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     this.map.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+  }
+
+  private val mapLoadedListener = MapLoadedListener { stats ->
+    getEventEmitter().dispatchEvent(YamapViewOnMapLoadedEvent(
+      getSurfaceId(),
+      id,
+      stats.renderObjectCount,
+      stats.curZoomModelsLoaded.toDouble(),
+      stats.curZoomPlacemarksLoaded.toDouble(),
+      stats.curZoomLabelsLoaded.toDouble(),
+      stats.curZoomGeometryLoaded.toDouble(),
+      stats.tileMemoryUsage,
+      stats.delayedGeometryLoaded.toDouble(),
+      stats.fullyAppeared.toDouble(),
+      stats.fullyLoaded.toDouble()
+    ))
+  }
+
+  private val inputListener = object: InputListener {
+    override fun onMapTap(map: Map, point: Point) {
+      getEventEmitter().dispatchEvent(YamapViewOnMapPressEvent(getSurfaceId(), id, point))
+    }
+
+    override fun onMapLongTap(map: Map, point: Point) {
+      getEventEmitter().dispatchEvent(YamapViewOnMapLongPressEvent(getSurfaceId(), id, point))
+    }
+  }
+
+  private val cameraListener = CameraListener { _, position, reason, finished ->
+    getEventEmitter().dispatchEvent(YamapViewOnCameraPositionChangeEvent(
+      getSurfaceId(),
+      id,
+      position.zoom.toDouble(),
+      position.tilt.toDouble(),
+      position.azimuth.toDouble(),
+      position.target,
+      reason,
+      finished
+    ))
   }
 }

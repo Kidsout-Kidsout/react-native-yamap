@@ -13,7 +13,9 @@ import com.facebook.react.viewmanagers.YamapCircleViewManagerInterface
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CircleMapObject
+import com.yandex.mapkit.map.MapObject
 import com.yandex.mapkit.map.MapObjectCollection
+import com.yandex.mapkit.map.MapObjectTapListener
 import ru.kidsout.yamap.types.YamapCircleViewProps
 import ru.kidsout.yamap.types.YamapCircleViewPropsStyling
 
@@ -45,13 +47,15 @@ class YamapCircleView: View, YamapCircleViewManagerInterface<YamapCircleView> {
   fun setCollection(col: MapObjectCollection) {
     this.col = col
     this.obj = col.addCircle(Circle(Point(0.0, 0.0), 0.0f))
-    obj!!.addTapListener { _, _ ->
-      val dispatcher = getEventEmitter()
-      val surfaceId = getSurfaceId()
-      dispatcher.dispatchEvent(YamapCircleViewOnPressEvent(surfaceId, id))
-      true
-    }
+    obj!!.addTapListener(tapListener)
     update()
+  }
+
+  private val tapListener = MapObjectTapListener { p0, p1 ->
+    val dispatcher = getEventEmitter()
+    val surfaceId = getSurfaceId()
+    dispatcher.dispatchEvent(YamapCircleViewOnPressEvent(surfaceId, id))
+    true
   }
 
   override fun setCenter(view: YamapCircleView?, value: ReadableMap?) {

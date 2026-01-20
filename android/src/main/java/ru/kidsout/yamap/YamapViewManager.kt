@@ -10,12 +10,20 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.YamapViewManagerDelegate
 import com.facebook.react.viewmanagers.YamapViewManagerInterface
 import ru.kidsout.yamap.events.YamapViewOnMapLoadedEvent
+import ru.kidsout.yamap.events.YamapViewOnMapPressEvent
+import ru.kidsout.yamap.events.YamapViewOnMapLongPressEvent
+import ru.kidsout.yamap.events.YamapViewOnCameraPositionChangeEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandSetCenterReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandSetBoundsReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandSetZoomReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandGetCameraPositionReceivedEvent
+import ru.kidsout.yamap.events.YamapViewOnCommandGetVisibleRegionReceivedEvent
 import ru.kidsout.yamap.types.YamapViewProps
 import ru.kidsout.yamap.utils.BubblingDescriptor
+import ru.kidsout.yamap.utils.DirectDescriptor
 
 @ReactModule(name = YamapViewManager.NAME)
 class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<YamapView>(), IViewGroupManager<YamapView>, YamapViewManagerInterface<YamapView> {
-  private var props = YamapViewProps()
   private val delegate: YamapViewManagerDelegate<YamapView, YamapViewManager> =
     YamapViewManagerDelegate(this)
 
@@ -96,6 +104,18 @@ class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<Yam
 
   override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> =
     mapOf(
-      YamapViewOnMapLoadedEvent.EVENT_NAME to BubblingDescriptor.create(YamapViewOnMapLoadedEvent.EVENT_NAME)
+      YamapViewOnMapLoadedEvent.EVENT_NAME to BubblingDescriptor.create(YamapViewOnMapLoadedEvent.EVENT_NAME),
+      YamapViewOnMapPressEvent.EVENT_NAME to BubblingDescriptor.create(YamapViewOnMapPressEvent.EVENT_NAME),
+      YamapViewOnMapLongPressEvent.EVENT_NAME to BubblingDescriptor.create(YamapViewOnMapLongPressEvent.EVENT_NAME),
+      YamapViewOnCameraPositionChangeEvent.EVENT_NAME to BubblingDescriptor.create(YamapViewOnCameraPositionChangeEvent.EVENT_NAME),
     )
+
+  override fun getExportedCustomDirectEventTypeConstants(): Map<String?, Any?> = mapOf(
+      YamapViewOnCommandSetCenterReceivedEvent.EVENT_NAME to DirectDescriptor.create(YamapViewOnCommandSetCenterReceivedEvent.EVENT_NAME),
+      YamapViewOnCommandSetBoundsReceivedEvent.EVENT_NAME to DirectDescriptor.create(YamapViewOnCommandSetBoundsReceivedEvent.EVENT_NAME),
+      YamapViewOnCommandSetZoomReceivedEvent.EVENT_NAME to DirectDescriptor.create(YamapViewOnCommandSetZoomReceivedEvent.EVENT_NAME),
+      YamapViewOnCommandGetCameraPositionReceivedEvent.EVENT_NAME to DirectDescriptor.create(YamapViewOnCommandGetCameraPositionReceivedEvent.EVENT_NAME),
+      YamapViewOnCommandGetVisibleRegionReceivedEvent.EVENT_NAME to DirectDescriptor.create(YamapViewOnCommandGetVisibleRegionReceivedEvent.EVENT_NAME)
+    )
+
 }

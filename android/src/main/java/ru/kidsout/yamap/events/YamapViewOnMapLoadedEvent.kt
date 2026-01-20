@@ -1,5 +1,7 @@
 package ru.kidsout.yamap.events
 
+import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
 
 class YamapViewOnMapLoadedEvent : Event<YamapViewOnMapLoadedEvent> {
@@ -39,7 +41,23 @@ class YamapViewOnMapLoadedEvent : Event<YamapViewOnMapLoadedEvent> {
 
   override fun getEventName(): String = EVENT_NAME
 
-  override fun getCoalescingKey(): Short = 0
+  override fun getEventData(): WritableMap {
+    val map = Arguments.createMap()
+    map.putInt("renderObjectCount", renderObjectCount)
+    map.putDouble("curZoomModelsLoaded", curZoomModelsLoaded)
+    map.putDouble("curZoomPlacemarksLoaded", curZoomPlacemarksLoaded)
+    map.putDouble("curZoomLabelsLoaded", curZoomLabelsLoaded)
+    map.putDouble("curZoomGeometryLoaded", curZoomGeometryLoaded)
+    map.putInt("tileMemoryUsage", tileMemoryUsage)
+    map.putDouble("delayedGeometryLoaded", delayedGeometryLoaded)
+    map.putDouble("fullyAppeared", fullyAppeared)
+    map.putDouble("fullyLoaded", fullyLoaded)
+    return map
+  }
+
+  override fun canCoalesce(): Boolean {
+    return false
+  }
 
   companion object {
     const val EVENT_NAME = "onMapLoaded"
