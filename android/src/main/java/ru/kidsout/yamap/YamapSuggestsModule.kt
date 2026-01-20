@@ -1,4 +1,4 @@
-package ru.kidsout.yamap.suggest
+package ru.kidsout.yamap
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -6,6 +6,9 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.facebook.react.module.annotations.ReactModule
 import ru.kidsout.yamap.NativeYamapSuggestsSpec
+import ru.kidsout.yamap.suggest.ArgsHelper
+import ru.kidsout.yamap.suggest.MapSuggestItem
+import ru.kidsout.yamap.suggest.SuggestClient
 
 @ReactModule(name = YamapSuggestsModule.NAME)
 class YamapSuggestsModule(reactContext: ReactApplicationContext) :

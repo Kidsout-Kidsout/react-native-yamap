@@ -1,7 +1,6 @@
 package ru.kidsout.yamap
 
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
@@ -12,7 +11,7 @@ import ru.kidsout.yamap.events.YamapViewOnMapLoadedEvent
 import ru.kidsout.yamap.types.YamapViewProps
 import ru.kidsout.yamap.utils.BubblingDescriptor
 
-@ReactModule(name = YamapViewManager.REACT_CLASS)
+@ReactModule(name = YamapViewManager.NAME)
 class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<YamapView>(), YamapViewManagerInterface<YamapView> {
   private var props = YamapViewProps()
   private val delegate: YamapViewManagerDelegate<YamapView, YamapViewManager> =
@@ -20,7 +19,7 @@ class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<Yam
 
   override fun getDelegate(): ViewManagerDelegate<YamapView> = delegate
 
-  override fun getName(): String = REACT_CLASS
+  override fun getName(): String = NAME
 
   override fun createViewInstance(context: ThemedReactContext): YamapView = YamapView(context)
 
@@ -70,7 +69,7 @@ class YamapViewManager(context: ReactApplicationContext) : SimpleViewManager<Yam
   }
 
   companion object {
-    const val REACT_CLASS = "YamapView"
+    const val NAME= "YamapView"
   }
 
   override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> =

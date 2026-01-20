@@ -12,7 +12,7 @@ import ru.kidsout.yamap.events.YamapCircleViewOnPressEvent
 import ru.kidsout.yamap.types.YamapCircleViewProps
 import ru.kidsout.yamap.utils.BubblingDescriptor
 
-@ReactModule(name = YamapCircleViewManager.REACT_CLASS)
+@ReactModule(name = YamapCircleViewManager.NAME)
 class YamapCircleViewManager(context: ReactApplicationContext) : SimpleViewManager<YamapCircleView>(), YamapCircleViewManagerInterface<YamapCircleView> {
   private var props = YamapCircleViewProps()
   private val delegate: YamapCircleViewManagerDelegate<YamapCircleView, YamapCircleViewManager> =
@@ -20,7 +20,7 @@ class YamapCircleViewManager(context: ReactApplicationContext) : SimpleViewManag
 
   override fun getDelegate(): ViewManagerDelegate<YamapCircleView> = delegate
 
-  override fun getName(): String = REACT_CLASS
+  override fun getName(): String = NAME
 
   override fun createViewInstance(context: ThemedReactContext): YamapCircleView = YamapCircleView(context)
 
@@ -41,7 +41,7 @@ class YamapCircleViewManager(context: ReactApplicationContext) : SimpleViewManag
   }
 
   companion object {
-    const val REACT_CLASS = "YamapCircleView"
+    const val NAME = "YamapCircleView"
   }
 
   override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> =

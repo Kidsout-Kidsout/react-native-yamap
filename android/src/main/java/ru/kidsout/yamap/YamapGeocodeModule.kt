@@ -4,12 +4,13 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
+import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import com.yandex.mapkit.geometry.Point
 import ru.kidsout.yamap.geocode.ArgsHelper
 import ru.kidsout.yamap.geocode.MapGeocodeClient
 import ru.kidsout.yamap.geocode.MapGeocodeItem
 
-@ReactModule(name = YamapModule.NAME)
+@ReactModule(name = YamapGeocodeModule.NAME)
 class YamapGeocodeModule(reactContext: ReactApplicationContext) :
   NativeYamapGeocodeSpec(reactContext) {
   private val argsHelper = ArgsHelper()
@@ -57,7 +58,7 @@ class YamapGeocodeModule(reactContext: ReactApplicationContext) :
 
   private fun runSafe(promise: Promise, block: () -> Unit) {
     try {
-      reactApplicationContext.currentActivity!!.runOnUiThread {
+      runOnUiThread {
         try {
           block()
         } catch (error: Exception) {

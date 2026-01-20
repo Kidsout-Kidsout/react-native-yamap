@@ -8,7 +8,9 @@ import com.yandex.mapkit.search.*
 import com.yandex.runtime.Error
 
 class SuggestClient() {
-  private val searchManager: SearchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+  private val searchManager: SearchManager by lazy {
+    SearchFactory.getInstance().createSearchManager(SearchManagerType.COMBINED)
+  }
   private val suggestOptions = SuggestOptions()
   private var suggestSession: SuggestSession? = null
 
