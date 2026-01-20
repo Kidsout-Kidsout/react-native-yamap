@@ -8,7 +8,7 @@ import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.EventDispatcher
-import ru.kidsout.yamap.events.YamapCirclePressEvent
+import ru.kidsout.yamap.events.YamapCircleViewOnPressEvent
 import com.facebook.react.viewmanagers.YamapCircleViewManagerInterface
 import com.yandex.mapkit.geometry.Circle
 import com.yandex.mapkit.geometry.Point
@@ -45,47 +45,38 @@ class YamapCircleView: View, YamapCircleViewManagerInterface<YamapCircleView> {
   fun setCollection(col: MapObjectCollection) {
     this.col = col
     this.obj = col.addCircle(Circle())
-    obj!!.addTapListener { _, p ->
+    obj!!.addTapListener { _, _ ->
       val dispatcher = getEventEmitter()
       val surfaceId = getSurfaceId()
-      dispatcher.dispatchEvent(YamapCirclePressEvent(surfaceId, id, p))
+      dispatcher.dispatchEvent(YamapCircleViewOnPressEvent(surfaceId, id))
       true
     }
     update()
   }
 
   override fun setCenter(view: YamapCircleView?, value: ReadableMap?) {
-    val view = view ?: return
     val value = value ?: return
     props.center = Point(value.getDouble("lat"), value.getDouble("lon"))
-    view.updateProps(props)
+    update()
   }
 
   override fun setLIndex(view: YamapCircleView?, value: Int) {
-    val view = view ?: return
     props.lIndex = value
-    view.updateProps(props)
+    update()
   }
 
   override fun setRadius(view: YamapCircleView?, value: Double) {
-    val view = view ?: return
     props.radius = value.toFloat()
-    view.updateProps(props)
+    update()
   }
 
   override fun setStyling(view: YamapCircleView?, value: ReadableMap?) {
-    val view = view ?: return
     val value = value ?: return
     props.styling = YamapCircleViewPropsStyling().apply {
       fillColor = value.getInt("fillColor")
       strokeColor = value.getInt("strokeColor")
       strokeWidth = value.getDouble("strokeWidth").toFloat()
     }
-    view.updateProps(props)
-  }
-
-  fun updateProps(props: YamapCircleViewProps) {
-    this.props = props
     update()
   }
 
@@ -96,6 +87,16 @@ class YamapCircleView: View, YamapCircleViewManagerInterface<YamapCircleView> {
     obj.strokeColor = props.styling.strokeColor
     obj.strokeWidth = props.styling.strokeWidth
     obj.fillColor = props.styling.fillColor
+  }
+
+  fun unmount() {
+    col?.let { col ->
+      obj?.let { obj ->
+        col.remove(obj)
+      }
+    }
+    col = null
+    obj = null
   }
 
   private fun configureComponent() {

@@ -8,7 +8,9 @@ import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.YamapCircleViewManagerDelegate
 import com.facebook.react.viewmanagers.YamapCircleViewManagerInterface
+import ru.kidsout.yamap.events.YamapCircleViewOnPressEvent
 import ru.kidsout.yamap.types.YamapCircleViewProps
+import ru.kidsout.yamap.utils.BubblingDescriptor
 
 @ReactModule(name = YamapCircleViewManager.REACT_CLASS)
 class YamapCircleViewManager(context: ReactApplicationContext) : SimpleViewManager<YamapCircleView>(), YamapCircleViewManagerInterface<YamapCircleView> {
@@ -43,12 +45,7 @@ class YamapCircleViewManager(context: ReactApplicationContext) : SimpleViewManag
   }
 
   override fun getExportedCustomBubblingEventTypeConstants(): Map<String, Any> =
-      mapOf(
-          YamapCirclePressEvent.NAME to
-              mapOf(
-                  "phasedRegistrationNames" to
-                      mapOf(
-                          "bubbled" to "onPress",
-                          "captured" to "onPressCapture"
-                      )))
+    mapOf(
+      YamapCircleViewOnPressEvent.EVENT_NAME to BubblingDescriptor.create(YamapCircleViewOnPressEvent.EVENT_NAME)
+    )
 }
