@@ -77,9 +77,13 @@ using namespace facebook::react;
   auto obj = self->_obj;
   auto inner = self->_inner;
   
+
   dispatch_async(dispatch_get_main_queue(), ^{
     if(inner == NULL) {
-      [obj setViewWithView:[[YRTViewProvider alloc] initWithUIView:[[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)]]];
+      auto view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+      view.backgroundColor = [UIColor clearColor];
+      [view setOpaque:false];
+      [obj setViewWithView:[[YRTViewProvider alloc] initWithUIView:view cacheable:true]];
     } else {
       auto provider = [[YRTViewProvider alloc] initWithUIView:inner cacheable:true];
       [obj setViewWithView:provider];
