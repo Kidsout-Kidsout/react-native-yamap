@@ -1,50 +1,30 @@
-import { type Point } from './interfaces';
-import NativeModule from './specs/NativeYamapSuggests';
+import {
+  type Point,
+  type YamapSuggestOptions,
+  type YamapSuggestResult,
+  type YamapSuggestResultWithCoords,
+} from './interfaces';
+import NativeModule, { type SuggestOptions } from './specs/NativeYamapSuggests';
 import { invariant } from './utils/invariant';
 
 const getModule = () =>
   NativeModule ?? invariant('YamapSuggests native module is not linked.');
 
-export type YamapSuggest = {
-  title: string;
-  subtitle?: string;
-  uri?: string;
-  searchText: string;
-  displayText?: string;
-};
-
-export type YamapSuggestWithCoords = YamapSuggest & Partial<Point>;
-
-export enum SuggestTypes {
-  YMKSuggestTypeUnspecified = 0b00,
-  YMKSuggestTypeGeo = 0b01,
-  // eslint-disable-next-line no-bitwise
-  YMKSuggestTypeBiz = 0b01 << 1,
-  // eslint-disable-next-line no-bitwise
-  YMKSuggestTypeTransit = 0b01 << 2,
-}
-
-type SuggestOptions = {
-  userPosition?: Point;
-  suggestWords?: boolean;
-  suggestTypes?: SuggestTypes[];
-};
-
 type SuggestFetcher = (
   query: string,
-  options?: SuggestOptions
-) => Promise<Array<YamapSuggest>>;
+  options?: YamapSuggestOptions
+) => Promise<Array<YamapSuggestResult>>;
 const suggest: SuggestFetcher = (query, options) => {
   if (options) {
-    return getModule().suggestWithOptions(query, options);
+    return getModule().suggestWithOptions(query, options as SuggestOptions);
   }
   return getModule().suggest(query);
 };
 
 type SuggestWithCoordsFetcher = (
   query: string,
-  options?: SuggestOptions
-) => Promise<Array<YamapSuggestWithCoords>>;
+  options?: YamapSuggestOptions
+) => Promise<Array<YamapSuggestResultWithCoords>>;
 
 const suggestWithCoords: SuggestWithCoordsFetcher = async (query, options) => {
   const suggests = await suggest(query, options);
@@ -60,7 +40,7 @@ const reset = () => {
 };
 //  Original uri format for the MapKit 4.0.0 ymapsbm1://geo?ll=39.957371%2C48.306156&spn=0.001000%2C0.001000&text=%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D1%8F%2C%20%D0%A0%D0%BE%D1%81%D1%82%D0%BE%D0%B2%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C%2C%20%D0%94%D0%BE%D0%BD%D0%B5%D1%86%D0%BA%2C%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%9C%D0%B8%D0%BA%D0%BE%D1%8F%D0%BD%D0%B0%2C%2012
 // Decoded uri format ymapsbm1://geo?ll=39.957371,48.306156&spn=0.001000,0.001000&text=Россия, Ростовская область, Донецк, улица Микояна, 12
-type LatLonGetter = (suggest: YamapSuggest) => Point | undefined;
+type LatLonGetter = (suggest: YamapSuggestResult) => Point | undefined;
 
 const getCoordsFromSuggest: LatLonGetter = (suggest) => {
   const coords = suggest.uri

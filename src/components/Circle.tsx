@@ -4,12 +4,14 @@ import YamapCircle from '../specs/NativeYamapCircleView';
 import { processColor } from 'react-native';
 import { usePreventedCallback } from '../utils/preventedCallback';
 
+export type CirclePropsOnPressCallback = () => void;
+
 export interface CircleProps {
   fillColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
   zIndex?: number;
-  onPress?: () => void;
+  onPress?: CirclePropsOnPressCallback;
   center: Point;
   radius: number;
 }

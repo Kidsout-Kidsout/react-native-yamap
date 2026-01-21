@@ -17,7 +17,10 @@ import {
 } from '../interfaces';
 import YamapNativeComponent, {
   type CameraMoveNativeEvent,
+  type CameraPositionEvent,
   type CameraPositionReceivedEvent,
+  type MapLoadedEvent,
+  type MapPointEvent,
   type NativeProps,
   type VisibleRegionReceivedEvent,
   Commands,
@@ -56,6 +59,30 @@ export type YamapRef = {
   getVisibleRegion: () => Promise<VisibleRegion>;
 };
 
+export type YamapPropsOnCameraPositionChangeResult = CameraPositionEvent;
+export type YamapPropsOnCameraPositionChangeCallback = Exclude<
+  NativeProps['onCameraPositionChange'],
+  undefined
+>;
+
+export type YamapPropsOnMapPressResult = MapPointEvent;
+export type YamapPropsOnMapPressCallback = Exclude<
+  NativeProps['onMapPress'],
+  undefined
+>;
+
+export type YamapPropsOnMapLongPressResult = MapPointEvent;
+export type YamapPropsOnMapLongPressCallback = Exclude<
+  NativeProps['onMapLongPress'],
+  undefined
+>;
+
+export type YamapPropsOnMapLoadedResult = MapLoadedEvent;
+export type YamapPropsOnMapLoadedCallback = Exclude<
+  NativeProps['onMapLoaded'],
+  undefined
+>;
+
 export type YamapProps = PropsWithChildren<ViewProps> & {
   nightMode?: boolean;
   mapType?: MapType;
@@ -66,10 +93,11 @@ export type YamapProps = PropsWithChildren<ViewProps> & {
   fastTapEnabled?: boolean;
   maxFps?: number;
   ref?: Ref<YamapRef>;
-} & Pick<
-    NativeProps,
-    'onCameraPositionChange' | 'onMapPress' | 'onMapLongPress' | 'onMapLoaded'
-  >;
+  onCameraPositionChange?: YamapPropsOnCameraPositionChangeCallback;
+  onMapPress?: YamapPropsOnMapPressCallback;
+  onMapLongPress?: YamapPropsOnMapLongPressCallback;
+  onMapLoaded?: YamapPropsOnMapLoadedCallback;
+};
 
 export const Yamap: FunctionComponent<YamapProps> = ({
   ref,

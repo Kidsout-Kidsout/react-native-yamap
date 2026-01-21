@@ -5,31 +5,6 @@ export interface Point {
   lon: number;
 }
 
-export interface ScreenPoint {
-  x: number;
-  y: number;
-}
-
-export interface MapLoaded {
-  renderObjectCount: number;
-  curZoomModelsLoaded: number;
-  curZoomPlacemarksLoaded: number;
-  curZoomLabelsLoaded: number;
-  curZoomGeometryLoaded: number;
-  tileMemoryUsage: number;
-  delayedGeometryLoaded: number;
-  fullyAppeared: number;
-  fullyLoaded: number;
-}
-
-export interface InitialRegion {
-  lat: number;
-  lon: number;
-  zoom?: number;
-  azimuth?: number;
-  tilt?: number;
-}
-
 export type AddressComponent =
   | 'unknown'
   | 'country'
@@ -50,17 +25,6 @@ export type AddressComponent =
   | 'airport'
   | 'other';
 
-export type MasstransitVehicles =
-  | 'bus'
-  | 'trolleybus'
-  | 'tramway'
-  | 'minibus'
-  | 'suburban'
-  | 'underground'
-  | 'ferry'
-  | 'cable'
-  | 'funicular';
-
 export type MapType = 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
 
 export interface CameraPosition {
@@ -75,4 +39,39 @@ export type VisibleRegion = {
   bottomRight: Point;
   topLeft: Point;
   topRight: Point;
+};
+
+export type YamapGeocodeResult = {
+  name: string;
+  descriptionText: string;
+  formattedAddress: string;
+  coords: Point;
+  upperCorner: Point;
+  lowerCorner: Point;
+  components: { name: string; kinds: AddressComponent[] }[];
+};
+
+export type YamapSuggestResult = {
+  title: string;
+  subtitle?: string;
+  uri?: string;
+  searchText: string;
+  displayText?: string;
+};
+
+export type YamapSuggestResultWithCoords = YamapSuggestResult & Partial<Point>;
+
+export enum YamapSuggestTypes {
+  YMKSuggestTypeUnspecified = 0b00,
+  YMKSuggestTypeGeo = 0b01,
+  // eslint-disable-next-line no-bitwise
+  YMKSuggestTypeBiz = 0b01 << 1,
+  // eslint-disable-next-line no-bitwise
+  YMKSuggestTypeTransit = 0b01 << 2,
+}
+
+export type YamapSuggestOptions = {
+  userPosition?: Point;
+  suggestWords?: boolean;
+  suggestTypes?: YamapSuggestTypes[];
 };

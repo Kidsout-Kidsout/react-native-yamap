@@ -10,18 +10,24 @@ import type { CodegenTypes } from 'react-native';
 import { usePreventedCallback } from '../utils/preventedCallback';
 import { processColor } from 'react-native';
 
+export type ClustersPropsStyle = {
+  fontSize?: CodegenTypes.Double;
+  fontColor?: string;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: CodegenTypes.Double;
+  padding?: CodegenTypes.Double;
+};
+
+export type ClustersPropsOnPressCallback = CodegenTypes.BubblingEventHandler<{
+  ids: string[];
+}>;
+
 export interface ClustersProps {
   radius?: number;
   minZoom?: number;
-  clusterStyle?: {
-    fontSize?: CodegenTypes.Double;
-    fontColor?: string;
-    fillColor?: string;
-    strokeColor?: string;
-    strokeWidth?: CodegenTypes.Double;
-    padding?: CodegenTypes.Double;
-  };
-  onPress?: CodegenTypes.BubblingEventHandler<{ ids: string[] }>;
+  clusterStyle?: ClustersPropsStyle;
+  onPress?: ClustersPropsOnPressCallback;
   children?: ReactNode;
 }
 

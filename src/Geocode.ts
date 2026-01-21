@@ -1,16 +1,6 @@
-import { type AddressComponent, type Point } from './interfaces';
+import { type Point, type YamapGeocodeResult } from './interfaces';
 import NativeModule from './specs/NativeYamapGeocode';
 import { invariant } from './utils/invariant';
-
-export type YamapGeocodeResult = {
-  name: string;
-  descriptionText: string;
-  formattedAddress: string;
-  coords: Point;
-  upperCorner: Point;
-  lowerCorner: Point;
-  components: { name: string; kinds: AddressComponent[] }[];
-};
 
 const getModule = () =>
   NativeModule ?? invariant('YamapGeocode native module is not linked.');

@@ -5,6 +5,8 @@ import YamapPolygon from '../specs/NativeYamapPolygonView';
 import { processColor } from 'react-native';
 import { usePreventedCallback } from '../utils/preventedCallback';
 
+export type PolygonPropsOnPressCallback = () => void;
+
 export interface PolygonProps {
   points: Point[];
 
@@ -12,7 +14,7 @@ export interface PolygonProps {
   strokeColor?: string;
   strokeWidth?: number;
   zIndex?: number;
-  onPress?: () => void;
+  onPress?: PolygonPropsOnPressCallback;
   innerRings?: Point[][];
 }
 

@@ -5,11 +5,15 @@ import type { CodegenTypes } from 'react-native';
 import { usePreventedCallback } from '../utils/preventedCallback';
 import { processColor } from 'react-native';
 
+export type MarkerPropsOnPressCallback = CodegenTypes.BubblingEventHandler<{
+  id: string;
+}>;
+
 export interface MarkerProps {
   id: string;
   center: Point;
   zIndex?: number;
-  onPress?: CodegenTypes.BubblingEventHandler<{ id: string }>;
+  onPress?: MarkerPropsOnPressCallback;
   text?: string;
   textSize?: number;
   textColor?: string;
