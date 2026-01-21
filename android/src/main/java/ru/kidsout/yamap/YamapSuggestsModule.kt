@@ -1,5 +1,6 @@
 package ru.kidsout.yamap
 
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
@@ -67,7 +68,9 @@ class YamapSuggestsModule(reactContext: ReactApplicationContext) :
   private fun createResolveCallback(promise: Promise): (List<YamapMapSuggestResult>) -> Unit {
     return { result ->
       try {
-        promise.resolve(result.map { it.toMap() })
+        val arr = Arguments.createArray()
+        result.forEach { arr.pushMap(it.toMap()) }
+        promise.resolve(arr)
       } catch (error: Exception) {
         promise.reject(ERR_SUGGEST_FAILED, error)
       }
