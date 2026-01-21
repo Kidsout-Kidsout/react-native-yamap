@@ -74,6 +74,10 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
         child.setCollection(map.mapWindow.map.mapObjects)
         subviewsMap[index] = child
       }
+      is YamapMarkerView -> {
+        child.setCollection(map.mapWindow.map.mapObjects)
+        subviewsMap[index] = child
+      }
       else -> addView(child, index)
     }
   }
@@ -82,6 +86,7 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
     when (val v = subviewsMap[index]) {
       is YamapCircleView -> v.unmount()
       is YamapPolygonView -> v.unmount()
+      is YamapMarkerView -> v.unmount()
       else -> removeViewAt(index)
     }
   }

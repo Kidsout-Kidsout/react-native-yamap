@@ -13,6 +13,11 @@ export interface MarkerProps {
   text?: string;
   textSize?: number;
   textColor?: string;
+  /**
+   * Note that marker view will get rasterized upon placing on map.
+   * This means that you won't be able to use animated components.
+   * To update marker view, you will need to re-render Marker component with a new 'marker' prop or assign a different key.
+   */
   marker?: ReactElement;
 }
 

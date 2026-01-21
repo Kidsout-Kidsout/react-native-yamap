@@ -14,7 +14,8 @@ class YamapPackage : BaseReactPackage() {
     return listOf(
       YamapViewManager(reactContext),
       YamapCircleViewManager(reactContext),
-      YamapPolygonViewManager(reactContext)
+      YamapPolygonViewManager(reactContext),
+      YamapMarkerViewManager(reactContext)
     )
   }
 
@@ -26,6 +27,7 @@ class YamapPackage : BaseReactPackage() {
       YamapViewManager.NAME -> YamapViewManager(reactContext)
       YamapCircleViewManager.NAME -> YamapCircleViewManager(reactContext)
       YamapPolygonViewManager.NAME -> YamapPolygonViewManager(reactContext)
+      YamapMarkerViewManager.NAME -> YamapMarkerViewManager(reactContext)
       else -> null
     }
   }
@@ -38,7 +40,8 @@ class YamapPackage : BaseReactPackage() {
         YamapSuggestsModule::class.java,
         YamapViewManager::class.java,
         YamapCircleViewManager::class.java,
-        YamapPolygonViewManager::class.java
+        YamapPolygonViewManager::class.java,
+        YamapMarkerViewManager::class.java
         )
     val reactModuleInfoMap: MutableMap<String, ReactModuleInfo> = HashMap()
     for (moduleClass in moduleList) {

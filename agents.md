@@ -1,0 +1,3 @@
+# Creating android components from specs
+
+to be written...

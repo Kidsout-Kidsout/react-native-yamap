@@ -43,6 +43,10 @@ export function AppContent() {
     'marker',
     'clusters',
   ]);
+  const [markerStyle, markerStyleControl] = useListToggle('Marker Style', [
+    'basic',
+    'empty',
+  ]);
   const mapRef = useRef<YamapRef>(null);
   const [position, setPosition] = useState<string>('');
 
@@ -96,6 +100,7 @@ export function AppContent() {
   const map = (
     <MapDemo
       mapType={mapType}
+      markerStyle={markerStyle}
       ref={mapRef}
       clusterColor={clusterColor}
       handlePositionChange={handlePositionChange}
@@ -119,6 +124,7 @@ export function AppContent() {
           {mapTypeControl}
           {typeControl}
           {type === 'clusters' && clusterColorControl}
+          {type === 'marker' && markerStyleControl}
         </View>
         {map}
         <Text>State: {position}</Text>
@@ -129,6 +135,7 @@ export function AppContent() {
 
 const MapDemo: FunctionComponent<{
   mapType: 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
+  markerStyle: 'basic' | 'empty';
   nightMode: boolean;
   type: 'circle' | 'marker' | 'polygon' | 'clusters';
   clusterColor: string;
@@ -137,6 +144,7 @@ const MapDemo: FunctionComponent<{
   ref?: Ref<YamapRef>;
 }> = ({
   mapType,
+  markerStyle,
   nightMode,
   type,
   clusterColor,
@@ -166,7 +174,11 @@ const MapDemo: FunctionComponent<{
         alert(`Object ${e.nativeEvent.id} pressed`);
       }}
       text={String(text)}
-      marker={<View style={styles.markerStyle} />}
+      marker={
+        markerStyle === 'basic' ? (
+          <View style={styles.markerStyle} />
+        ) : undefined
+      }
     />
   );
 
