@@ -268,9 +268,7 @@ using namespace facebook::react;
   if(maxZoom != 0 && zoom > maxZoom) {
     zoom = maxZoom;
   }
-  if (offset != 0) {
-    pos = [YMKCameraPosition cameraPositionWithTarget:pos.target zoom:zoom azimuth:pos.azimuth tilt:pos.tilt];
-  }
+  pos = [YMKCameraPosition cameraPositionWithTarget:pos.target zoom:zoom azimuth:pos.azimuth tilt:pos.tilt];
   auto anType = animationType == 1 ? YMKAnimationTypeSmooth : YMKAnimationTypeLinear;
   YMKAnimation *anim = [YMKAnimation animationWithType:anType duration:animationDuration];
 

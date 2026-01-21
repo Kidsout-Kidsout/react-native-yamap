@@ -46,6 +46,8 @@ export function AppContent() {
   const [markerStyle, markerStyleControl] = useListToggle('Marker Style', [
     'basic',
     'empty',
+    'blue',
+    'pink',
   ]);
   const mapRef = useRef<YamapRef>(null);
   const [position, setPosition] = useState<string>('');
@@ -124,7 +126,7 @@ export function AppContent() {
           {mapTypeControl}
           {typeControl}
           {type === 'clusters' && clusterColorControl}
-          {type === 'marker' && markerStyleControl}
+          {(type === 'marker' || type === 'clusters') && markerStyleControl}
         </View>
         {map}
         <Text>State: {position}</Text>
@@ -135,7 +137,7 @@ export function AppContent() {
 
 const MapDemo: FunctionComponent<{
   mapType: 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
-  markerStyle: 'basic' | 'empty';
+  markerStyle: 'basic' | 'empty' | 'blue' | 'pink';
   nightMode: boolean;
   type: 'circle' | 'marker' | 'polygon' | 'clusters';
   clusterColor: string;
@@ -162,25 +164,39 @@ const MapDemo: FunctionComponent<{
     p: { lat: number; lon: number },
     text: number,
     key?: string | number
-  ) => (
-    <Marker
-      id={id}
-      key={key}
-      center={p}
-      onPress={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // eslint-disable-next-line no-alert
-        alert(`Object ${e.nativeEvent.id} pressed`);
-      }}
-      text={String(text)}
-      marker={
-        markerStyle === 'basic' ? (
-          <View style={styles.markerStyle} />
-        ) : undefined
-      }
-    />
-  );
+  ) => {
+    return (
+      <Marker
+        id={id}
+        key={key}
+        center={p}
+        onPress={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          // eslint-disable-next-line no-alert
+          alert(`Object ${e.nativeEvent.id} pressed`);
+        }}
+        text={String(text)}
+        marker={
+          markerStyle === 'empty' ? undefined : (
+            <View
+              key={markerStyle}
+              // eslint-disable-next-line react-native/no-inline-styles
+              style={{
+                ...styles.markerStyle,
+                borderColor:
+                  markerStyle === 'blue'
+                    ? 'blue'
+                    : markerStyle === 'pink'
+                      ? 'pink'
+                      : 'green',
+              }}
+            />
+          )
+        }
+      />
+    );
+  };
 
   const clusterPoints = useMemo(() => {
     return [...Array(50).keys()].map((i) => {

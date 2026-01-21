@@ -12,9 +12,7 @@ class YamapCircleViewOnPressEvent : Event<YamapCircleViewOnPressEvent> {
     return false
   }
 
-  override fun getEventData(): WritableMap? {
-    return null
-  }
+  override fun getEventData(): WritableMap? = null
 
   companion object {
     const val EVENT_NAME = "onPress"

@@ -13,6 +13,8 @@ import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.facebook.react.viewmanagers.YamapMarkerViewManagerInterface
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.BaseMapObjectCollection
+import com.yandex.mapkit.map.ClusterizedPlacemarkCollection
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
@@ -22,10 +24,8 @@ import ru.kidsout.yamap.events.YamapMarkerViewOnPressEvent
 import ru.kidsout.yamap.types.YamapMarkerViewProps
 import kotlin.math.roundToInt
 
-const val TAG = "YamapMarkerView"
-
 class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarkerView> {
-  private var collection: MapObjectCollection? = null
+  private var collection: BaseMapObjectCollection? = null
   private var placemark: PlacemarkMapObject? = null
   private var props = YamapMarkerViewProps()
 
@@ -66,10 +66,15 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
     configureComponent()
   }
 
-  fun setCollection(col: MapObjectCollection) {
+  fun setCollection(col: BaseMapObjectCollection) {
     collection = col
-    placemark = col.addPlacemark()
+    placemark = when (col) {
+      is MapObjectCollection -> col.addPlacemark()
+      is ClusterizedPlacemarkCollection -> col.addPlacemark()
+      else -> throw Exception("Unsopported object collection passed")
+    }
     placemark?.addTapListener(tapListener)
+    updateUserData()
     updatePlacemark()
   }
 
@@ -96,6 +101,7 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
 
   override fun setId(view: YamapMarkerView?, value: String?) {
     props.markerId = value ?: ""
+    updateUserData()
   }
 
   override fun setText(view: YamapMarkerView?, value: String?) {
@@ -143,6 +149,10 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
   private fun updatePlacemark() {
     updateGeometry()
     updateText()
+  }
+
+  private fun updateUserData() {
+    placemark?.userData = props.markerId
   }
 
   private fun updatePlacemarkView() {
@@ -210,5 +220,9 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
 
   private fun configureComponent() {
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+  }
+
+  companion object {
+    private const val TAG = "YamapMarkerView"
   }
 }

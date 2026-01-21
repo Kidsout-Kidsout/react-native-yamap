@@ -26,15 +26,13 @@ class YamapViewOnCameraPositionChangeEvent : Event<YamapViewOnCameraPositionChan
 
   override fun getEventName(): String = EVENT_NAME
 
-  override fun getEventData(): WritableMap {
-    val map = Arguments.createMap()
-    map.putDouble("zoom", zoom)
-    map.putDouble("tilt", tilt)
-    map.putDouble("azimuth", azimuth)
-    map.putMap("point", getPointSerialized())
-    map.putString("reason", getReasonSerialized())
-    map.putBoolean("finished", finished)
-    return map
+  override fun getEventData(): WritableMap = Arguments.createMap().apply {
+    putDouble("zoom", zoom)
+    putDouble("tilt", tilt)
+    putDouble("azimuth", azimuth)
+    putMap("point", getPointSerialized())
+    putString("reason", getReasonSerialized())
+    putBoolean("finished", finished)
   }
 
   override fun canCoalesce(): Boolean {

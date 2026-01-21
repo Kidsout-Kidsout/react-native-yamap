@@ -30,6 +30,7 @@ import ru.kidsout.yamap.events.YamapViewOnCommandSetZoomReceivedEvent
 import ru.kidsout.yamap.events.YamapViewOnCommandGetCameraPositionReceivedEvent
 import ru.kidsout.yamap.events.YamapViewOnCommandGetVisibleRegionReceivedEvent
 import ru.kidsout.yamap.types.YamapViewProps
+import ru.kidsout.yamap.utils.animationFromProps
 
 class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
   private var map: MapView
@@ -78,6 +79,10 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
         child.setCollection(map.mapWindow.map.mapObjects)
         subviewsMap[index] = child
       }
+      is YamapClustersView -> {
+        child.setCollection(map.mapWindow.map.mapObjects)
+        subviewsMap[index] = child
+      }
       else -> addView(child, index)
     }
   }
@@ -87,6 +92,7 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
       is YamapCircleView -> v.unmount()
       is YamapPolygonView -> v.unmount()
       is YamapMarkerView -> v.unmount()
+      is YamapClustersView -> v.unmount()
       else -> removeViewAt(index)
     }
   }
@@ -143,8 +149,8 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
   }
 
   override fun commandSetCenter(view: YamapView?, cid: String?, lat: Double, lon: Double, zoom: Double, azimuth: Double, tilt: Double, offset: Double, animationType: Int, animationDuration: Double) {
-    val cp = CameraPosition(Point(lat, lon), zoom.toFloat(), azimuth.toFloat(), tilt.toFloat())
-    val an = Animation(if (animationType == 1) Animation.Type.SMOOTH else Animation.Type.LINEAR, animationDuration.toFloat())
+    val cp = CameraPosition(Point(lat, lon), zoom.toFloat() - offset.toFloat(), azimuth.toFloat(), tilt.toFloat())
+    val an = animationFromProps(animationType, animationDuration)
     map.mapWindow.map.move(cp, an) { completed ->
       getEventEmitter().dispatchEvent(YamapViewOnCommandSetCenterReceivedEvent(
         getSurfaceId(),
@@ -161,8 +167,16 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
       Point(topRightPointLat, topRightPointLon)
     )
 
-    val cp = map.mapWindow.map.cameraPosition(Geometry.fromBoundingBox(bb))
-    val an = Animation(if (animationType == 1) Animation.Type.SMOOTH else Animation.Type.LINEAR, animationDuration.toFloat())
+    var cp = map.mapWindow.map.cameraPosition(Geometry.fromBoundingBox(bb))
+    var zoom = cp.zoom - offset.toFloat()
+    if (minZoom != 0.0 && zoom < minZoom) {
+      zoom = minZoom.toFloat()
+    }
+    if (maxZoom != 0.0 && zoom > maxZoom) {
+      zoom = maxZoom.toFloat()
+    }
+    cp = CameraPosition(cp.target, zoom, cp.azimuth, cp.tilt)
+    val an = animationFromProps(animationType, animationDuration)
     map.mapWindow.map.move(cp, an) { completed ->
       getEventEmitter().dispatchEvent(YamapViewOnCommandSetBoundsReceivedEvent(
         getSurfaceId(),
@@ -175,8 +189,8 @@ class YamapView: FrameLayout, YamapViewManagerInterface<YamapView> {
 
   override fun commandSetZoom(view: YamapView?, cid: String?, zoom: Double, offset: Double, animationType: Int, animationDuration: Double) {
     val ccp = map.mapWindow.map.cameraPosition
-    val cp = CameraPosition(ccp.target, zoom.toFloat(), ccp.azimuth, ccp.tilt)
-    val an = Animation(if (animationType == 1) Animation.Type.SMOOTH else Animation.Type.LINEAR, animationDuration.toFloat())
+    val cp = CameraPosition(ccp.target, zoom.toFloat() - offset.toFloat(), ccp.azimuth, ccp.tilt)
+    val an = animationFromProps(animationType, animationDuration)
     map.mapWindow.map.move(cp, an) { completed ->
       getEventEmitter().dispatchEvent(YamapViewOnCommandSetZoomReceivedEvent(
         getSurfaceId(),
