@@ -70,21 +70,20 @@ using namespace facebook::react;
 }
 
 - (void)updateChild {
-  if (_obj == NULL) return;
-
-  auto obj = self->_obj;
-  auto inner = self->_inner;
-
-
-  if(inner == NULL) {
-    auto view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-    view.backgroundColor = [UIColor clearColor];
-    [view setOpaque:false];
-    [obj setViewWithView:[[YRTViewProvider alloc] initWithUIView:view cacheable:true]];
-  } else {
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+    if (self->_obj == NULL) return;
+    
+    auto inner = self->_inner;
+    if(inner == NULL) {
+      inner = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+      inner.backgroundColor = [UIColor clearColor];
+    }
+    [inner setOpaque:false];
+    [inner layoutSubviews];
+    
     auto provider = [[YRTViewProvider alloc] initWithUIView:inner cacheable:true];
-    [obj setViewWithView:provider];
-  }
+    [self->_obj setViewWithView:provider];
+  });
 }
 
 - (void)unmount {
@@ -96,7 +95,6 @@ using namespace facebook::react;
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
   if (index > 0) return;
-  [childComponentView setOpaque:false];
   _inner = childComponentView;
   [self updateChild];
 }
