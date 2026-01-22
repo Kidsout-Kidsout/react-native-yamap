@@ -60,35 +60,31 @@ using namespace facebook::react;
   auto obj = _obj;
   auto p = self->_rprops;
 
-  dispatch_async(dispatch_get_main_queue(), ^{
-    [obj setGeometry:[YMKPoint pointWithLatitude:p->center.lat longitude:p->center.lon]];
-    auto style = [YMKTextStyle textStyleWithSize:p->styling.fontSize color:[YamapUtils uiColorFromColor:p->styling.fontColor] outlineWidth:0 outlineColor:UIColor.clearColor placement:YMKTextStylePlacementCenter offset:0 offsetFromIcon:false textOptional:false];
-    [obj setTextWithText:[NSString stringWithUTF8String:p->text.c_str()] style:style];
-    [obj setZIndex:p->lIndex];
-    auto data = [[YamapMarkerUserData alloc] init];
-    data.id = [NSString stringWithUTF8String:p->id.c_str()];
-    [obj setUserData:(id)data];
-  });
+  [obj setGeometry:[YMKPoint pointWithLatitude:p->center.lat longitude:p->center.lon]];
+  auto style = [YMKTextStyle textStyleWithSize:p->styling.fontSize color:[YamapUtils uiColorFromColor:p->styling.fontColor] outlineWidth:0 outlineColor:UIColor.clearColor placement:YMKTextStylePlacementCenter offset:0 offsetFromIcon:false textOptional:false];
+  [obj setTextWithText:[NSString stringWithUTF8String:p->text.c_str()] style:style];
+  [obj setZIndex:p->lIndex];
+  auto data = [[YamapMarkerUserData alloc] init];
+  data.id = [NSString stringWithUTF8String:p->id.c_str()];
+  [obj setUserData:(id)data];
 }
 
 - (void)updateChild {
   if (_obj == NULL) return;
-  
+
   auto obj = self->_obj;
   auto inner = self->_inner;
-  
 
-  dispatch_async(dispatch_get_main_queue(), ^{
-    if(inner == NULL) {
-      auto view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
-      view.backgroundColor = [UIColor clearColor];
-      [view setOpaque:false];
-      [obj setViewWithView:[[YRTViewProvider alloc] initWithUIView:view cacheable:true]];
-    } else {
-      auto provider = [[YRTViewProvider alloc] initWithUIView:inner cacheable:true];
-      [obj setViewWithView:provider];
-    }
-  });
+
+  if(inner == NULL) {
+    auto view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+    view.backgroundColor = [UIColor clearColor];
+    [view setOpaque:false];
+    [obj setViewWithView:[[YRTViewProvider alloc] initWithUIView:view cacheable:true]];
+  } else {
+    auto provider = [[YRTViewProvider alloc] initWithUIView:inner cacheable:true];
+    [obj setViewWithView:provider];
+  }
 }
 
 - (void)unmount {
