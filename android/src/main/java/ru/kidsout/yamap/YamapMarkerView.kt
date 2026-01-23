@@ -133,7 +133,6 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
 
   fun addMarker(view: View) {
     Log.i(TAG, "Add marker")
-    view.layoutParams = LayoutParams(100, 100)
     ensureMeasured(view)
     view.addOnLayoutChangeListener(markerLayoutChangeListener)
   }
