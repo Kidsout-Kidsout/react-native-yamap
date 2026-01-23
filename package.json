@@ -3,6 +3,15 @@
   "version": "5.0.4",
   "description": "Yandex.Maps SDK for React Native",
   "main": "./lib/module/index.js",
+  "scripts": {
+    "example": "yarn workspace react-native-kidsout-yamap-example",
+    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "build": "bob build",
+    "typecheck": "tsc",
+    "test": "jest",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint:fix": "eslint --fix \"**/*.{js,ts,tsx}\""
+  },
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
     ".": {
@@ -32,15 +41,7 @@
     "!**/__mocks__",
     "!**/.*"
   ],
-  "scripts": {
-    "example": "yarn workspace react-native-kidsout-yamap-example",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "build": "bob build",
-    "typecheck": "tsc",
-    "test": "jest",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "lint:fix": "eslint --fix \"**/*.{js,ts,tsx}\""
-  },
+
   "keywords": [
     "react-native",
     "ios",
@@ -84,10 +85,6 @@
     "react": "*",
     "react-native": "*"
   },
-  "workspaces": [
-    "example"
-  ],
-  "packageManager": "yarn@4.11.0",
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
@@ -146,20 +143,6 @@
     "android": {
       "javaPackageName": "ru.kidsout.yamap"
     }
-  },
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
-  },
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
   },
   "create-react-native-library": {
     "type": "turbo-module",
