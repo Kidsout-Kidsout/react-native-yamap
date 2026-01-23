@@ -109,6 +109,7 @@ using namespace facebook::react;
     dispatch_async(dispatch_get_main_queue(), ^{
       auto *view = (KDSTYamapMarkerView *)childComponentView;
       [view unmount];
+      self->needsUpdate = true;
     });
     return;
   }
