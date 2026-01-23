@@ -44,6 +44,10 @@ class YamapMarkerViewManager(context: ReactApplicationContext) : SimpleViewManag
     view?.setCenter(view, value)
   }
 
+  override fun setImage(view: YamapMarkerView?, value: ReadableMap?) {
+    view?.setImage(view, value)
+  }
+
   override fun addView(parent: YamapMarkerView, child: View, index: Int) {
     if (index > 0) return
     parent.addMarker(child)

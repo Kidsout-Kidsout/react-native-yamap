@@ -8,6 +8,7 @@ import {
   Clusters,
   Geocode,
   Suggest,
+  MarkerImage,
 } from '@kidsout-kidsout/react-native-yamap';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -160,6 +161,12 @@ const MapDemo: FunctionComponent<{
   const rref = useMergedRefs<YamapRef>(localRef, ref);
   const [markerText, setMarkerText] = useState(0);
 
+  const markerImage = useMemo(() => {
+    return new MarkerImage(
+      Image.resolveAssetSource(require('./assets/pin.ext.png'))
+    );
+  }, []);
+
   const getMarker = (
     id: string,
     p: { lat: number; lon: number },
@@ -180,7 +187,7 @@ const MapDemo: FunctionComponent<{
         text={String(text)}
         marker={
           markerStyle === 'empty' ? undefined : markerStyle === 'image' ? (
-            <Image source={require('./assets/pin.ext.png')} />
+            markerImage
           ) : (
             <View
               key={markerStyle}

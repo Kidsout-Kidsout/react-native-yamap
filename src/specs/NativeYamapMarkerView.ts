@@ -1,6 +1,7 @@
 import {
   codegenNativeComponent,
   type CodegenTypes,
+  type ImageSource,
   type ProcessedColorValue,
   type ViewProps,
 } from 'react-native';
@@ -15,6 +16,7 @@ export interface NativeProps extends ViewProps {
   lIndex?: CodegenTypes.Int32;
   onPress?: CodegenTypes.BubblingEventHandler<{ id: string }>;
   center: { lat: CodegenTypes.Double; lon: CodegenTypes.Double };
+  image?: ImageSource;
 }
 
 export default codegenNativeComponent<NativeProps>('YamapMarkerView');

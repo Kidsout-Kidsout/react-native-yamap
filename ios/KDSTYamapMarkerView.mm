@@ -26,6 +26,8 @@ using namespace facebook::react;
 @property (atomic, strong) YMKPlacemarkMapObject *obj;
 @property (atomic) const YamapMarkerViewProps *rprops;
 @property (atomic, strong) UIView *inner;
+@property (atomic, strong) NSString *lastSource;
+@property (atomic, strong) UIImage *markerImage;
 @end
 
 @implementation KDSTYamapMarkerView {}
@@ -64,14 +66,33 @@ using namespace facebook::react;
   auto style = [YMKTextStyle textStyleWithSize:p->styling.fontSize color:[YamapUtils uiColorFromColor:p->styling.fontColor] outlineWidth:0 outlineColor:UIColor.clearColor placement:YMKTextStylePlacementCenter offset:0 offsetFromIcon:false textOptional:false];
   [obj setTextWithText:[NSString stringWithUTF8String:p->text.c_str()] style:style];
   [obj setZIndex:p->lIndex];
+  [self updateIcon:p->image];
   auto data = [[YamapMarkerUserData alloc] init];
   data.id = [NSString stringWithUTF8String:p->id.c_str()];
   [obj setUserData:(id)data];
 }
 
+- (void)updateIcon:(ImageSource) source {
+  auto sourceUri = [NSString stringWithUTF8String:source.uri.c_str()];
+  if ([sourceUri isEqualToString:_lastSource]) return;
+  _lastSource = sourceUri;
+  dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+    auto image = [self resolveUIImage:sourceUri];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      self->_markerImage = image;
+      [self updateChild];
+    });
+  });
+}
+
 - (void)updateChild {
   dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
     if (self->_obj == NULL) return;
+    
+    if (self->_markerImage != NULL) {
+      [self->_obj setIconWithImage:self->_markerImage];
+      return;
+    }
     
     auto inner = self->_inner;
     if(inner == NULL) {
@@ -122,6 +143,35 @@ using namespace facebook::react;
   emitter.onPress(value);
 
   return true;
+}
+
+- (UIImage *)resolveUIImage:(NSString *)uri {
+  UIImage *icon = nil;
+  
+  if (!uri || [uri isEqualToString:@""]) {
+    NSLog(@"URI is nil or empty");
+    return nil;
+  }
+  
+  NSURL *url = [NSURL URLWithString:uri];
+  if (!url) {
+    NSLog(@"Failed to create URL from URI: %@", uri);
+    return nil;
+  }
+  
+  NSData *imageData = [NSData dataWithContentsOfURL:url];
+  if (!imageData) {
+    NSLog(@"Failed to load image data from URL: %@", uri);
+    return nil;
+  }
+  
+  icon = [UIImage imageWithData:imageData];
+  if (!icon) {
+    NSLog(@"Failed to create image from loaded data: %@", uri);
+    return nil;
+  }
+  
+  return icon;
 }
 
 // Event emitter convenience method

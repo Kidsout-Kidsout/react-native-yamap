@@ -22,11 +22,15 @@ import com.yandex.mapkit.map.TextStyle
 import com.yandex.runtime.image.ImageProvider
 import ru.kidsout.yamap.events.YamapMarkerViewOnPressEvent
 import ru.kidsout.yamap.types.YamapMarkerViewProps
+import ru.kidsout.yamap.types.YamapMarkerViewPropsImage
 import kotlin.math.roundToInt
+import androidx.core.graphics.createBitmap
+import com.yandex.runtime.ui_view.ViewProvider
+import ru.kidsout.yamap.utils.ImageLoader
 
 class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarkerView> {
   private var collection: BaseMapObjectCollection? = null
-  private var placemark: PlacemarkMapObject? = null
+  private var obj: PlacemarkMapObject? = null
   private var props = YamapMarkerViewProps()
 
   var markerChild: View? = null
@@ -68,12 +72,12 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
 
   fun setCollection(col: BaseMapObjectCollection) {
     collection = col
-    placemark = when (col) {
+    obj = when (col) {
       is MapObjectCollection -> col.addPlacemark()
       is ClusterizedPlacemarkCollection -> col.addPlacemark()
       else -> throw Exception("Unsopported object collection passed")
     }
-    placemark?.addTapListener(tapListener)
+    obj?.addTapListener(tapListener)
     updateUserData()
     updatePlacemark()
   }
@@ -84,11 +88,11 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
   }
 
   private fun detachPlacemark() {
-    placemark?.removeTapListener(tapListener)
+    obj?.removeTapListener(tapListener)
     collection?.let { col ->
-      placemark?.let { col.remove(it) }
+      obj?.let { col.remove(it) }
     }
-    placemark = null
+    obj = null
   }
 
   private val tapListener = MapObjectTapListener { _, _ ->
@@ -131,6 +135,28 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
     updateGeometry()
   }
 
+  override fun setImage(view: YamapMarkerView?, value: ReadableMap?) {
+    when (value) {
+      null -> {
+        props.image = null
+        updatePlacemarkView()
+      }
+      else -> {
+        try {
+          props.image = YamapMarkerViewPropsImage(
+            value.getString("uri")!!,
+            if (value.hasKey("scale")) value.getInt("scale") else 1,
+            value.getInt("height"),
+            value.getInt("width"),
+          )
+        } catch (_: Throwable) {
+          props.image = null
+        }
+        updatePlacemarkView()
+      }
+    }
+  }
+
   fun addMarker(view: View) {
     Log.i(TAG, "Add marker")
     ensureMeasured(view)
@@ -139,9 +165,7 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
 
   fun removeMarker() {
     Log.i(TAG, "Remove marker")
-    val v = createPlaceholder()
-    ensureMeasured(v)
-    markerChild = v
+    markerChild = null
     updatePlacemarkView()
   }
 
@@ -151,27 +175,39 @@ class YamapMarkerView : FrameLayout, YamapMarkerViewManagerInterface<YamapMarker
   }
 
   private fun updateUserData() {
-    placemark?.userData = props.markerId
+    obj?.userData = props.markerId
   }
 
   private fun updatePlacemarkView() {
     Log.i(TAG, "Updating marker")
-    val obj = placemark ?: return
-    val source = markerChild ?: return
-    val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+    val obj = obj ?: return
+    props.image?.let {
+      Log.i(TAG, "Setting icon to ${it.uri}")
+      ImageLoader.downloadImageBitmap(context, it.uri, {
+        obj.setIcon(ImageProvider.fromBitmap(it))
+      })
+      return
+    }
+    val view = markerChild ?: createPlaceholder();
+    val childName = when (markerChild) {
+      null -> "Empty view"
+      else -> "Some view"
+    }
+    Log.i(TAG, "Setting view to ${childName}")
+    val bitmap = createBitmap(view.width, view.height)
     val canvas = Canvas(bitmap)
-    source.draw(canvas)
+    view.draw(canvas)
     obj.setIcon(ImageProvider.fromBitmap(bitmap))
   }
 
   private fun updateGeometry() {
-    val obj = placemark ?: return
+    val obj = obj ?: return
     obj.geometry = props.center
     obj.zIndex = props.lIndex.toFloat()
   }
 
   private fun updateText() {
-    val obj = placemark ?: return
+    val obj = obj ?: return
     val style = TextStyle().apply {
       size = props.styling.fontSize
       color = props.styling.fontColor

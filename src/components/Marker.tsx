@@ -4,6 +4,7 @@ import YamapMarker from '../specs/NativeYamapMarkerView';
 import type { CodegenTypes } from 'react-native';
 import { usePreventedCallback } from '../utils/preventedCallback';
 import { processColor } from 'react-native';
+import { MarkerImage } from '../MarkerImage';
 
 export type MarkerPropsOnPressCallback = CodegenTypes.BubblingEventHandler<{
   id: string;
@@ -22,7 +23,7 @@ export interface MarkerProps {
    * This means that you won't be able to use animated components.
    * To update marker view, you will need to re-render Marker component with a new 'marker' prop or assign a different key.
    */
-  marker?: ReactElement;
+  marker?: ReactElement | MarkerImage;
 }
 
 export const Marker: FunctionComponent<MarkerProps> = ({
@@ -43,14 +44,17 @@ export const Marker: FunctionComponent<MarkerProps> = ({
     [textColor, textSize]
   );
 
+  const children = marker instanceof MarkerImage ? undefined : marker;
+
   return (
     <YamapMarker
       {...props}
       styling={styling}
       lIndex={props.zIndex ?? 1}
       onPress={handlePress}
+      image={marker instanceof MarkerImage ? marker.src : undefined}
     >
-      {marker}
+      {children}
     </YamapMarker>
   );
 };
