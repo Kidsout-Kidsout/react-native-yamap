@@ -1,4 +1,4 @@
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Image, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import {
   Yamap,
   YamapRef,
@@ -48,6 +48,7 @@ export function AppContent() {
     'empty',
     'blue',
     'pink',
+    'image',
   ]);
   const mapRef = useRef<YamapRef>(null);
   const [position, setPosition] = useState<string>('');
@@ -137,7 +138,7 @@ export function AppContent() {
 
 const MapDemo: FunctionComponent<{
   mapType: 'none' | 'raster' | 'vector' | 'satellite' | 'hybrid';
-  markerStyle: 'basic' | 'empty' | 'blue' | 'pink';
+  markerStyle: 'basic' | 'empty' | 'blue' | 'pink' | 'image';
   nightMode: boolean;
   type: 'circle' | 'marker' | 'polygon' | 'clusters';
   clusterColor: string;
@@ -178,7 +179,9 @@ const MapDemo: FunctionComponent<{
         }}
         text={String(text)}
         marker={
-          markerStyle === 'empty' ? undefined : (
+          markerStyle === 'empty' ? undefined : markerStyle === 'image' ? (
+            <Image source={require('./assets/pin.ext.png')} />
+          ) : (
             <View
               key={markerStyle}
               // eslint-disable-next-line react-native/no-inline-styles
