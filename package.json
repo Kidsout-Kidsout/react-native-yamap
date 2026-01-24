@@ -2,7 +2,6 @@
   "name": "@kidsout-kidsout/react-native-yamap",
   "version": "5.0.4",
   "description": "Yandex.Maps SDK for React Native",
-  "main": "./lib/module/index.js",
   "scripts": {
     "example": "yarn workspace react-native-kidsout-yamap-example",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
@@ -13,11 +12,14 @@
     "lint:fix": "eslint --fix \"**/*.{js,ts,tsx}\""
   },
   "types": "./lib/typescript/src/index.d.ts",
+  "source": "./src/index",
+  "react-native": "./src/index",
+  "main": "./lib/module/index.js",
   "exports": {
     ".": {
-      "react-native": "./src/index.ts",
-      "source": "./src/index.ts",
       "types": "./lib/typescript/src/index.d.ts",
+      "source": "./src/index.ts",
+      "react-native": "./src/index.ts",
       "default": "./lib/module/index.js"
     },
     "./package.json": "./package.json"
