@@ -4,11 +4,6 @@
 
 @implementation KDSTYamap
 
-static NSString * _pinIcon;
-static NSString * _arrowIcon;
-static NSString * _markerIcon;
-static NSString * _selectedMarkerIcon;
-
 + (BOOL)requiresMainQueueSetup
 {
     return YES;
@@ -16,11 +11,6 @@ static NSString * _selectedMarkerIcon;
 
 + (NSString *)moduleName { 
   return @"Yamap";
-}
-
-
-- (void)initWithKey:(NSString *) apiKey {
-    [YMKMapKit setApiKey: apiKey];
 }
 
 - (dispatch_queue_t)methodQueue{
@@ -35,7 +25,7 @@ static NSString * _selectedMarkerIcon;
 
 - (void)init:(nonnull NSString *)apiKey resolve:(nonnull RCTPromiseResolveBlock)resolve reject:(nonnull RCTPromiseRejectBlock)reject {
   @try {
-    [self initWithKey: apiKey];
+    [YMKMapKit setApiKey: apiKey];
     resolve(nil);
   } @catch (NSException *exception) {
     NSError *error = nil;
