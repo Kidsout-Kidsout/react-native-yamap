@@ -1,8 +1,8 @@
 package ru.kidsout.yamap
 
-import android.util.Log
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.module.annotations.ReactModule
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.runtime.i18n.I18nManagerFactory
@@ -19,11 +19,15 @@ class YamapModule(reactContext: ReactApplicationContext) :
   }
 
   override fun init(apiKey: String?, promise: Promise?) {
-    reactApplicationContext.currentActivity!!.runOnUiThread {
-      MapKitFactory.setApiKey(apiKey!!)
-      MapKitFactory.initialize(reactApplicationContext)
-      MapKitFactory.getInstance().onStart()
-      promise?.resolve(null)
+    UiThreadUtil.runOnUiThread {
+      try {
+        MapKitFactory.setApiKey(apiKey!!)
+        MapKitFactory.initialize(reactApplicationContext)
+        MapKitFactory.getInstance().onStart()
+        promise?.resolve(null)
+      } catch (error: Throwable) {
+        promise?.reject(ERR_INIT_FAILED, error)
+      }
     }
   }
 
@@ -43,6 +47,7 @@ class YamapModule(reactContext: ReactApplicationContext) :
   }
 
   companion object {
+    private const val ERR_INIT_FAILED = "YAMAP_ERR_INIT_FAILED"
     const val NAME = "Yamap"
   }
 }

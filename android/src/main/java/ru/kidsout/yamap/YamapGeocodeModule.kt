@@ -59,11 +59,11 @@ class YamapGeocodeModule(reactContext: ReactApplicationContext) :
       runOnUiThread {
         try {
           block()
-        } catch (error: Exception) {
+        } catch (error: Throwable) {
           promise.reject(ERR_GEOCODE_FAILED, error)
         }
       }
-    } catch (error: Exception) {
+    } catch (error: Throwable) {
       promise.reject(ERR_GEOCODE_FAILED, error)
     }
   }
