@@ -59,7 +59,7 @@ class YamapSuggestsModule(reactContext: ReactApplicationContext) :
     runOnUiThread {
       try {
         block()
-      } catch (error: Exception) {
+      } catch (error: Throwable) {
         promise.reject(ERR_SUGGEST_FAILED, error)
       }
     }
