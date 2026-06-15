@@ -1,6 +1,6 @@
 {
   "name": "@kidsout-kidsout/react-native-yamap",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "description": "Yandex.Maps SDK for React Native",
   "scripts": {
     "example": "yarn workspace react-native-kidsout-yamap-example",
@@ -44,7 +44,6 @@
     "!**/__mocks__",
     "!**/.*"
   ],
-
   "keywords": [
     "react-native",
     "ios",
